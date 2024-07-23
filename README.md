@@ -6,8 +6,12 @@
 
 **마일스톤 컨벤션**
 **마일스톤 컨벤션 예시**
+
 <br/> 
+
 **이슈 작성 후 작업 진행 바랍니다.**
+
+<br/> 
 
 **이슈 예**
 
@@ -23,19 +27,26 @@
 - [ ]  팔 모션 주기
 - [ ]  다리 모션 주기
 - [ ]  실제 물리 공간 이동
+
 <br/> 
+
 **작은 변경사항이라도 꼭 중간마다 커밋, 푸쉬 부탁드립니다.**
+
 <br/> 
+
 **push 전에는 서로 공유 부탁드립니다.**
 <br/> 
+
 **브렌치명 컨벤션**
 - 브렌치 명 : <자기이니셜>_<기능>
 
-- **브렌치명 컨벤션 예**
+**브렌치명 컨벤션 예**
 
 - csr_PlayerJump
 - hsu-ClickButtonAndExecSomething
+
 <br/> 
+
 **커밋 컨벤션**
 
 - <유형> : <내용> #이슈번호
@@ -56,7 +67,9 @@
 - Fix: tokenizer 문자열 파싱 버그 수정 - junlee2
 - Remove: test.txt 임시파일 삭제 - tyi
 - Rename: test.txt → operator.txt - jincpark
+
 <br/> 
+
 **코드 컨벤션**
 
 - 파스칼 켄벤션 (int ShootingPlayer)
