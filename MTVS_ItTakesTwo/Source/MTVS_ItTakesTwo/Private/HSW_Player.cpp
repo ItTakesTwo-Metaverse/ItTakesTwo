@@ -2,6 +2,7 @@
 
 
 #include "HSW_Player.h"
+#include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
 
 // Sets default values
 AHSW_Player::AHSW_Player()
@@ -16,6 +17,16 @@ void AHSW_Player::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	auto* pc = Cast<APlayerController>(Controller);
+	if (pc)
+	{
+		UEnhancedInputLocalPlayerSubsystem* subSys = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer());
+
+		if (subSys)
+		{
+			subSys->AddMappingContext(IMC_Player, 0);
+		}
+	}
 }
 
 // Called every frame
@@ -29,6 +40,11 @@ void AHSW_Player::Tick(float DeltaTime)
 void AHSW_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+}
+
+void AHSW_Player::OnMyActionFire()
+{
 
 }
 

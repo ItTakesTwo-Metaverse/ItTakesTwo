@@ -26,4 +26,12 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditDefaultsOnly)
+	class UInputMappingContext* IMC_Player;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UInputAction* IA_Fire;
+
+	void OnMyActionFire();
+
 };
