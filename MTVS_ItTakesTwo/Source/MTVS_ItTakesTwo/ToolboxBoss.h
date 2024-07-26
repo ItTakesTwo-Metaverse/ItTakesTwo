@@ -28,6 +28,9 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBoxComponent* BossBox;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USkeletalMeshComponent* BossMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -35,6 +38,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USkeletalMeshComponent* RightArmMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBoxComponent* RightHandBox;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* RightHandMesh;
 
 
 };

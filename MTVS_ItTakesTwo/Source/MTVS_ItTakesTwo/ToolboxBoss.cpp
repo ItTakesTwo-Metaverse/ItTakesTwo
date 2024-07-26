@@ -3,6 +3,7 @@
 
 #include "ToolboxBoss.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 AToolboxBoss::AToolboxBoss()
@@ -11,6 +12,9 @@ AToolboxBoss::AToolboxBoss()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// 보스 몸체
+	BossBox = CreateDefaultSubobject<UBoxComponent>(TEXT("BossBox"));
+	SetRootComponent(BossBox);
+
 	BossMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BossMesh"));
 	BossMesh->SetupAttachment(RootComponent);
 	BossMesh->SetRelativeScale3D(FVector(2.5, 5, 5));
@@ -46,6 +50,14 @@ AToolboxBoss::AToolboxBoss()
 	{
 		RightArmMesh->SetSkeletalMesh(RightArmMeshAsset.Object);
 	}
+
+	// 보스 오른손
+	RightHandBox = CreateDefaultSubobject<UBoxComponent>(TEXT("RightHandBox"));
+	RightHandBox->SetupAttachment(RightArmMesh, TEXT("RightHandSocket"));
+	RightHandMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightHandMesh"));
+	RightHandMesh->SetupAttachment(RightHandBox);
+	RightHandBox->SetRelativeLocation(FVector(0, 0, -240));
+	RightHandBox->SetRelativeRotation(FRotator(0, 0, -90));
 }
 
 // Called when the game starts or when spawned
