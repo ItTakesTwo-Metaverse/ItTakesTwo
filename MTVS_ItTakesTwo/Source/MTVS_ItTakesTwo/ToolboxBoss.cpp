@@ -12,24 +12,23 @@ AToolboxBoss::AToolboxBoss()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// º¸½º ¸öÃ¼
-	BossBox = CreateDefaultSubobject<UBoxComponent>(TEXT("BossBox"));
-	SetRootComponent(BossBox);
 
-	BossMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BossMesh"));
-	BossMesh->SetupAttachment(RootComponent);
-	BossMesh->SetRelativeScale3D(FVector(2.5, 5, 5));
+	//BossMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BossMesh"));
+	GetMesh()->SetupAttachment(RootComponent);
+	GetMesh()->SetRelativeLocation(FVector(0, 0, 450));
+	GetMesh()->SetRelativeScale3D(FVector(5, 10, 10));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BossMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Engine/EngineMeshes/SkeletalCube.SkeletalCube'"));
 	if (BossMeshAsset.Succeeded())
 	{
-		BossMesh->SetSkeletalMesh(BossMeshAsset.Object);
+		GetMesh()->SetSkeletalMesh(BossMeshAsset.Object);
 	}
 
 	// º¸½º ¿ÞÆÈ
 	LeftArmMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("LeftArmMesh"));
-	LeftArmMesh->SetupAttachment(BossMesh, TEXT("LeftArmSocket"));
-	LeftArmMesh->SetRelativeLocation(FVector(8,0,-12));
-	LeftArmMesh->SetRelativeRotation(FRotator(80, 180, -90));
+	LeftArmMesh->SetupAttachment(GetMesh(), TEXT("LeftArmSocket"));
+	LeftArmMesh->SetRelativeLocation(FVector(0,-12,20));
+	LeftArmMesh->SetRelativeRotation(FRotator(-10, 90, -90));
 	LeftArmMesh->SetRelativeScale3D(FVector(0.05,0.3,0.05));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LeftArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Engine/EditorMeshes/SkeletalMesh/DefaultSkeletalMesh.DefaultSkeletalMesh'"));
@@ -40,9 +39,9 @@ AToolboxBoss::AToolboxBoss()
 
 	// º¸½º ¿À¸¥ÆÈ
 	RightArmMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightArmMesh"));
-	RightArmMesh->SetupAttachment(BossMesh, TEXT("RightArmSocket"));
-	RightArmMesh->SetRelativeLocation(FVector(8, 0, 12));
-	RightArmMesh->SetRelativeRotation(FRotator(-80, 180, 90));
+	RightArmMesh->SetupAttachment(GetMesh(), TEXT("RightArmSocket"));
+	RightArmMesh->SetRelativeLocation(FVector(0, 12, 20));
+	RightArmMesh->SetRelativeRotation(FRotator(-10, 270, -90));
 	RightArmMesh->SetRelativeScale3D(FVector(0.05, 0.3, 0.05));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Engine/EditorMeshes/SkeletalMesh/DefaultSkeletalMesh.DefaultSkeletalMesh'"));
@@ -58,6 +57,8 @@ AToolboxBoss::AToolboxBoss()
 	RightHandMesh->SetupAttachment(RightHandBox);
 	RightHandBox->SetRelativeLocation(FVector(0, 0, -240));
 	RightHandBox->SetRelativeRotation(FRotator(0, 0, -90));
+
+
 }
 
 // Called when the game starts or when spawned

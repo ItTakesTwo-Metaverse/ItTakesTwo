@@ -27,11 +27,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UBoxComponent* BossBox;
+	
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USkeletalMeshComponent* BossMesh;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class USkeletalMeshComponent* BossMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USkeletalMeshComponent* LeftArmMesh;
