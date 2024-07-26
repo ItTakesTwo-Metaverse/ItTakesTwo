@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "HSW_Bullet.h"
@@ -12,17 +12,17 @@ AHSW_Bullet::AHSW_Bullet()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//√Êµπ√º
+	//Ï∂©ÎèåÏ≤¥
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
 	SetRootComponent(BoxComp);
 	BoxComp->SetCollisionProfileName(TEXT("BlockAll"));
 
-	//ø‹«¸
+	//Ïô∏Ìòï
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetupAttachment(RootComponent);
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	//πﬂªÁ√º
+	//Î∞úÏÇ¨Ï≤¥
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComp"));
 	MovementComp->SetUpdatedComponent(RootComponent);
 }
@@ -32,6 +32,7 @@ void AHSW_Bullet::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Bullet::OnMyWallHit );
 }
 
 // Called every frame
@@ -40,4 +41,18 @@ void AHSW_Bullet::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
+{
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "collision" ) );
+	if ( OtherActor->ActorHasTag ( TEXT ( "Wall1" ) ) )
+	{
+		MovementComp->bShouldBounce = false;
+	}
+	else if ( OtherActor->ActorHasTag ( TEXT ( "Wall2" ) ) )
+	{
+		MovementComp->bShouldBounce = true;
+	}
+}
+
 
