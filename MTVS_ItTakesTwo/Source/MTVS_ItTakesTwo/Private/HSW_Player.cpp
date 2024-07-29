@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "HSW_Player.h"
@@ -40,10 +40,21 @@ void AHSW_Player::Tick(float DeltaTime)
 void AHSW_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	P1->SetInput ( PlayerInputComponent );
+	P2->SetInput ( PlayerInputComponent );
 }
 
 void AHSW_Player::OnMyActionFire()
+{
+
+}
+
+AP1::SetInput ( UInputComponent* PlayerInputComponent )
+{
+	PlayerInputComponent->BindAction( AP1::Move )
+}
+
+AP1::Move ( )
 {
 
 }
