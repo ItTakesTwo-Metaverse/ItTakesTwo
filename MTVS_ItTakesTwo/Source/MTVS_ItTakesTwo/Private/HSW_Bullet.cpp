@@ -40,6 +40,11 @@ void AHSW_Bullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if ( bRetunring )
+	{
+		ReturnToPlayer ( );
+	}
+
 }
 
 void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
@@ -53,6 +58,11 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 	{
 		MovementComp->bShouldBounce = true;
 	}
+}
+
+void AHSW_Bullet::ReturnToPlayer ( )
+{
+	//GetActorLocation() =
 }
 
 

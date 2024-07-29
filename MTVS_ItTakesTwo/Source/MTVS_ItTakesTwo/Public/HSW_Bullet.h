@@ -39,4 +39,13 @@ public:
 //Overlap이 작동할 함수
 	UFUNCTION ( )
 	void OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit );
+
+
+	//못이 돌아오는 중인지 아닌지 체크
+	bool bRetunring;
+	// 플레이어에게 돌아가는 함수
+	void ReturnToPlayer();
+
+	//타임라인
+
 };
