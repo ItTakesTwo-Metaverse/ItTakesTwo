@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
+#include "HSW_Player.h"
 #include "ToolBoxBossFSM.generated.h"
 
 // 상태정의
@@ -40,6 +41,12 @@ public:
 
 public:
 	//UPROPERTY(VisibleAnywhere)
+
+	UPROPERTY()
+	class AToolboxBoss* me;
+
+	UPROPERTY()
+	class AHSW_Player* player;
 
 
 	// 상태변수

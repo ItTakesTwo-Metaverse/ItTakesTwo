@@ -29,11 +29,13 @@ public:
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USkeletalMeshComponent* LeftArmMesh;
+	class USkeletalMeshComponent* RightArmMesh1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USkeletalMeshComponent* RightArmMesh;
-
+	class USkeletalMeshComponent* RightArmMesh2;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USkeletalMeshComponent* RightHandMesh;
 
 	UFUNCTION()
 	void OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

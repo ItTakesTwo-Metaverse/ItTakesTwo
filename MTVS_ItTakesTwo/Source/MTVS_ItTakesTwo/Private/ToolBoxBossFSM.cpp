@@ -3,6 +3,7 @@
 
 #include "ToolBoxBossFSM.h"
 #include "../ToolboxBoss.h"
+#include "HSW_Player.h"
 
 // Sets default values for this component's properties
 UToolBoxBossFSM::UToolBoxBossFSM()
@@ -21,7 +22,7 @@ void UToolBoxBossFSM::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//ToolBoxBoss = Cast<AToolboxBoss>(GetOwner());
+	me = Cast<AToolboxBoss>(GetOwner());
 	
 }
 
@@ -33,7 +34,6 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 	// 실행창에 상태 메세지 출력
 	FString logMsg = UEnum::GetValueAsString(CurrentState);
-	//GEngine->AddOnScreenDebugMessage(0, 1, FColor::Cyan, logMsg);
 	DrawDebugString(GetWorld(), GetOwner()->GetActorLocation(), logMsg, nullptr, FColor::Yellow, 0);
 
 	AttackTimer += DeltaTime;
@@ -88,7 +88,13 @@ void UToolBoxBossFSM::ChangeState(EBossState NewState)
 
 void UToolBoxBossFSM::IdleState()
 {
-	// 기본 상태
+	// 기본 상태 
+	// TO DO : 목적지(주인공)를 찾고싶다.
+	player = Cast<AHSW_Player>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (player)
+	{
+		CurrentState = EBossState::Attack1;
+	}
 }
 
 void UToolBoxBossFSM::Attack1State()
