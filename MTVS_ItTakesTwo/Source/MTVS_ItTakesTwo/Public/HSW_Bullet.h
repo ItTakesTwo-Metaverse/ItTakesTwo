@@ -6,6 +6,15 @@
 #include "GameFramework/Actor.h"
 #include "HSW_Bullet.generated.h"
 
+UENUM(BlueprintType)
+enum class ENailState: uint8
+{
+	BASIC		UMETA ( DisplayName = "기본" ) ,
+	EMBEDDED	UMETA ( DisplayName = "박힘" ) ,
+	UNEMBEDDED	UMETA ( DisplayName = "박기실패" ) ,
+	RETURNING	UMETA ( DisplayName = "돌아옴" ) ,
+};
+
 UCLASS()
 class MTVS_ITTAKESTWO_API AHSW_Bullet : public AActor
 {
@@ -36,16 +45,21 @@ public:
 	class UProjectileMovementComponent* MovementComp;
 
 
+
+
 //Overlap이 작동할 함수
 	UFUNCTION ( )
 	void OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit );
 
 
-	//못이 돌아오는 중인지 아닌지 체크
-	bool bRetunring;
-	// 플레이어에게 돌아가는 함수
-	void ReturnToPlayer();
+	void TickBasic ( const float& DeltaTime );
+	void TickEmbedded ( const float& DeltaTime );
+	void TickUnembedded ( const float& DeltaTime );
 
-	//타임라인
+	UFUNCTION(BlueprintCallable)
+	void TickReturning ( const float& DeltaTime );
 
+	ENailState State = ENailState::BASIC;
+
+	float NailDefaultDist = 100;
 };
