@@ -111,7 +111,7 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn( );
 	float dist = (player->GetActorLocation() - this->GetActorLocation ( )).Size();
 	SetActorLocation ( FMath::Lerp ( this->GetActorLocation ( ) , player->GetActorLocation ( ) , 0.1 ));
-	UE_LOG ( LogTemp , Warning , TEXT ( "dodododo" ) );
+	UE_LOG ( LogTemp , Warning , TEXT ( "%f" ),dist );
 	// 조건
 	// 플레이어에게 도착하면 
 	if ( dist < NailDefaultDist )

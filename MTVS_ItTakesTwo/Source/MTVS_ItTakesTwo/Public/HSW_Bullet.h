@@ -59,6 +59,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void TickReturning ( const float& DeltaTime );
 
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly )
 	ENailState State = ENailState::BASIC;
 
 	float NailDefaultDist = 100;
