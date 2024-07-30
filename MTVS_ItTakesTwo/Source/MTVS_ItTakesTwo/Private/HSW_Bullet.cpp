@@ -15,7 +15,7 @@ AHSW_Bullet::AHSW_Bullet()
 	//충돌체
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
 	SetRootComponent(BoxComp);
-	BoxComp->SetCollisionProfileName(TEXT("BlockAll"));
+	BoxComp->SetCollisionProfileName(TEXT("Bullet"));
 
 	//외형
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
