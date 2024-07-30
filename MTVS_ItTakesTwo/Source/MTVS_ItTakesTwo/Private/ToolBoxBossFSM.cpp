@@ -21,7 +21,7 @@ void UToolBoxBossFSM::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//Cast<AToolboxBoss>(GetComponentTransform());
+	//ToolBoxBoss = Cast<AToolboxBoss>(GetOwner());
 	
 }
 
@@ -33,7 +33,8 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 	// 실행창에 상태 메세지 출력
 	FString logMsg = UEnum::GetValueAsString(CurrentState);
-	GEngine->AddOnScreenDebugMessage(0, 1, FColor::Cyan, logMsg);
+	//GEngine->AddOnScreenDebugMessage(0, 1, FColor::Cyan, logMsg);
+	DrawDebugString(GetWorld(), GetOwner()->GetActorLocation(), logMsg, nullptr, FColor::Yellow, 0);
 
 	AttackTimer += DeltaTime;
 

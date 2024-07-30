@@ -39,6 +39,9 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
+	//UPROPERTY(VisibleAnywhere)
+
+
 	// 상태변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EBossState CurrentState = EBossState::Idle;

@@ -43,27 +43,20 @@ AToolboxBoss::AToolboxBoss()
 	// 보스 오른팔
 	RightArmMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightArmMesh"));
 	RightArmMesh->SetupAttachment(GetMesh(), TEXT("RightArmSocket"));
-	RightArmMesh->SetRelativeLocation(FVector(0, 12, 20));
-	RightArmMesh->SetRelativeRotation(FRotator(-10, 270, -90));
-	RightArmMesh->SetRelativeScale3D(FVector(0.05, 0.3, 0.05));
+	RightArmMesh->SetRelativeLocationAndRotation(FVector(-5, 14.5, 18), FRotator(-90, 0, -90));
+	RightArmMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.02));
+	RightArmMesh->SetGenerateOverlapEvents(true);
 	RightArmMesh->SetCollisionProfileName(TEXT("Boss"));
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Engine/EditorMeshes/SkeletalMesh/DefaultSkeletalMesh.DefaultSkeletalMesh'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_RightArm.SKM_RightArm'"));
 	if (RightArmMeshAsset.Succeeded())
 	{
 		RightArmMesh->SetSkeletalMesh(RightArmMeshAsset.Object);
 	}
 
-	// 보스 오른손
-	RightHandMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightHandMesh"));
-	RightHandMesh->SetupAttachment(RightArmMesh, TEXT("RightHandSocket"));
-	RightHandMesh->SetRelativeLocation(FVector(0, 0, -260));
-	RightHandMesh->SetRelativeRotation(FRotator(0, 0, -90));
-	RightHandMesh->SetGenerateOverlapEvents(true);
-	RightHandMesh->SetCollisionProfileName(TEXT("Boss"));
 
 	// 충돌체
-	RightHandMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
+	RightArmMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
 
 	// FSM 컴포넌트 추가
 	fsm = CreateDefaultSubobject<UToolBoxBossFSM>(TEXT("FSM"));
@@ -96,5 +89,8 @@ void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent
 {
 	// 플레이어와 충돌했을 때 플레이어 파괴
 	//OtherActor->Destroy();
+	
+	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Blue, TEXT("Destroy Player"));
+	
 }
 
