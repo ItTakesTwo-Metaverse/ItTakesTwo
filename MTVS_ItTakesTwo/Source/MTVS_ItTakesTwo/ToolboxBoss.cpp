@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ToolboxBoss.h"
@@ -12,59 +12,49 @@ AToolboxBoss::AToolboxBoss()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	// ∫∏Ω∫ ∏ˆ√º
+	// Î≥¥Ïä§ Î™∏Ï≤¥
 	
 	GetMesh()->SetupAttachment(RootComponent);
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, 450),FRotator(0,-90,0));
 	GetMesh()->SetRelativeScale3D(FVector(5, 5, 5));
 	GetMesh()->SetCollisionProfileName(TEXT("Boss"));
 
-
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BossMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_boss_bone_v002_body_001.SKM_boss_bone_v002_body_001'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BossMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_Body.SKM_Body'"));
 	if (BossMeshAsset.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(BossMeshAsset.Object);
 	}
 
-	// ∫∏Ω∫ ø¿∏•∆»1
-	RightArmMesh1 = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightArmMesh1"));
-	RightArmMesh1->SetupAttachment(GetMesh(), TEXT("RightArmSocket"));
-	RightArmMesh1->SetRelativeLocationAndRotation(FVector(-70,-90,-20),FRotator(90,0,0));
-	//RightArmMesh->SetGenerateOverlapEvents(true);
-	//RightArmMesh->SetCollisionProfileName(TEXT("Boss"));
+	// Î≥¥Ïä§ ÏôºÌåî
+	LeftArmMesh = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "LeftArmMesh" ) );
+	LeftArmMesh->SetupAttachment ( GetMesh ( ) , TEXT ( "LeftArmSocket" ) );
+	LeftArmMesh->SetRelativeLocationAndRotation ( FVector ( 135 , 100 , -60 ), FRotator(0,-90,50));
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMesh1Asset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_boss_bone_v002_Sphere_001.SKM_boss_bone_v002_Sphere_001'"));
-	if (RightArmMesh1Asset.Succeeded())
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LeftArmMeshAsset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_LeftArm.SKM_LeftArm'" ) );
+	if ( LeftArmMeshAsset.Succeeded ( ) )
 	{
-		RightArmMesh1->SetSkeletalMesh(RightArmMesh1Asset.Object);
+		LeftArmMesh->SetSkeletalMesh ( LeftArmMeshAsset.Object );
 	}
 
-	// ∫∏Ω∫ ø¿∏•∆»2
-	RightArmMesh2 = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightArmMesh2"));
-	RightArmMesh2->SetupAttachment(RightArmMesh1, TEXT("RightArmSocket"));
-	RightArmMesh2->SetRelativeLocation(FVector(-105, -40, 20));
+	// Î≥¥Ïä§ Ïò§Î•∏Ìåî
+	RightArmMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightArmMesh"));
+	RightArmMesh->SetupAttachment(GetMesh(), TEXT("RightArmSocket"));
+	RightArmMesh->SetRelativeLocationAndRotation ( FVector ( -148 , 107 , -18 ),FRotator(0,80,0));
+	RightArmMesh->SetGenerateOverlapEvents(true);
+	RightArmMesh->SetCollisionProfileName(TEXT("Boss"));
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMesh2Asset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_boss_bone_v002_Cube_001.SKM_boss_bone_v002_Cube_001'"));
-	if (RightArmMesh2Asset.Succeeded())
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_RightArm.SKM_RightArm'"));
+	if (RightArmMeshAsset.Succeeded())
 	{
-		RightArmMesh2->SetSkeletalMesh(RightArmMesh2Asset.Object);
+		RightArmMesh->SetSkeletalMesh(RightArmMeshAsset.Object);
 	}
 
-	// ∫∏Ω∫ ø¿∏•º’
-	RightHandMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightHandMesh"));
-	RightHandMesh->SetupAttachment(RightArmMesh2, TEXT("RightHandSocket"));
-	RightHandMesh->SetRelativeLocationAndRotation(FVector(100,-70,10),FRotator(0,0,-3));
+	
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightHandMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_boss_bone_v002_Cube_002.SKM_boss_bone_v002_Cube_002'"));
-	if (RightHandMeshAsset.Succeeded())
-	{
-		RightHandMesh->SetSkeletalMesh(RightHandMeshAsset.Object);
-	}
+	// Ï∂©ÎèåÏ≤¥
+	RightArmMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
 
-	// √Êµπ√º
-	//RightArmMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
-
-	// FSM ƒƒ∆˜≥Õ∆Æ √ﬂ∞°
+	// FSM Ïª¥Ìè¨ÎÑåÌä∏ Ï∂îÍ∞Ä
 	fsm = CreateDefaultSubobject<UToolBoxBossFSM>(TEXT("FSM"));
 	
 
@@ -93,10 +83,10 @@ void AToolboxBoss::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// «√∑π¿ÃæÓøÕ √Êµπ«ﬂ¿ª ∂ß «√∑π¿ÃæÓ ∆ƒ±´
+	// ÌîåÎ†àÏù¥Ïñ¥ÏôÄ Ï∂©ÎèåÌñàÏùÑ Îïå ÌîåÎ†àÏù¥Ïñ¥ ÌååÍ¥¥
 	//OtherActor->Destroy();
 	
-	//GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Blue, TEXT("Destroy Player"));
+	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Blue, TEXT("Destroy Player"));
 	
 }
 
