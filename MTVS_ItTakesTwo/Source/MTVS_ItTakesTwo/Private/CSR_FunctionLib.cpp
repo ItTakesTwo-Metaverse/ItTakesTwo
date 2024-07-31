@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CSR_FunctionLib.h"
@@ -8,7 +8,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Engine/World.h"
 
-// ÀÔ·ÂÇÑ tag¸¦ °¡Áø PlayerStart transform Á¤º¸¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+// ì…ë ¥í•œ tagë¥¼ ê°€ì§„ PlayerStart transform ì •ë³´ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 FTransform UCSR_FunctionLib::FindStartTransForm(UObject* InWorldObject, FString StartTag)
 {
 	if (InWorldObject == nullptr) {
@@ -33,7 +33,7 @@ FTransform UCSR_FunctionLib::FindStartTransForm(UObject* InWorldObject, FString 
 	return (FTransform());
 }
 
-// ÀÔ·ÂÇÑ ¸Ş¼¼Áö¸¦ ·Î±×¿¡ Ãâ·ÂÇÏ°í °ÔÀÓÀ» Á¾·áÇÕ´Ï´Ù.
+// ì…ë ¥í•œ ë©”ì„¸ì§€ë¥¼ ë¡œê·¸ì— ì¶œë ¥í•˜ê³  ê²Œì„ì„ ì¢…ë£Œí•©ë‹ˆë‹¤.
 void UCSR_FunctionLib::ExitGame(UWorld* world, FString str)
 {
 	if (world == nullptr) {
