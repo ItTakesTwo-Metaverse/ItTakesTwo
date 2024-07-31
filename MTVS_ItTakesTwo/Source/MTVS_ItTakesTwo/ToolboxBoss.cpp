@@ -19,7 +19,7 @@ AToolboxBoss::AToolboxBoss()
 	GetMesh()->SetRelativeScale3D(FVector(5, 5, 5));
 	GetMesh()->SetCollisionProfileName(TEXT("Boss"));
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BossMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_Body.SKM_Body'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BossMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossCharacter/SKM_Body.SKM_Body'"));
 	if (BossMeshAsset.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(BossMeshAsset.Object);
@@ -30,7 +30,7 @@ AToolboxBoss::AToolboxBoss()
 	LeftArmMesh->SetupAttachment ( GetMesh ( ) , TEXT ( "LeftArmSocket" ) );
 	LeftArmMesh->SetRelativeLocationAndRotation ( FVector ( 135 , 100 , -60 ), FRotator(0,-90,50));
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LeftArmMeshAsset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_LeftArm.SKM_LeftArm'" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LeftArmMeshAsset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossCharacter/SKM_Left.SKM_Left'" ) );
 	if ( LeftArmMeshAsset.Succeeded ( ) )
 	{
 		LeftArmMesh->SetSkeletalMesh ( LeftArmMeshAsset.Object );
@@ -43,7 +43,7 @@ AToolboxBoss::AToolboxBoss()
 	RightArmMesh->SetGenerateOverlapEvents(true);
 	RightArmMesh->SetCollisionProfileName(TEXT("Boss"));
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_RightArm.SKM_RightArm'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossCharacter/SKM_Right.SKM_Right'"));
 	if (RightArmMeshAsset.Succeeded())
 	{
 		RightArmMesh->SetSkeletalMesh(RightArmMeshAsset.Object);
