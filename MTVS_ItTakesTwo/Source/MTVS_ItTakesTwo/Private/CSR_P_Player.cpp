@@ -1,9 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CSR_P_Player.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/SceneComponent.h"
+#include "GameFramework/Character.h"
+#include "Components/CapsuleComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/PlayerController.h"
 
 // Sets default values
 ACSR_P_Player::ACSR_P_Player()
@@ -11,20 +16,28 @@ ACSR_P_Player::ACSR_P_Player()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// ½ºÇÁ¸µ¾ÏÀ» »ý¼ºÇØ¼­
+	// ìŠ¤í”„ë§ì•”ì„ ìƒì„±í•´ì„œ
 	this->SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
-	// ·çÆ®¿¡ ºÙÀÌ°í ½Í´Ù.
+	// ë£¨íŠ¸ì— ë¶™ì´ê³  ì‹¶ë‹¤.
 	this->SpringArmComp->SetupAttachment(RootComponent);
-	// ½ºÇÁ¸µ ¾ÏÀÇ »ó´ë ÁÂÇ¥¸¦ (x = 0, y = 40, Z = 80) 
-	this->SpringArmComp->SetRelativeLocation(FVector(0.0f, 40.0f, 80.0f));
+	// ìŠ¤í”„ë§ ì•”ì˜ ìƒëŒ€ ì¢Œí‘œë¥¼ (x = 0, y = 40, Z = 80) 
+	this->SpringArmComp->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 	// TargetArmLength : 200.0f
-	this->SpringArmComp->TargetArmLength = 200.0f;
+	this->SpringArmComp->TargetArmLength = EarlyCameraDistance;
 
-	// Ä«¸Þ¶ó¸¦ »ý¼ºÇÏ°í ½Í´Ù.
+	this->SpringArmComp->bUsePawnControlRotation = true;
+
+	// ì¹´ë©”ë¼ë¥¼ ìƒì„±í•˜ê³  ì‹¶ë‹¤.
 	this->CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
-	// ½ºÇÁ¸µ ¾ÏÀ» ºÙÀÌ°í ½Í´Ù.
+	// ìŠ¤í”„ë§ ì•”ì„ ë¶™ì´ê³  ì‹¶ë‹¤.
 	this->CameraComp->SetupAttachment(this->SpringArmComp);
 
+	this->CameraComp->bUsePawnControlRotation = false;
+
+	this->bUseControllerRotationYaw = false;
+	this->bUseControllerRotationPitch = false;
+	this->bUseControllerRotationRoll = false;
+	//GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 // Called when the game starts or when spawned
@@ -51,10 +64,26 @@ void ACSR_P_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 void ACSR_P_Player::Player_Move(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Click"));
-	FVector2D V = Value.Get<FVector2D>();
+	FVector2D V = Value.Get<FVector2D> ();
 	this->Direction.X = V.X;
 	this->Direction.Y = V.Y;
-	this->Direction.Normalize();
+	//this->Direction.Normalize();
+	//UCapsuleComponent* t = this->GetCapsuleComponent ( );
+	//FRotator RT = t->GetComponentRotation ( );
+	//FRotator EarlyRT = FRotator ( 0.0f , RT.Yaw , 0.0f );
+	//FVector ForwardVector = UKismetMathLibrary::GetForwardVector ( EarlyRT );
+	//FVector RightVector = UKismetMathLibrary::GetRightVector ( EarlyRT );
+	
+}
+
+void ACSR_P_Player::Player_View ( const FInputActionValue& Value )
+{	
+	//this->CameraComp
+	FVector2D V = Value.Get<FVector2D>();
+	//this->CameraComp->
+	AddControllerYawInput(-V.X);
+	V.X = 0;
+	AddControllerPitchInput(V.Y);	
+	V.Y = 0;
 }
 

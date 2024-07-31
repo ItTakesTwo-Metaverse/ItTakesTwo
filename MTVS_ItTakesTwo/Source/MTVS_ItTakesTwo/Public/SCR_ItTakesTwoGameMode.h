@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,14 +16,14 @@ class MTVS_ITTAKESTWO_API ASCR_ItTakesTwoGameMode : public AGameModeBase
 protected:
 	virtual void BeginPlay() override;
 public:
-// ¼ÒÈ¯ÇÒ Ä³¸¯ÅÍµé ºí·çÇÁ¸°Æ® µî·Ï.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+// ì†Œí™˜í•  ìºë¦­í„°ë“¤ ë¸”ë£¨í”„ë¦°íŠ¸ ë“±ë¡.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ModifyAble" )
 	TSubclassOf<class ACSR_Player_Cody> SpawnCody;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ModifyAble" )
 	TSubclassOf<class ACSR_Player_May> SpawnMay;
 
-// ¼ÒÈ¯ÇÑ Ä³¸¯ÅÍµé ÀúÀå.
+// ì†Œí™˜í•œ ìºë¦­í„°ë“¤ ì €ì¥.
 	class ACSR_Player_Cody *P2_Cody;
 
 	class ACSR_Player_May *P1_May;

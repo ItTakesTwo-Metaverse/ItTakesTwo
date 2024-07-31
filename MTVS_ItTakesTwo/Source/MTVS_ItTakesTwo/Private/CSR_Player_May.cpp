@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CSR_Player_May.h"
@@ -13,19 +13,19 @@ void ACSR_Player_May::BeginPlay()
 	this->MakeEnhancedInputLocalSubSystem();
 }
 
-// PlayerController¸¦ IMC_PlayerController¿Í ¸ÊÇÎ.
+// PlayerControllerë¥¼ IMC_PlayerControllerì™€ ë§µí•‘.
 void ACSR_Player_May::MakeEnhancedInputLocalSubSystem()
 {
-	// ÇØ´ç ManngerÀÇ ÄÁÆ®·Ñ·¯°¡ Á¸ÀçÇÏ´ÂÁö È®ÀÎÇÕ´Ï´Ù.
+	// í•´ë‹¹ Manngerì˜ ì»¨íŠ¸ë¡¤ëŸ¬ê°€ ì¡´ì¬í•˜ëŠ”ì§€ í™•ì¸í•©ë‹ˆë‹¤.
 	APlayerController* Player_1 = UGameplayStatics::GetPlayerController(this->GetWorld(), 0);
 	if (Player_1 == nullptr)
 		UCSR_FunctionLib::ExitGame(GetWorld(), FString("Player_1 is null"));
 
-	// EnhancedInputÀ» ¿¬°áÇÕ´Ï´Ù.
+	// EnhancedInputì„ ì—°ê²°í•©ë‹ˆë‹¤.
 	UEnhancedInputLocalPlayerSubsystem* SubSys = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(Player_1->GetLocalPlayer());
 	if (SubSys == nullptr)
 		UCSR_FunctionLib::ExitGame(GetWorld(), FString("SubSyn is null"));
-	// EnhancedInputÀ» IMC_...¸¦ ¸ÊÇÎÇÕ´Ï´Ù.
+	// EnhancedInputì„ IMC_...ë¥¼ ë§µí•‘í•©ë‹ˆë‹¤.
 	SubSys->AddMappingContext(this->IMC_PlayerController_, 0);
 }
 
@@ -45,8 +45,9 @@ void ACSR_Player_May::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 #pragma endregion EnhancedInput register
 
 #pragma region
-
+	InputKey->BindAction ( Look_ , ETriggerEvent::Triggered , this , &ACSR_P_Player::Player_View );
 #pragma endregion Input Function binding
+	this->AddControllerPitchInput (this->EarlyCameraArmRotateHeight);
 }
 
 
