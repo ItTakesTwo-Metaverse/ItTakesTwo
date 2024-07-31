@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "HSW_Player.h"
 #include "ToolBoxBossFSM.generated.h"
 
-// »óÅÂÁ¤ÀÇ
+// ìƒíƒœì •ì˜
 UENUM(BlueprintType)
 enum class EBossState : uint8
 {
@@ -40,16 +40,20 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	//UPROPERTY(VisibleAnywhere)
-
+	
+	// ì†Œìœ  ì•¡í„°
 	UPROPERTY()
 	class AToolboxBoss* me;
+
+	// ê³µê²© ë²”ìœ„
+	UPROPERTY()
+	float attackRange = 150.0f;
 
 	UPROPERTY()
 	class AHSW_Player* player;
 
 
-	// »óÅÂº¯¼ö
+	// ìƒíƒœë³€ìˆ˜
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EBossState CurrentState = EBossState::Idle;
 
