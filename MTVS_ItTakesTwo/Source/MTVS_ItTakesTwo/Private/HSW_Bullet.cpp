@@ -28,6 +28,11 @@ AHSW_Bullet::AHSW_Bullet()
 	MovementComp->bShouldBounce = true;
 	MovementComp->ProjectileGravityScale = 0;
 
+	//유도탄 설정
+	MovementComp->bIsHomingProjectile = false;
+	MovementComp->HomingAccelerationMagnitude = 3000;
+
+
 	//해머 인터렉션 Overlap
 	NailHammerComp = CreateDefaultSubobject<UBoxComponent> ( TEXT ( "NailHammerComp" ) );
 	NailHammerComp->SetupAttachment ( RootComponent );
@@ -44,6 +49,9 @@ void AHSW_Bullet::BeginPlay()
 	
 	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Bullet::OnMyWallHit );
 
+	//auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
+
+	//NailHomingTargetComponent = player->GetComponentByClass<USceneComponent> ( );
 }
 
 // Called every frame
@@ -86,6 +94,8 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 void AHSW_Bullet::TickBasic ( const float& DeltaTime )
 {
 	MovementComp->ProjectileGravityScale = 0;
+	//MovementComp->bIsHomingProjectile = false;
+	// 
 	// TO DO
 	// 
 
@@ -125,10 +135,12 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	// To Do
 	// 플레이어에게 곡선을 그리며 이동하고싶다.
 	MovementComp->ProjectileGravityScale = 0;
-	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn( );
+	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
 	float dist = (player->GetActorLocation() - this->GetActorLocation ( )).Size();
 	SetActorLocation ( FMath::Lerp ( this->GetActorLocation ( ) , player->GetActorLocation ( ) , 0.1 ));
 	//UE_LOG ( LogTemp , Warning , TEXT ( "%f" ),dist );
+
+	//MovementComp->bIsHomingProjectile = true;
 
 	// 해머 인터렉션 콜리전을 없앤다.
 	NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );

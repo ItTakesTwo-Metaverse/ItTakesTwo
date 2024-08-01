@@ -33,6 +33,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
 	//충돌체, 외관을 만들고싶다.
 	UPROPERTY(EditDefaultsOnly)
 	class UBoxComponent* BoxComp;
@@ -66,4 +67,8 @@ public:
 	ENailState State = ENailState::BASIC;
 
 	float NailDefaultDist = 100;
+
+	//유도탄
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly )
+	TWeakObjectPtr<USceneComponent> NailHomingTargetComponent;
 };
