@@ -9,6 +9,9 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
+#include "CSR_Direction_GameInstance.h"
+#include "Kismet/GameplayStatics.h"
+#include "CSR_FunctionLib.h"
 
 // Sets default values
 ACSR_P_Player::ACSR_P_Player()
@@ -50,10 +53,15 @@ void ACSR_P_Player::BeginPlay()
 void ACSR_P_Player::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	FTransform See = FTransform(this->GetControlRotation());
-	this->Direction = See.TransformVector(this->Direction);
-	this->AddMovementInput(this->Direction, 1);
-	this->Direction = FVector::ZeroVector;
+
+	// 카메라 정면 벡터에 맞는 플레이어의 회전값을 구한다.
+	FRotator NewRot = UKismetMathLibrary::MakeRotFromX ( this->ChoosedDirection );
+	// 플레이어에게 해당 회전값을 적용시킨다.
+	SetActorRotation(NewRot);
+	// 풀래이어는 앞으로 이동한다.
+	this->AddMovementInput( this->ChoosedDirection , (this->AbsScale * this->Speed));
+	this->AbsScale = 0.0f;
+	
 }
 
 //Called to bind functionality to input
@@ -65,17 +73,62 @@ void ACSR_P_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 void ACSR_P_Player::Player_Move(const FInputActionValue& Value)
 {
 	FVector2D V = Value.Get<FVector2D> ();
-	this->Direction.X = V.X;
-	this->Direction.Y = V.Y;
-	//this->Direction.Normalize();
-	//UCapsuleComponent* t = this->GetCapsuleComponent ( );
-	//FRotator RT = t->GetComponentRotation ( );
-	//FRotator EarlyRT = FRotator ( 0.0f , RT.Yaw , 0.0f );
-	//FVector ForwardVector = UKismetMathLibrary::GetForwardVector ( EarlyRT );
-	//FVector RightVector = UKismetMathLibrary::GetRightVector ( EarlyRT );
-	
+	// TargetValue는 입력 키 X, Y 중에 절대값이 큰 값입니다.
+	float TargetValue = UCSR_FunctionLib::SelectABSUpperFloat( V.X , V.Y );
+	// TagetValue에 따라 캐릭터 이동속도의 곱하기 상수를 결정합니다.
+	if ( TargetValue < this->StickSensitivity_NoInput ) {
+		return;
+	}
+	else if ( TargetValue < this->StickSensitivity_WeakInput ) {
+		this->AbsScale = 0.5;
+	}
+	else {
+		this->AbsScale = 1.0f;
+	}
+	// X,Y키가 8방향 중 어느곳에 더 가까운지를 체크합니다.
+	this->PadDirection.X = V.Y;
+	this->PadDirection.Y = V.X;
+	this->PadDirection.Normalize();
+	int32 Flag = ChooseDirectionFlag ( this->PadDirection );
+	// 카메라가 정면이 플레이어의 정면 벡터라고보고 플레이어의 이동벡터를 결정합니다.
+	CaracterDirection ( Flag );
+	this->PadDirection.X = 0.0f;
+	this->PadDirection.Y = 0.0f;
 }
 
+// 패드의 방향이 8방향 중 어느곳에 더 가까운지를 판단합니다.
+int32 ACSR_P_Player::ChooseDirectionFlag ( FVector2D& PadDirection_ ) {
+	// 전역 게임 인스텐스에서 8방향 배열을 가져옵니다.
+	UCSR_Direction_GameInstance *GameInstance = Cast< UCSR_Direction_GameInstance>(UGameplayStatics::GetGameInstance(this->GetWorld()));
+
+	const TArray<FVector2D> &Directions = GameInstance->Directions;
+	float RelativeDValue = -1;
+	int32 flag = 0;
+	int32 answer = 0;
+	for ( FVector2D param : Directions ) {
+		flag = flag + 1;
+		float CalcDot = FVector2D::DotProduct(PadDirection_, param);
+		if ( CalcDot > RelativeDValue ) {
+			answer = flag;
+			RelativeDValue = CalcDot;
+		}
+	}
+	return (answer);
+}
+
+// 카메라 정면이 플레이어의 정면으로치고 플레이어의 이동방향을 결정합니다.
+void ACSR_P_Player::CaracterDirection ( int32 flag )
+{
+	UCSR_Direction_GameInstance* GameInstance = Cast< UCSR_Direction_GameInstance> ( UGameplayStatics::GetGameInstance ( this->GetWorld ( ) ) );
+	const TArray<FVector2D>& Directions = GameInstance->Directions;
+	FVector CameraF = this->CameraComp->GetForwardVector ( );
+	FVector CameraR = this->CameraComp->GetRightVector ( );
+	CameraF.Z = 0;
+	CameraR.Z = 0;
+	this->ChoosedDirection = ((CameraF * Directions[flag - 1].X + CameraR * Directions[flag - 1].Y) / 2).GetUnsafeNormal();
+}
+
+// 마우스, 패드 오른쪽 스틱의 입력값에 따라 플레이어 컨트롤(즉 시야 회전)을 시켜줍니다.
 void ACSR_P_Player::Player_View ( const FInputActionValue& Value )
 {	
 	//this->CameraComp
@@ -86,4 +139,3 @@ void ACSR_P_Player::Player_View ( const FInputActionValue& Value )
 	AddControllerPitchInput(V.Y);	
 	V.Y = 0;
 }
-
