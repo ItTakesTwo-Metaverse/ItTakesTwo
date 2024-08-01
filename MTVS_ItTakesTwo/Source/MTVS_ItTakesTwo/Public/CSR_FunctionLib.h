@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,8 +15,10 @@ class MTVS_ITTAKESTWO_API UCSR_FunctionLib : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	
 public:
-	// ÀÔ·ÂÇÑ tag¸¦ °¡Áø PlayerStart transform Á¤º¸¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	// ì…ë ¥í•œ tagë¥¼ ê°€ì§„ PlayerStart transform ì •ë³´ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 	static FTransform FindStartTransForm(UObject* InWorldObject, FString StartTag);
-	// ÀÔ·ÂÇÑ ¸Ş¼¼Áö¸¦ ·Î±×¿¡ Ãâ·ÂÇÏ°í °ÔÀÓÀ» Á¾·áÇÕ´Ï´Ù.
+	// ì…ë ¥í•œ ë©”ì„¸ì§€ë¥¼ ë¡œê·¸ì— ì¶œë ¥í•˜ê³  ê²Œì„ì„ ì¢…ë£Œí•©ë‹ˆë‹¤.
 	static void ExitGame(UWorld *world, FString str);
+	// float ë§¤ê°œë³€ìˆ˜ë¥¼ absí•˜ì—¬ í° ìª½ absë¥¼ ë¦¬í„´í•©ë‹ˆë‹¤.
+	static float SelectABSUpperFloat (const float& a ,const float& b );
 };
