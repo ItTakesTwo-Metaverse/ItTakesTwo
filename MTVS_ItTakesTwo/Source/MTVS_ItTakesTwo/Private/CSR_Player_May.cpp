@@ -45,7 +45,9 @@ void ACSR_Player_May::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 #pragma endregion EnhancedInput register
 
 #pragma region
+	InputKey->BindAction ( Move_ , ETriggerEvent::Triggered , this , &ACSR_P_Player::Player_Move );
 	InputKey->BindAction ( Look_ , ETriggerEvent::Triggered , this , &ACSR_P_Player::Player_View );
+
 #pragma endregion Input Function binding
 	this->AddControllerPitchInput (this->EarlyCameraArmRotateHeight);
 }
