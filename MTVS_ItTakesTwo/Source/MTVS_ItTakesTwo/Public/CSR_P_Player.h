@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -27,22 +27,33 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	int State = 0;
+
 #pragma region
-	// «√∑π¿ÃæÓ ƒ´∏ﬁ∂Û º¬∆√
+	// ÌîåÎ†àÏù¥Ïñ¥ Ïπ¥Î©îÎùº ÏÖãÌåÖ
 	UPROPERTY(EditDefaultsOnly)
 	class USpringArmComponent *SpringArmComp;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UCameraComponent *CameraComp;
 
+	UPROPERTY ( EditAnywhere , BlueprintReadWrite, Category="ModifyAble" )
+	float EarlyCameraDistance = 1000;
+
+	UPROPERTY ( EditAnywhere , BlueprintReadWrite , Category = "ModifyAble" )
+	float EarlyCameraArmRotateHeight = 20;
+	
 #pragma endregion ComponentSetting
 
 #pragma region
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
 	class UInputMappingContext *IMC_PlayerController_;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
 	class UInputAction	*Move_;
+
+	UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
+	class UInputAction	*Look_;
 
 #pragma endregion KeyBind
 
@@ -53,4 +64,10 @@ public:
 
 	void Player_Move(const FInputActionValue& Value);
 #pragma endregion PlayerMove
+
+#pragma region
+	FVector2D view;
+
+	void Player_View( const FInputActionValue& Value );
+#pragma endregion PlayerView
 };

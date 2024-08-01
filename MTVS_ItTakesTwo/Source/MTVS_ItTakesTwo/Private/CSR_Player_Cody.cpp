@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CSR_Player_Cody.h"
@@ -13,26 +13,27 @@ void ACSR_Player_Cody::BeginPlay()
 	Super::BeginPlay();
 }
 
-// possess °úÁ¤ Áß¿¡¼­ ¼± ÀÔ·Â
+// possess ê³¼ì • ì¤‘ì—ì„œ ì„  ì…ë ¥
 void ACSR_Player_Cody::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	MakeEnhancedInputLocalSubSystem();
 }
 
-// PlayerController¸¦ IMC_PlayerController¿Í ¸ÊÇÎ.
+// PlayerControllerë¥¼ IMC_PlayerControllerì™€ ë§µí•‘.
 void ACSR_Player_Cody::MakeEnhancedInputLocalSubSystem()
 {
 	APlayerController* Player_2 = UGameplayStatics::GetPlayerController(this->GetWorld(), 1);
 	if (Player_2 == nullptr)
 		UCSR_FunctionLib::ExitGame(GetWorld(), FString("Player_2 is null"));
 
-	// EnhancedInputÀ» ¿¬°áÇÕ´Ï´Ù.
+	// EnhancedInputì„ ì—°ê²°í•©ë‹ˆë‹¤.
 	UEnhancedInputLocalPlayerSubsystem* SubSys = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(Player_2->GetLocalPlayer());
 	if (SubSys == nullptr)
 		UCSR_FunctionLib::ExitGame(GetWorld(), FString("SubSyn is null"));
-	// EnhancedInputÀ» IMC_...¸¦ ¸ÊÇÎÇÕ´Ï´Ù.
+	// EnhancedInputì„ IMC_...ë¥¼ ë§µí•‘í•©ë‹ˆë‹¤.
 	SubSys->AddMappingContext(this->IMC_PlayerController_, 0);
+
 }
 
 
@@ -53,7 +54,9 @@ void ACSR_Player_Cody::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	
 #pragma region
 	InputKey->BindAction(Move_, ETriggerEvent::Triggered, this, &ACSR_P_Player::Player_Move);
-#pragma endregion Input Function binding
+	InputKey->BindAction(Look_ , ETriggerEvent::Triggered , this , &ACSR_P_Player::Player_View );
 
+#pragma endregion Input Function binding
+	this->AddControllerPitchInput (this->EarlyCameraArmRotateHeight);
 }
 
