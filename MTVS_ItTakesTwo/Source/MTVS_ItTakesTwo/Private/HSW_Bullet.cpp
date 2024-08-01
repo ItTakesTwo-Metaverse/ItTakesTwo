@@ -25,6 +25,14 @@ AHSW_Bullet::AHSW_Bullet()
 	//발사체
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComp"));
 	MovementComp->SetUpdatedComponent(RootComponent);
+	MovementComp->bShouldBounce = true;
+
+	//해머 인터렉션 Overlap
+	NailHammerComp = CreateDefaultSubobject<UBoxComponent> ( TEXT ( "NailHammerComp" ) );
+	NailHammerComp->SetupAttachment ( RootComponent );
+	NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+	NailHammerComp->SetBoxExtent ( FVector ( 50.f ) );
+
 
 }
 
@@ -34,6 +42,7 @@ void AHSW_Bullet::BeginPlay()
 	Super::BeginPlay();
 	
 	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Bullet::OnMyWallHit );
+
 }
 
 // Called every frame
@@ -60,10 +69,14 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 	{
 		MovementComp->bShouldBounce = false;
 		State = ENailState::EMBEDDED;
+		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
 	}
-	else if ( OtherActor->ActorHasTag ( TEXT ( "Wall2" ) ) )
+	//else if ( OtherActor->ActorHasTag ( TEXT ( "Wall2" ) ) )
+	//{
+	//	State = ENailState::UNEMBEDDED;
+	//}
+	else
 	{
-		MovementComp->bShouldBounce = true;
 		State = ENailState::UNEMBEDDED;
 	}
 }
@@ -111,7 +124,14 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn( );
 	float dist = (player->GetActorLocation() - this->GetActorLocation ( )).Size();
 	SetActorLocation ( FMath::Lerp ( this->GetActorLocation ( ) , player->GetActorLocation ( ) , 0.1 ));
-	UE_LOG ( LogTemp , Warning , TEXT ( "%f" ),dist );
+	UE_LOG ( LogTemp , Warning , TEXT ( "%f" ),dist );\
+
+	// 해머 인터렉션 콜리전을 없앤다.
+	NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
+
+	//Bounce를 다시 활성화시킨다.
+	MovementComp->bShouldBounce = true;
+
 	// 조건
 	// 플레이어에게 도착하면 
 	if ( dist < NailDefaultDist )
