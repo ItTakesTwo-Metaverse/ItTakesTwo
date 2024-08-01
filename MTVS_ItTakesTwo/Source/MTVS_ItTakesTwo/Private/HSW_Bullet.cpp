@@ -26,6 +26,7 @@ AHSW_Bullet::AHSW_Bullet()
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComp"));
 	MovementComp->SetUpdatedComponent(RootComponent);
 	MovementComp->bShouldBounce = true;
+	MovementComp->ProjectileGravityScale = 0;
 
 	//해머 인터렉션 Overlap
 	NailHammerComp = CreateDefaultSubobject<UBoxComponent> ( TEXT ( "NailHammerComp" ) );
@@ -84,6 +85,7 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 
 void AHSW_Bullet::TickBasic ( const float& DeltaTime )
 {
+	MovementComp->ProjectileGravityScale = 0;
 	// TO DO
 	// 
 
@@ -107,6 +109,7 @@ void AHSW_Bullet::TickEmbedded ( const float& DeltaTime )
 
 void AHSW_Bullet::TickUnembedded ( const float& DeltaTime )
 {
+	MovementComp->ProjectileGravityScale = 1.f;
 	// To Do
 	// 벽에서 튕겨나가고 싶다.
 	// 3초 후가 되거나 E키가 눌러지면 플레이어에게 되돌아가고 싶다.
@@ -121,10 +124,11 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 {
 	// To Do
 	// 플레이어에게 곡선을 그리며 이동하고싶다.
+	MovementComp->ProjectileGravityScale = 0;
 	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn( );
 	float dist = (player->GetActorLocation() - this->GetActorLocation ( )).Size();
 	SetActorLocation ( FMath::Lerp ( this->GetActorLocation ( ) , player->GetActorLocation ( ) , 0.1 ));
-	UE_LOG ( LogTemp , Warning , TEXT ( "%f" ),dist );\
+	//UE_LOG ( LogTemp , Warning , TEXT ( "%f" ),dist );
 
 	// 해머 인터렉션 콜리전을 없앤다.
 	NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
