@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "HSW_Player.h"
 #include "ToolBoxBossFSM.generated.h"
 
 // 상태정의
 UENUM(BlueprintType)
 enum class EBossState : uint8
 {
-	Idle, 
+	//Start,
+	Idle,
 	Attack1, 
 	Attack2, 
 	Attack3, 
@@ -35,6 +35,8 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -45,34 +47,37 @@ public:
 	UPROPERTY()
 	class AToolboxBoss* me;
 
-	// 공격 범위
 	UPROPERTY()
-	float attackRange = 150.0f;
+	class ACharacter* player;
 
-	UPROPERTY()
-	class AHSW_Player* player;
+	//UPROPERTY()
+	//class AHSW_Player* HSWplayer;
+
+	UPROPERTY(EditAnywhere)
+	float AttackRange = 1000.0f;
+	float AttackCoolDown;
+	float AttackTimer;
+	float Attack1Duration;
+
+	bool bAttack1Executed;
+
 
 
 	// 상태변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	EBossState CurrentState = EBossState::Idle;
-
-	float AttackCoolDown;
-	float AttackTimer;
-
+	EBossState CurrentState;
+	
 	void ChangeState(EBossState NewState);
 
+	//void StartState();
 	void IdleState();
 	void Attack1State();
 	void Attack2State();
 	void Attack3State();
 	void Attack4State();
 	void Attack5State();
-
 	void CoolDownState();
 	void DieState();
-
-	
 
 	
 		

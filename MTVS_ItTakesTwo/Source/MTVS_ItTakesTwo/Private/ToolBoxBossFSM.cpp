@@ -1,9 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ToolBoxBossFSM.h"
 #include "../ToolboxBoss.h"
 #include "HSW_Player.h"
+#include "GameFramework/Character.h"
+#include "RightArmAnim.h"
+#include "Animation/AnimMontage.h"
 
 // Sets default values for this component's properties
 UToolBoxBossFSM::UToolBoxBossFSM()
@@ -12,8 +15,10 @@ UToolBoxBossFSM::UToolBoxBossFSM()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	AttackCoolDown = 3.0f; // ¿¹½Ã·Î 3ÃÊ Äğ´Ù¿î ¼³Á¤
+	AttackCoolDown = 3.0f; // ì˜ˆì‹œë¡œ 3ì´ˆ ì¿¨ë‹¤ìš´ ì„¤ì •
 	AttackTimer = 0;
+	Attack1Duration = 10;
+	//bAttack1Executed = false;
 }
 
 
@@ -23,7 +28,10 @@ void UToolBoxBossFSM::BeginPlay()
 	Super::BeginPlay();
 
 	me = Cast<AToolboxBoss>(GetOwner());
-	
+	player = Cast<ACharacter> ( GetWorld ( )->GetFirstPlayerController ( )->GetCharacter ( ) );
+
+	// ì´ˆê¸° ìƒíƒœë¥¼ Idleë¡œ ì„¤ì •
+	ChangeState(EBossState::Idle);
 }
 
 
@@ -32,14 +40,17 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ½ÇÇàÃ¢¿¡ »óÅÂ ¸Ş¼¼Áö Ãâ·Â
+	// ì‹¤í–‰ì°½ì— ìƒíƒœ ë©”ì„¸ì§€ ì¶œë ¥
 	FString logMsg = UEnum::GetValueAsString(CurrentState);
-	DrawDebugString(GetWorld(), GetOwner()->GetActorLocation(), logMsg, nullptr, FColor::Yellow, 0);
+	DrawDebugString(GetWorld(), GetOwner()->GetActorLocation(), logMsg, nullptr, FColor::Red, 0);
 
 	AttackTimer += DeltaTime;
 
 	switch (CurrentState)
 	{
+	//case EBossState::Start:
+	//	StartState ();
+	//	//CoolDownState ();
 	case EBossState::Idle:
 		IdleState();
 		CoolDownState();
@@ -65,12 +76,7 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		CoolDownState();
 		break;
 	case EBossState::CoolDown:
-		AttackCoolDown -= DeltaTime;
-		if (AttackCoolDown <= 0)
-		{
-			ChangeState(EBossState::Idle);
-			AttackCoolDown = 3.0f; // Äğ´Ù¿î ½Ã°£ ¸®¼Â
-		}
+		CoolDownState();
 		break;
 	case EBossState::Die:
 		DieState();
@@ -80,56 +86,142 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	}
 }
 
+
 void UToolBoxBossFSM::ChangeState(EBossState NewState)
 {
 	CurrentState = NewState;
 	AttackTimer = 0;
+
+	// ì• ë‹ˆë©”ì´ì…˜ ë™ê¸°í™”
+	switch ( NewState )
+	{
+	/*case EBossState::Start:
+		me->SetAnimState ( ERightAnimState::Start );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Green , TEXT ( "Set Anim State : Start" ) );
+		break;*/
+	case EBossState::Idle:
+		me->SetAnimState ( ERightAnimState::Idle );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Green , TEXT ( "Set Anim State : Idle" ) );
+		break;
+	case EBossState::Attack1:
+		me->SetAnimState ( ERightAnimState::Attack1 );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Green , TEXT ( "Set Anim State : Attack1" ) );
+		break;
+	case EBossState::Attack2:
+		me->SetAnimState ( ERightAnimState::Attack2 );
+		break;
+	case EBossState::Attack3:
+		me->SetAnimState ( ERightAnimState::Attack3 );
+		break;
+	case EBossState::Attack4:
+		me->SetAnimState ( ERightAnimState::Attack4 );
+		break;
+	case EBossState::Attack5:
+		me->SetAnimState ( ERightAnimState::Attack5 );
+		break;
+	case EBossState::CoolDown:
+		me->SetAnimState ( ERightAnimState::CoolDown );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Green , TEXT ( "Set Anim State : CoolDown" ) );
+		break;
+	case EBossState::Die:
+		me->SetAnimState ( ERightAnimState::Die );
+		break;
+	default:
+		break;
+	}
+
 }
 
+//void UToolBoxBossFSM::StartState ( )
+//{
+//	if ( !player || !me ) { return; }
+//
+//	FVector dir = player->GetActorLocation ( ) - me->GetActorLocation ( );
+//
+//	// í”Œë ˆì´ì–´ê°€ ê°€ê¹Œì›Œì§€ë©´ Attack1ë¡œ ì „ì´
+//	if ( dir.Size ( ) < AttackRange /*&& !bAttack1Executed*/ )
+//	{
+//		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "StartState >> AttackState" ) );
+//		ChangeState ( EBossState::Attack1 );
+//		//bAttack1Executed = true;
+//	}
+//}
+
 void UToolBoxBossFSM::IdleState()
-{
-	// ±âº» »óÅÂ 
-	// TO DO : ¸ñÀûÁö(ÁÖÀÎ°ø)¸¦ Ã£°í½Í´Ù.
-	player = Cast<AHSW_Player>(GetWorld()->GetFirstPlayerController()->GetCharacter());
-	if (player)
+{	
+	if ( !player || !me ){ return; }
+
+	FVector dir = player->GetActorLocation() - me->GetActorLocation();
+
+	// í”Œë ˆì´ì–´ê°€ ê°€ê¹Œì›Œì§€ë©´ Attack1ë¡œ ì „ì´
+	if (dir.Size() < AttackRange /*&& !bAttack1Executed*/)
 	{
-		CurrentState = EBossState::Attack1;
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "idlestate >> attackstate" ) );
+		ChangeState ( EBossState::Attack1 );
+		//bAttack1Executed = true;
 	}
 }
 
 void UToolBoxBossFSM::Attack1State()
 {
-	// ¿À¸¥ÆÈ ³»·ÁÃÄ¼­ ¾²´Â °ø°İ
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack1!!!" ) );
+	
+	if ( !player || !me ){ return; }
+	ChangeState ( EBossState::CoolDown );
+	// Attack1 ìƒíƒœ ìœ ì§€
+	/*AttackTimer += GetWorld()->GetDeltaSeconds();
+	if ( AttackTimer >= Attack1Duration )
+	{
+		ChangeState ( EBossState::CoolDown );
+	}*/
+
+
+
+	/*if ( ëª»ì´ ë°•í˜”ë‹¤ë©´ ê³µê²©1 ìƒíƒœë¥¼ ìœ ì§€í•˜ê³  ì• ë‹ˆë©”ì´ì…˜ì„ ì¼ì‹œì •ì§€ í•˜ê³ ì‹¶ë‹¤. )
+	{
+		if ( ë°ë¯¸ì§€ê°€ 1 / 2(ìë¬¼ì‡ )ë§Œí¼ ì…ì—ˆë‹¤ë©´ ì¿¨ë‹¤ìš´ >> ë‹¤ì‹œ ê³µê²©1 ìƒíƒœë¡œ ëŒì•„ì˜¤ì )
+		{
+			ChangeState ( EBossState::CoolDown );
+		}
+			
+	}*/
 	
 }
 
 void UToolBoxBossFSM::Attack2State()
 {
-
+	
 }
 
 void UToolBoxBossFSM::Attack3State()
 {
-
+	
 }
 
 void UToolBoxBossFSM::Attack4State()
 {
-
+	
 }
 
 void UToolBoxBossFSM::Attack5State()
 {
-
+	
 }
 
 void UToolBoxBossFSM::CoolDownState()
 {
-	ChangeState(EBossState::CoolDown);
+	
+	AttackCoolDown -= GetWorld()->GetDeltaSeconds();
+	if ( AttackCoolDown <= 0 )
+	{	
+		ChangeState ( EBossState::Idle );
+		AttackCoolDown = 3.0f; // ì¿¨ë‹¤ìš´ ì‹œê°„ ë¦¬ì…‹
+		//bAttack1Executed = false; // í›„ì— ë‹¤ë¥¸ ê³µê²© í—ˆìš©í•˜ë„ë¡ ì¬ì„¤ì •
+	}
 }
 
 void UToolBoxBossFSM::DieState()
 {
-
+	
 }
 
