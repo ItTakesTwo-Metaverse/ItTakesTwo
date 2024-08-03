@@ -19,6 +19,6 @@ public:
 	static FTransform FindStartTransForm(UObject* InWorldObject, FString StartTag);
 	// 입력한 메세지를 로그에 출력하고 게임을 종료합니다.
 	static void ExitGame(UWorld *world, FString str);
-	// float 매개변수를 abs하여 큰 쪽 abs를 리턴합니다.
+	// float 매개변수를 abs하여 더한값을 리턴한다.
 	static float SelectABSUpperFloat (const float& a ,const float& b );
 };
