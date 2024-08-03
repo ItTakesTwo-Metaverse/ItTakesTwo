@@ -55,17 +55,19 @@ void AHSW_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void AHSW_Player::OnMyActionFire()
 {
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "FIre" ) );
+	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "FIre" ) );
+	// 손에서 스폰이 되도록 합니다.
 	FTransform t = GetMesh()->GetSocketTransform ( TEXT ( "hand_r" ));
+	t = GetActorTransform ( );
 	Nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( NailFactory , t );
+
+	Nail->StartPoint = GetActorLocation();
+	Nail->EndPoint = GetActorLocation ( )+FVector(100000,0,0);
+	Nail->SetState ( ENailState::SHOOT );
 }
 
 void AHSW_Player::OnMyActionBack ( )
 {
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Return" ) );
-	Nail->State = Nail->SetStateReturning();
-	if ( Nail->State == ENailState::RETURNING )
-	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "RETURNING" ) );
-	}
+	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Return" ) );
+	Nail->SetState( ENailState::RETURNING);
 }

@@ -10,6 +10,7 @@ UENUM(BlueprintType)
 enum class ENailState: uint8
 {
 	BASIC		UMETA ( DisplayName = "기본" ) ,
+	SHOOT		UMETA ( DisplayName = "날라가기" ),
 	EMBEDDED	UMETA ( DisplayName = "박힘" ) ,
 	UNEMBEDDED	UMETA ( DisplayName = "박기실패" ) ,
 	RETURNING	UMETA ( DisplayName = "돌아옴" ) ,
@@ -57,6 +58,7 @@ public:
 
 
 	void TickBasic ( const float& DeltaTime );
+	void TickShoot ( const float& DeltaTime );
 	void TickEmbedded ( const float& DeltaTime );
 	void TickUnembedded ( const float& DeltaTime );
 
@@ -72,6 +74,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly )
 	TWeakObjectPtr<USceneComponent> NailHomingTargetComponent;
 
-	ENailState SetStateReturning ( );
+	void SetState( ENailState NextState);
 
+	FVector StartPoint;
+	FVector EndPoint;
+	float Distance;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly )
+	float Speed = 5000;
 };
