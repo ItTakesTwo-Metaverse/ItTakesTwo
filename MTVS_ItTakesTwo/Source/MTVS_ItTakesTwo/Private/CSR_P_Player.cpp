@@ -12,6 +12,9 @@
 #include "CSR_Direction_GameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "CSR_FunctionLib.h"
+#include "GameFramework/NavMovementComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "CSR_P_AComp_CharicStateMannage.h"
 
 // Sets default values
 ACSR_P_Player::ACSR_P_Player()
@@ -25,8 +28,9 @@ ACSR_P_Player::ACSR_P_Player()
 	this->SpringArmComp->SetupAttachment(RootComponent);
 	// 스프링 암의 상대 좌표를 (x = 0, y = 40, Z = 80) 
 	this->SpringArmComp->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
-	// TargetArmLength : 200.0f
+	// TargetArmLength : 1000.0f
 	this->SpringArmComp->TargetArmLength = EarlyCameraDistance;
+
 
 	this->SpringArmComp->bUsePawnControlRotation = true;
 
@@ -40,6 +44,8 @@ ACSR_P_Player::ACSR_P_Player()
 	this->bUseControllerRotationYaw = false;
 	this->bUseControllerRotationPitch = false;
 	this->bUseControllerRotationRoll = false;
+
+	this->CharacterStateMannageComp = CreateDefaultSubobject< UCSR_P_AComp_CharicStateMannage> ( TEXT ( "CharacterStateMannageComp" ) );
 	//GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
@@ -59,7 +65,7 @@ void ACSR_P_Player::Tick(float DeltaTime)
 	// 플레이어에게 해당 회전값을 적용시킨다.
 	SetActorRotation(NewRot);
 	// 풀래이어는 앞으로 이동한다.
-	this->AddMovementInput( this->ChoosedDirection , (this->AbsScale * this->Speed));
+	this->AddMovementInput( this->ChoosedDirection , (this->AbsScale));
 	this->AbsScale = 0.0f;
 	
 }
@@ -70,10 +76,20 @@ void ACSR_P_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void ACSR_P_Player::Setting ( )
+{
+	this->AddControllerPitchInput ( this->EarlyCameraArmRotateHeight );
+	this->SpringArmComp->TargetArmLength = EarlyCameraDistance;
+	this->CharacterMoveMentComp = this->GetCharacterMovement ( );
+	CharacterMoveMentComp->MaxWalkSpeed = this->Speed;
+	CharacterMoveMentComp->JumpZVelocity = this->FirstJumpZVelocity;
+	this->JumpMaxHoldTime = JumpMaxHoldT;
+}
+
 void ACSR_P_Player::Player_Move(const FInputActionValue& Value)
 {
 	FVector2D V = Value.Get<FVector2D> ();
-	// TargetValue는 입력 키 X, Y 중에 절대값이 큰 값입니다.
+	// TargetValue는 입력 키 X, Y 의 절대값 value를 더하여 이동량을 결정한다.
 	float TargetValue = UCSR_FunctionLib::SelectABSUpperFloat( V.X , V.Y );
 	// TagetValue에 따라 캐릭터 이동속도의 곱하기 상수를 결정합니다.
 	if ( TargetValue < this->StickSensitivity_NoInput ) {
@@ -123,9 +139,35 @@ void ACSR_P_Player::CaracterDirection ( int32 flag )
 	const TArray<FVector2D>& Directions = GameInstance->Directions;
 	FVector CameraF = this->CameraComp->GetForwardVector ( );
 	FVector CameraR = this->CameraComp->GetRightVector ( );
+	//UE_LOG(LogTemp, Warning, TEXT("%f" ), this->a);
 	CameraF.Z = 0;
 	CameraR.Z = 0;
 	this->ChoosedDirection = ((CameraF * Directions[flag - 1].X + CameraR * Directions[flag - 1].Y) / 2).GetUnsafeNormal();
+}
+
+
+// 점프 기능은 추후 수정 요망
+void ACSR_P_Player::PlayerJump ( const FInputActionValue& Value )
+{
+	UE_LOG ( LogTemp , Warning , TEXT ( "Jump" ));
+	if ( this->CharacterMoveMentComp->IsFalling ( ) == true ) {
+		UE_LOG ( LogTemp , Warning , TEXT ( "%d" ) , this->SecondJumpPossible );
+		if ( this->SecondJumpPossible == false ) {
+			return;
+		}
+		LaunchCharacter ( FVector ( 0 , 0 ,	this->SecondJumpZVelocity ) , false , true );
+		this->SecondJumpPossible = false;
+	}
+	else {
+		this->Jump ( );
+	}
+}
+
+void ACSR_P_Player::Landed ( const FHitResult& Hit )
+{
+	Super::Landed(Hit);
+
+	this->SecondJumpPossible = true;
 }
 
 // 마우스, 패드 오른쪽 스틱의 입력값에 따라 플레이어 컨트롤(즉 시야 회전)을 시켜줍니다.
@@ -139,3 +181,4 @@ void ACSR_P_Player::Player_View ( const FInputActionValue& Value )
 	AddControllerPitchInput(V.Y);	
 	V.Y = 0;
 }
+
