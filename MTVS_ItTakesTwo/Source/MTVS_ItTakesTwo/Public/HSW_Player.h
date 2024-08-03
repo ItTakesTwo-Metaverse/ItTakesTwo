@@ -29,10 +29,21 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UInputMappingContext* IMC_Player;
 
+	// 못 발사시킬 IA, 함수
 	UPROPERTY(EditDefaultsOnly)
 	class UInputAction* IA_Fire;
+	void OnMyActionFire ( );
 
-	void OnMyActionFire();
+	// 못 회수할 IA, 함수
+	UPROPERTY(EditDefaultsOnly)
+	class UInputAction* IA_Back;
+	void OnMyActionBack ( );
 
+	// 회수할때 필요한 Nail 변수
+	class AHSW_Bullet* Nail;
+
+	// 스폰할때 필요한 Nail Factory
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AHSW_Bullet> NailFactory;
 
 };

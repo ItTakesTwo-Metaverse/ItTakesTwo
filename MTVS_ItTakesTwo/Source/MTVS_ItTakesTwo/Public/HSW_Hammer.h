@@ -39,5 +39,11 @@ public:
 	UFUNCTION()
 	void OnMyBoxEndOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex);
 
+	UPROPERTY ()
+	class AHSW_Bullet* Nail;
+
 	bool bCanHanging;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite )
+	bool bIsHanging;
 };

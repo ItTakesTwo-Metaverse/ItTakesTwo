@@ -21,6 +21,7 @@ AHSW_Hammer::AHSW_Hammer()
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "MeshComp" ) );
 	MeshComp->SetupAttachment ( RootComponent );
 	MeshComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+
 }
 
 // Called when the game starts or when spawned
@@ -38,9 +39,13 @@ void AHSW_Hammer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if ( bCanHanging )
+	if ( bIsHanging )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Can Hanging" ) );
+		//SetActorLocation ( Nail->GetActorLocation ( ) );
+		//Nail ->	Socket 
+		//player -> socket -> hammer
+		//SceneComponent
+		//this->AttachToActor ( Nail );
 	}
 
 }
@@ -60,8 +65,9 @@ void AHSW_Hammer::OnMyBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent
 	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
 	if ( bullet )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Begin Overlap" ) );
+		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Begin Overlap" ) );
 		bCanHanging = true;
+		Nail = bullet;
 
 	}
 }
@@ -71,7 +77,7 @@ void AHSW_Hammer::OnMyBoxEndOverlap ( UPrimitiveComponent* OverlappedComponent ,
 	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
 	if ( bullet )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
+		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
 		bCanHanging = false;
 
 	}
