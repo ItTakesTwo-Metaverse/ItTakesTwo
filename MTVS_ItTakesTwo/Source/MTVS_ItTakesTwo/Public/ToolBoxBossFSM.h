@@ -54,7 +54,7 @@ public:
 	//class AHSW_Player* HSWplayer;
 
 	UPROPERTY(EditAnywhere)
-	float AttackRange = 1000.0f;
+	float AttackRange = 3000.0f;
 	float AttackCoolDown;
 	float AttackTimer;
 	float Attack1Duration;

@@ -5,8 +5,8 @@
 #include "Animation/AnimInstance.h"
 
 URightArmAnim::URightArmAnim( )
-: AnimState( ERightAnimState::Idle )
-, bIsAttacking(false)
+    : AnimState( ERightAnimState::Idle )
+    , bIsAttacking(false)
 {}
 
 void URightArmAnim::NativeInitializeAnimation ( )
@@ -26,16 +26,18 @@ void URightArmAnim::NativeUpdateAnimation ( float DeltaSeconds )
         break;*/
     case ERightAnimState::Idle:
         bIsAttacking = false;
-        GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Idle" ) );
+        //GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Idle" ) );
+        //UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Idle" ) );
         break;
     case ERightAnimState::Attack1:
-      
+        
         if ( !bIsAttacking )
-        {
+        {   
+            
             if ( Attack1Montage )
             {
                 GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Attack1" ) );
-
+                UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Attack1" ) );
                 MontageEndedDelegate.BindUObject ( this , &URightArmAnim::OnAttackMontageEnded );
                 Montage_Play ( Attack1Montage );
                 Montage_SetEndDelegate ( MontageEndedDelegate , Attack1Montage );

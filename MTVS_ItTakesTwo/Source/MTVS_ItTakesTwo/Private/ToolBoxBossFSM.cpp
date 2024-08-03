@@ -44,7 +44,7 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	FString logMsg = UEnum::GetValueAsString(CurrentState);
 	DrawDebugString(GetWorld(), GetOwner()->GetActorLocation(), logMsg, nullptr, FColor::Red, 0);
 
-	AttackTimer += DeltaTime;
+	//AttackTimer += DeltaTime;
 
 	switch (CurrentState)
 	{
@@ -167,6 +167,8 @@ void UToolBoxBossFSM::Attack1State()
 	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack1!!!" ) );
 	
 	if ( !player || !me ){ return; }
+
+	AttackTimer += GetWorld()->GetDeltaSeconds();
 	ChangeState ( EBossState::CoolDown );
 	// Attack1 상태 유지
 	/*AttackTimer += GetWorld()->GetDeltaSeconds();
