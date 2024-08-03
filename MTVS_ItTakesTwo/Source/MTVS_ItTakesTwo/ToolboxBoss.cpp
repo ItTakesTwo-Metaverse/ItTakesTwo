@@ -21,7 +21,7 @@ AToolboxBoss::AToolboxBoss()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// 보스 몸체
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BossMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/newBoss/SKM_boss_body.SKM_boss_body'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BossMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_boss_body.SKM_boss_body'"));
 	if (BossMeshAsset.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(BossMeshAsset.Object);
@@ -33,7 +33,7 @@ AToolboxBoss::AToolboxBoss()
 	// 보스 왼팔
 	LeftArmMesh = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "LeftArmMesh" ) );
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LeftArmMeshAsset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/newBoss/SKM_boss_left_arm.SKM_boss_left_arm'" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LeftArmMeshAsset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_boss_left_arm.SKM_boss_left_arm'" ) );
 	if ( LeftArmMeshAsset.Succeeded ( ) )
 	{
 		LeftArmMesh->SetSkeletalMesh ( LeftArmMeshAsset.Object );
@@ -44,7 +44,7 @@ AToolboxBoss::AToolboxBoss()
 	// 보스 오른팔
 	RightArmMesh = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "RightArmMesh" ) );
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/newBoss/SKM_boss_right_arm.SKM_boss_right_arm'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_boss_right_arm.SKM_boss_right_arm'"));
 	if (RightArmMeshAsset.Succeeded())
 	{
 		RightArmMesh->SetSkeletalMesh(RightArmMeshAsset.Object);
@@ -73,7 +73,7 @@ AToolboxBoss::AToolboxBoss()
 	{
 		NailInterationBox2->SetStaticMesh ( NailInterationBox2Asset.Object );
 		NailInterationBox2->SetupAttachment ( RightArmMesh , TEXT ( "joint5" ) );
-		NailInterationBox2->SetRelativeLocationAndRotation ( FVector ( 240 , -30 , 0 ), FRotator(-3,0,0) );
+		NailInterationBox2->SetRelativeLocationAndRotation ( FVector ( 240 , 0 , 5 ), FRotator(-3,0,90) );
 		NailInterationBox2->SetRelativeScale3D ( FVector ( 2 , 0.3 , 2 ) );
 
 	}
@@ -85,7 +85,7 @@ AToolboxBoss::AToolboxBoss()
 	{
 		NailInterationBox3->SetStaticMesh ( NailInterationBox3Asset.Object );
 		NailInterationBox3->SetupAttachment ( RightArmMesh , TEXT ( "joint4" ) );
-		NailInterationBox3->SetRelativeLocationAndRotation ( FVector ( 0 , -30 ,0 ) , FRotator ( 0 , -8 , 0 ) );
+		NailInterationBox3->SetRelativeLocationAndRotation ( FVector ( 0 , -3 ,35 ) , FRotator ( 0 , -8 , 90 ) );
 		NailInterationBox3->SetRelativeScale3D ( FVector ( 2 , 0.3 , 2 ) );
 
 	}
