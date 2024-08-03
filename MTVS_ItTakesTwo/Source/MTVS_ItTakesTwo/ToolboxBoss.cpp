@@ -21,36 +21,35 @@ AToolboxBoss::AToolboxBoss()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// 보스 몸체
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BossMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossCharacter/SKM_Body.SKM_Body'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BossMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/newBoss/SKM_boss_body.SKM_boss_body'"));
 	if (BossMeshAsset.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(BossMeshAsset.Object);
 		GetMesh ( )->SetupAttachment ( RootComponent );
-		GetMesh ( )->SetRelativeLocationAndRotation ( FVector ( 0 , 0 , 450 ) , FRotator ( 0 , -90 , 0 ) );
-		GetMesh ( )->SetRelativeScale3D ( FVector ( 5 , 5 , 5 ) );
+		GetMesh ( )->SetRelativeLocation ( FVector ( 0 , 0 , 1000 ));
 		GetMesh ( )->SetCollisionProfileName ( TEXT ( "Boss" ) );
 	}
 
 	// 보스 왼팔
 	LeftArmMesh = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "LeftArmMesh" ) );
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LeftArmMeshAsset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossCharacter/SKM_Left.SKM_Left'" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LeftArmMeshAsset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/newBoss/SKM_boss_left_arm.SKM_boss_left_arm'" ) );
 	if ( LeftArmMeshAsset.Succeeded ( ) )
 	{
 		LeftArmMesh->SetSkeletalMesh ( LeftArmMeshAsset.Object );
 		LeftArmMesh->SetupAttachment ( GetMesh ( ) , TEXT ( "LeftArmSocket" ) );
-		LeftArmMesh->SetRelativeLocationAndRotation ( FVector ( 135 , 100 , -60 ) , FRotator ( 0 , -90 , 50 ) );
+		LeftArmMesh->SetRelativeLocationAndRotation ( FVector ( 210 , -850 , 0 ) , FRotator ( 0 , -90 , 0 ) );
 	}
 
 	// 보스 오른팔
 	RightArmMesh = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "RightArmMesh" ) );
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossCharacter/SKM_Right.SKM_Right'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/newBoss/SKM_boss_right_arm.SKM_boss_right_arm'"));
 	if (RightArmMeshAsset.Succeeded())
 	{
 		RightArmMesh->SetSkeletalMesh(RightArmMeshAsset.Object);
 		RightArmMesh->SetupAttachment ( GetMesh ( ) , TEXT ( "RightArmSocket" ) );
-		RightArmMesh->SetRelativeLocationAndRotation ( FVector ( -148 , 107 , -18 ) , FRotator ( 0 , 80 , 0 ));
+		RightArmMesh->SetRelativeLocationAndRotation ( FVector ( 250 , 750 , 0 ) , FRotator ( 0 , 80 , 0 ));
 		RightArmMesh->SetGenerateOverlapEvents ( true );
 		RightArmMesh->SetCollisionProfileName ( TEXT ( "Boss" ) );
 	}
@@ -63,9 +62,8 @@ AToolboxBoss::AToolboxBoss()
 	{
 		NailInterationBox1->SetStaticMesh( NailInterationBox1Asset .Object);
 		NailInterationBox1->SetupAttachment(RightArmMesh, TEXT("joint7" ) );
-		NailInterationBox1->ComponentHasTag(TEXT("NailInterationBox1" ) );
-		NailInterationBox1->SetRelativeLocation(FVector(0,-130,0));
-		NailInterationBox1->SetRelativeScale3D(FVector(0.05,0.2,0.2));
+		NailInterationBox1->SetRelativeLocation(FVector(-650,0,0));
+		NailInterationBox1->SetRelativeScale3D(FVector(1,0.3,1));
 	}
 
 	NailInterationBox2 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "NailInterationBox2" ) );
@@ -75,9 +73,8 @@ AToolboxBoss::AToolboxBoss()
 	{
 		NailInterationBox2->SetStaticMesh ( NailInterationBox2Asset.Object );
 		NailInterationBox2->SetupAttachment ( RightArmMesh , TEXT ( "joint5" ) );
-		NailInterationBox2->ComponentHasTag ( TEXT ( "NailInterationBox2" ) );
-		NailInterationBox2->SetRelativeLocationAndRotation ( FVector ( 2.5 , -30 , 5 ), FRotator(0,0,10) );
-		NailInterationBox2->SetRelativeScale3D ( FVector ( 0.05 , 0.3 , 0.3 ) );
+		NailInterationBox2->SetRelativeLocationAndRotation ( FVector ( 240 , -30 , 0 ), FRotator(-3,0,0) );
+		NailInterationBox2->SetRelativeScale3D ( FVector ( 2 , 0.3 , 2 ) );
 
 	}
 
@@ -88,9 +85,8 @@ AToolboxBoss::AToolboxBoss()
 	{
 		NailInterationBox3->SetStaticMesh ( NailInterationBox3Asset.Object );
 		NailInterationBox3->SetupAttachment ( RightArmMesh , TEXT ( "joint4" ) );
-		NailInterationBox3->ComponentHasTag ( TEXT ( "NailInterationBox3" ) );
-		NailInterationBox3->SetRelativeLocationAndRotation ( FVector ( 3 , -70 , 18 ) , FRotator ( 0 , -1 , 15 ) );
-		NailInterationBox3->SetRelativeScale3D ( FVector ( 0.05 , 0.3 , 0.3 ) );
+		NailInterationBox3->SetRelativeLocationAndRotation ( FVector ( 0 , -30 ,0 ) , FRotator ( 0 , -8 , 0 ) );
+		NailInterationBox3->SetRelativeScale3D ( FVector ( 2 , 0.3 , 2 ) );
 
 	}
 
