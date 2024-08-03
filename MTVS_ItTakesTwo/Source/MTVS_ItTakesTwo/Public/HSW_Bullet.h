@@ -71,4 +71,7 @@ public:
 	//유도탄
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly )
 	TWeakObjectPtr<USceneComponent> NailHomingTargetComponent;
+
+	ENailState SetStateReturning ( );
+
 };

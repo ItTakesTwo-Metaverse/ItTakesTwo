@@ -73,7 +73,7 @@ void AHSW_Bullet::Tick(float DeltaTime)
 
 void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
 {
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "collision" ) );
+	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "collision" ) );
 	if ( OtherActor->ActorHasTag ( TEXT ( "Wall1" ) ) )
 	{
 		MovementComp->bShouldBounce = false;
@@ -152,7 +152,14 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	// 플레이어에게 도착하면 
 	if ( dist < NailDefaultDist )
 	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "End" ) );
 		State = ENailState::BASIC;
 	}
 	// -> Basic상태로 변경.
+}
+
+ENailState AHSW_Bullet::SetStateReturning ( )
+{
+	State = ENailState::RETURNING;
+	return State;
 }

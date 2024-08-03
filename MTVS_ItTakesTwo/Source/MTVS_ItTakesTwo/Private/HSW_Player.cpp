@@ -3,6 +3,8 @@
 
 #include "HSW_Player.h"
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
+#include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
+#include "HSW_Bullet.h"
 
 // Sets default values
 AHSW_Player::AHSW_Player()
@@ -40,9 +42,30 @@ void AHSW_Player::Tick(float DeltaTime)
 void AHSW_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	UEnhancedInputComponent* input = Cast<UEnhancedInputComponent> ( PlayerInputComponent );
+	if ( input )
+	{
+		input->BindAction ( IA_Fire , ETriggerEvent::Started , this , &AHSW_Player::OnMyActionFire );
+		input->BindAction ( IA_Back , ETriggerEvent::Started , this , &AHSW_Player::OnMyActionBack );
+	}
+
+
 }
 
 void AHSW_Player::OnMyActionFire()
 {
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "FIre" ) );
+	FTransform t = GetMesh()->GetSocketTransform ( TEXT ( "hand_r" ));
+	Nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( NailFactory , t );
+}
 
+void AHSW_Player::OnMyActionBack ( )
+{
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Return" ) );
+	Nail->State = Nail->SetStateReturning();
+	if ( Nail->State == ENailState::RETURNING )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "RETURNING" ) );
+	}
 }

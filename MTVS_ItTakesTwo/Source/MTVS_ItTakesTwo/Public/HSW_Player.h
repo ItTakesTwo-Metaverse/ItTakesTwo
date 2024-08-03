@@ -32,7 +32,15 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UInputAction* IA_Fire;
 
-	void OnMyActionFire();
+	UPROPERTY(EditDefaultsOnly)
+	class UInputAction* IA_Back;
 
+	void OnMyActionFire();
+	void OnMyActionBack ( );
+
+	class AHSW_Bullet* Nail;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AHSW_Bullet> NailFactory;
 
 };
