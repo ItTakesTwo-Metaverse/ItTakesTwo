@@ -36,7 +36,6 @@ void ACSR_Player_Cody::MakeEnhancedInputLocalSubSystem()
 
 }
 
-
 void ACSR_Player_Cody::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -53,10 +52,11 @@ void ACSR_Player_Cody::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 #pragma endregion EnhancedInput register
 	
 #pragma region
-	InputKey->BindAction(Move_, ETriggerEvent::Triggered, this, &ACSR_P_Player::Player_Move);
-	InputKey->BindAction(Look_ , ETriggerEvent::Triggered , this , &ACSR_P_Player::Player_View );
+	InputKey->BindAction( IA_CMove_ , ETriggerEvent::Triggered, this, &ACSR_P_Player::Player_Move);
+	InputKey->BindAction( IA_CLook_ , ETriggerEvent::Triggered , this , &ACSR_P_Player::Player_View );
+	InputKey->BindAction( IA_CJump_ , ETriggerEvent::Started	, this , &ACSR_P_Player::PlayerJump );
 
 #pragma endregion Input Function binding
-	this->AddControllerPitchInput (this->EarlyCameraArmRotateHeight);
+	Setting ( );
 }
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -21,7 +21,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	// PlayerController¸¦ IMC_PlayerController¿Í ¸ÊÇÎ.
+	// PlayerControllerë¥¼ IMC_PlayerControllerì™€ ë§µí•‘.
 	void MakeEnhancedInputLocalSubSystem();
 #pragma region
 

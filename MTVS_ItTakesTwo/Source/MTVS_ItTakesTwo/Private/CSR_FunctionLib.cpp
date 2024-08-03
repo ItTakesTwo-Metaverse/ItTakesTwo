@@ -43,14 +43,11 @@ void UCSR_FunctionLib::ExitGame(UWorld* world, FString str)
 	UKismetSystemLibrary::QuitGame(world, nullptr, EQuitPreference::Quit, false);
 }	
 
-// float 매개변수를 abs하여 큰 쪽 abs를 리턴합니다.
+// float 매개변수를 abs하여 더한값을 리턴한다.
 float UCSR_FunctionLib::SelectABSUpperFloat ( const float& a , const float& b )
 {
 	float ScaleValue_a = FMath::Abs<float> ( a );
 	float ScaleValue_b = FMath::Abs<float> ( b );
-	float TargetValue = ScaleValue_a;
-	if ( ScaleValue_a < ScaleValue_b ) {
-		TargetValue = ScaleValue_b;
-	}
+	float TargetValue = ScaleValue_a + ScaleValue_b;
 	return (TargetValue);
 }
