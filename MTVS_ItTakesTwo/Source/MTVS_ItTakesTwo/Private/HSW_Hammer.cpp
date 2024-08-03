@@ -3,6 +3,7 @@
 
 #include "HSW_Hammer.h"
 #include "Components/BoxComponent.h"
+#include "../Public/HSW_Bullet.h"
 
 // Sets default values
 AHSW_Hammer::AHSW_Hammer()
@@ -15,6 +16,7 @@ AHSW_Hammer::AHSW_Hammer()
 	SetRootComponent ( BoxComp );
 	BoxComp->SetCollisionProfileName ( TEXT ( "Hammer" ) );
 
+
 	//외형
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "MeshComp" ) );
 	MeshComp->SetupAttachment ( RootComponent );
@@ -26,6 +28,9 @@ void AHSW_Hammer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Hammer::OnMyBoxHit );
+	BoxComp->OnComponentBeginOverlap.AddDynamic ( this , &AHSW_Hammer::OnMyBoxBeginOverlap );
+	BoxComp->OnComponentEndOverlap.AddDynamic ( this , &AHSW_Hammer::OnMyBoxEndOverlap );
 }
 
 // Called every frame
@@ -33,5 +38,41 @@ void AHSW_Hammer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if ( bCanHanging )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Can Hanging" ) );
+	}
+
 }
 
+void AHSW_Hammer::OnMyBoxHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
+{
+	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
+//	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Hammer" ) );
+	if ( bullet )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Hammer and nail" ) );
+	}
+}
+
+void AHSW_Hammer::OnMyBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
+{
+	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
+	if ( bullet )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Begin Overlap" ) );
+		bCanHanging = true;
+
+	}
+}
+
+void AHSW_Hammer::OnMyBoxEndOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex )
+{
+	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
+	if ( bullet )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
+		bCanHanging = false;
+
+	}
+}
