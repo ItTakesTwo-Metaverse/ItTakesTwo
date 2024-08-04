@@ -35,18 +35,19 @@ public:
 	class USkeletalMeshComponent* RightArmMesh;
 
 	UPROPERTY(EditDefaultsOnly)
-	class UStaticMeshComponent* NailInterationBox1;
+	class UStaticMeshComponent* NailInteractionBox1;
 	UPROPERTY(EditDefaultsOnly)
-	class UStaticMeshComponent* NailInterationBox2;
+	class UStaticMeshComponent* NailInteractionBox2;
 	UPROPERTY(EditDefaultsOnly)
-	class UStaticMeshComponent* NailInterationBox3;
+	class UStaticMeshComponent* NailInteractionBox3;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float HP;
-
+	float MaxHP = 100;
+	float HP = MaxHP;
 
 	UFUNCTION()
 	void OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UToolBoxBossFSM* fsm;

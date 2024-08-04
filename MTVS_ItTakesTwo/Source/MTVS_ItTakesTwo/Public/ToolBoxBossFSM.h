@@ -10,8 +10,9 @@
 UENUM(BlueprintType)
 enum class EBossState : uint8
 {
-	//Start,
+	Start,
 	Idle,
+	Paused,
 	Attack1, 
 	Attack2, 
 	Attack3, 
@@ -54,7 +55,7 @@ public:
 	//class AHSW_Player* HSWplayer;
 
 	UPROPERTY(EditAnywhere)
-	float AttackRange = 1000.0f;
+	float AttackRange = 3000.0f;
 	float AttackCoolDown;
 	float AttackTimer;
 	float Attack1Duration;
@@ -69,15 +70,16 @@ public:
 	
 	void ChangeState(EBossState NewState);
 
-	//void StartState();
-	void IdleState();
-	void Attack1State();
-	void Attack2State();
-	void Attack3State();
-	void Attack4State();
-	void Attack5State();
-	void CoolDownState();
-	void DieState();
+	void StartState( const float& DeltaTime );
+	void IdleState( const float& DeltaTime );
+	void PausedState ( const float& DeltaTime );
+	void Attack1State( const float& DeltaTime );
+	void Attack2State( const float& DeltaTime );
+	void Attack3State( const float& DeltaTime );
+	void Attack4State( const float& DeltaTime );
+	void Attack5State( const float& DeltaTime );
+	void CoolDownState( const float& DeltaTime );
+	void DieState( const float& DeltaTime );
 
 	
 		
