@@ -221,6 +221,11 @@ void UToolBoxBossFSM::CoolDownState( const float& DeltaTime )
 	}
 }
 
+void UToolBoxBossFSM::DamageState ( const float& DeltaTime )
+{
+
+}
+
 void UToolBoxBossFSM::DieState( const float& DeltaTime )
 {
 	

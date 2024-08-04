@@ -79,8 +79,9 @@ public:
 	void Attack4State( const float& DeltaTime );
 	void Attack5State( const float& DeltaTime );
 	void CoolDownState( const float& DeltaTime );
+	void DamageState( const float& DeltaTime );
 	void DieState( const float& DeltaTime );
-
+	
 	
 		
 };

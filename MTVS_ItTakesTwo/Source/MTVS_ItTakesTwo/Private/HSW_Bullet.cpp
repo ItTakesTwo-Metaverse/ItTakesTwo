@@ -53,7 +53,7 @@ void AHSW_Bullet::BeginPlay()
 
 	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
 	StartPoint = player->GetActorLocation ( );
-	EndPoint = StartPoint + FVector ( 100000 , 0 , 0 );
+	EndPoint = StartPoint + FVector ( 0 , 0 , -100000 );
 
 
 	//NailHomingTargetComponent = player->GetComponentByClass<USceneComponent> ( );
