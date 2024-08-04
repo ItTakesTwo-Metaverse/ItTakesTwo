@@ -187,10 +187,10 @@ void UToolBoxBossFSM::Attack1State( const float& DeltaTime )
 
 		AttackTimer = 0; // 공격시간 리셋
 	}
-	// 10초가 지나기 전에 플레이어가 못으로 박스를 태그하면 정지 상태로 전이
+	// 10초가 지나기 전에 플레이어가 못으로 박스를 태그하면 일시정지 상태로 전이
 	else if ( me->NailInteractionBox1->ComponentHasTag ( "Bullet" ) )
 	{
-		ChangeState(EBossState::Paused);
+			ChangeState ( EBossState::Paused );
 	}
 }
 
@@ -246,6 +246,8 @@ void UToolBoxBossFSM::OnMyTakeDamage ( float damage )
 	UE_LOG ( LogTemp , Warning , TEXT ( "Lock Damage" ) );
 	me->MaxHP -= damage;
 
+	// 프로토용
+	// 현재 체력이 0이라면
 	if ( me->MaxHP <= 0 )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "HP = 0 PausedState >> DieState" ) );
