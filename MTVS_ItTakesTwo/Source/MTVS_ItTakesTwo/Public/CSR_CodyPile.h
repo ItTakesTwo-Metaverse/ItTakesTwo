@@ -27,7 +27,12 @@ public:
 public:
 	UPROPERTY(EditDefaultsOnly )
 	class USpringArmComponent *SpringArmComp_;
+
+	UPROPERTY(EditDefaultsOnly )
 	class UCameraComponent *CameraComp_;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
+	class UCSR_PileInventory *PileInven;
 
 	UPROPERTY(EditDefaultsOnly )
 	FVector InitArmOffsetLocation = FVector(0.0f, 0.0f ,0.0f );
@@ -62,4 +67,10 @@ public:
 	void CameraZoomInMoving ( float DetaTime );
 	
 	void CameraZoomOutMoving ( float DetaTime );
+
+	FVector LayCasting ( );
+
+	void OnMyActionFire ( FVector startLocation, FRotator startRotation );
+
+	void OnMyActionBack ( );
 };

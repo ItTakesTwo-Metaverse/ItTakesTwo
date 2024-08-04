@@ -177,11 +177,11 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 
 	// 조건
 	// 플레이어에게 도착하면 
-	if ( Distance < NailDefaultDist )
-	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "End" ) );
-		SetState(ENailState::BASIC);
-	}
+	//if ( Distance < NailDefaultDist )
+	//{
+	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "End" ) );
+	//	//SetState(ENailState::BASIC);
+	//}
 	// -> Basic상태로 변경.
 }
 
