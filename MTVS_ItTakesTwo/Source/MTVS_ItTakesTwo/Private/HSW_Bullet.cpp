@@ -79,25 +79,23 @@ void AHSW_Bullet::Tick(float DeltaTime)
 
 void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
 {
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "CollisionHit" ) );
 
-	if ( OtherActor->ActorHasTag ( TEXT ( "NailTag" ) ) )
+	if ( OtherComp->ComponentHasTag ( TEXT ( "NailTag" ) ) )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "Tag: NailTag" ) );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "CollisionHit" ) );
 		SetState(ENailState::EMBEDDED);
 	}
-	if ( OtherActor->ActorHasTag ( TEXT ( "Wall1" ) ) )
-	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "Wall1" ) );
-		SetState ( ENailState::EMBEDDED );
-	}
+	//if ( OtherActor->ActorHasTag ( TEXT ( "Wall1" ) ) )
+	//{
+	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "Wall1" ) );
+	//	SetState ( ENailState::EMBEDDED );
+	//}
 	//else if ( OtherActor->ActorHasTag ( TEXT ( "Wall2" ) ) )
 	//{
 	//	State = ENailState::UNEMBEDDED;
 	//}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "else" ) );
 		SetState(ENailState::UNEMBEDDED);
 	}
 }
