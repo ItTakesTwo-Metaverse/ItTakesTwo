@@ -41,7 +41,7 @@ public:
 
 #pragma region
 	// 플레이어 카메라 셋팅
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USpringArmComponent *SpringArmComp;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -72,7 +72,8 @@ public:
 	class UInputAction	*IA_CJump_;
 
 #pragma endregion KeyBind
-
+	
+	UPROPERTY(EditDefaultsOnly)
 	class UCharacterMovementComponent *CharacterMoveMentComp;
 
 void Setting( );
