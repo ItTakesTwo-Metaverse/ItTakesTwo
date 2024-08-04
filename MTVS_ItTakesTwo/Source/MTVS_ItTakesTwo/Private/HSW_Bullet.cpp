@@ -49,7 +49,10 @@ void AHSW_Bullet::BeginPlay()
 	
 	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Bullet::OnMyWallHit );
 
-	//auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
+	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
+	StartPoint = player->GetActorLocation ( );
+	EndPoint = StartPoint + FVector ( 100000 , 0 , 0 );
+
 
 	//NailHomingTargetComponent = player->GetComponentByClass<USceneComponent> ( );
 }
@@ -74,7 +77,9 @@ void AHSW_Bullet::Tick(float DeltaTime)
 
 void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
 {
+	UE_LOG ( LogTemp , Warning , TEXT ( "DD" ) );
 	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "collision" ) );
+
 	if ( OtherActor->ActorHasTag ( TEXT ( "Wall1" ) ) )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "Wall1" ) );
@@ -86,6 +91,7 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 	//}
 	else
 	{
+		MovementComp->bShouldBounce = true;
 		SetState(ENailState::UNEMBEDDED);
 	}
 }
@@ -104,6 +110,8 @@ void AHSW_Bullet::TickBasic ( const float& DeltaTime )
 	// -> Embedded 상태로 변경.
 	// 못이 벽에 박히지 못했다면
 	// -> Unembedded 상태로 변경.
+
+	SetState ( ENailState::SHOOT );
 }
 
 void AHSW_Bullet::TickShoot ( const float& DeltaTime )
@@ -114,6 +122,7 @@ void AHSW_Bullet::TickShoot ( const float& DeltaTime )
 	FTransform PlayerSocketTransform = MeshComponent->GetSocketTransform ( TEXT ( "!!소켓이름!!" ))
 */
 	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "SHOOOOOOOT" ) );
+	
 	FVector dir =  EndPoint - StartPoint ;
 	dir.Normalize ( );
 	SetActorLocation (GetActorLocation() + dir* Speed * DeltaTime);
@@ -148,6 +157,7 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	// To Do
 	// 플레이어에게 곡선을 그리며 이동하고싶다.
 
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Return" ) );
 	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
 	Distance = (player->GetActorLocation() - this->GetActorLocation ( )).Size();
 	SetActorLocation ( FMath::Lerp ( this->GetActorLocation ( ) , player->GetActorLocation ( ) , 0.1 ));
@@ -156,7 +166,6 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	//MovementComp->bIsHomingProjectile = true;
 
 	// 해머 인터렉션 콜리전을 없앤다.
-	NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
 
 	//Bounce를 다시 활성화시킨다.
 	
@@ -181,26 +190,23 @@ void AHSW_Bullet::SetState ( ENailState NextState )
 	switch ( State )
 	{
 	case ENailState::BASIC:
-		MovementComp->ProjectileGravityScale = 0;
-		MeshComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+		MovementComp->ProjectileGravityScale = 0;	
 		MovementComp->bShouldBounce = true;
 		break;
 	case ENailState::SHOOT:
-		MovementComp->ProjectileGravityScale = 0;
-		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryAndPhysics );
 		break;
 	case ENailState::EMBEDDED:
 		MovementComp->bShouldBounce = false;
-		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryAndPhysics );
+		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
 		break;
 	case ENailState::UNEMBEDDED:
 		MovementComp->ProjectileGravityScale = 1.f;
-		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryAndPhysics );
+
 		break;
 	case ENailState::RETURNING:
 		MovementComp->ProjectileGravityScale = 0;
-		MeshComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
-		MovementComp->bShouldBounce = true;
+
+		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
 		break;
 	default:
 		break;

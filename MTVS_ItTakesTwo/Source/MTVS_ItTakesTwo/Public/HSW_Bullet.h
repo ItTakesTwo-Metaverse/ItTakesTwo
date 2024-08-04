@@ -81,5 +81,5 @@ public:
 	float Distance;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly )
-	float Speed = 5000;
+	float Speed = 1000;
 };
