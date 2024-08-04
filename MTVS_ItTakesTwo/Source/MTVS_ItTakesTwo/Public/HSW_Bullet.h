@@ -50,8 +50,6 @@ public:
 	class UProjectileMovementComponent* MovementComp;
 
 
-
-
 //Overlap이 작동할 함수
 	UFUNCTION ( )
 	void OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit );
@@ -81,5 +79,5 @@ public:
 	float Distance;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly )
-	float Speed = 1000;
+	float Speed = 5000;
 };

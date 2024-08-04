@@ -16,6 +16,7 @@ AHSW_Bullet::AHSW_Bullet()
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
 	SetRootComponent(BoxComp);
 	BoxComp->SetCollisionProfileName(TEXT("Bullet"));
+	BoxComp->SetEnableGravity ( false );
 
 	//외형
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
@@ -25,7 +26,7 @@ AHSW_Bullet::AHSW_Bullet()
 	//발사체
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent> ( TEXT ( "MovementComp" ) );
 	MovementComp->SetUpdatedComponent ( RootComponent );
-	MovementComp->bShouldBounce = true;
+	MovementComp->bShouldBounce = false;
 	MovementComp->ProjectileGravityScale = 0;
 
 	//유도탄 설정
@@ -48,6 +49,7 @@ void AHSW_Bullet::BeginPlay()
 	Super::BeginPlay();
 	
 	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Bullet::OnMyWallHit );
+
 
 	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
 	StartPoint = player->GetActorLocation ( );
@@ -77,13 +79,16 @@ void AHSW_Bullet::Tick(float DeltaTime)
 
 void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
 {
-	UE_LOG ( LogTemp , Warning , TEXT ( "DD" ) );
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "collision" ) );
 
+	if ( OtherActor->ActorHasTag ( TEXT ( "NailTag" ) ) )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "Tag: NailTag" ) );
+		SetState(ENailState::EMBEDDED);
+	}
 	if ( OtherActor->ActorHasTag ( TEXT ( "Wall1" ) ) )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "Wall1" ) );
-		SetState(ENailState::EMBEDDED);
+		SetState ( ENailState::EMBEDDED );
 	}
 	//else if ( OtherActor->ActorHasTag ( TEXT ( "Wall2" ) ) )
 	//{
@@ -91,7 +96,6 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 	//}
 	else
 	{
-		MovementComp->bShouldBounce = true;
 		SetState(ENailState::UNEMBEDDED);
 	}
 }
@@ -99,7 +103,7 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 
 void AHSW_Bullet::TickBasic ( const float& DeltaTime )
 {
-
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "Basic" ) );
 	//MovementComp->bIsHomingProjectile = false;
 	// 
 	// TO DO
@@ -122,10 +126,10 @@ void AHSW_Bullet::TickShoot ( const float& DeltaTime )
 	FTransform PlayerSocketTransform = MeshComponent->GetSocketTransform ( TEXT ( "!!소켓이름!!" ))
 */
 	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "SHOOOOOOOT" ) );
-	
+
 	FVector dir =  EndPoint - StartPoint ;
 	dir.Normalize ( );
-	SetActorLocation (GetActorLocation() + dir* Speed * DeltaTime);
+	SetActorLocation (GetActorLocation() + dir* Speed * DeltaTime,true);
 }
 
 void AHSW_Bullet::TickEmbedded ( const float& DeltaTime )
@@ -200,10 +204,14 @@ void AHSW_Bullet::SetState ( ENailState NextState )
 		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
 		break;
 	case ENailState::UNEMBEDDED:
+		BoxComp->SetEnableGravity ( true);
+		MovementComp->bShouldBounce = true;
 		MovementComp->ProjectileGravityScale = 1.f;
 
 		break;
 	case ENailState::RETURNING:
+		BoxComp->SetEnableGravity ( false );
+		MovementComp->bShouldBounce = false;
 		MovementComp->ProjectileGravityScale = 0;
 
 		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
