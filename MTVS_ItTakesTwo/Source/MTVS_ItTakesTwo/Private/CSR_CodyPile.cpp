@@ -4,6 +4,9 @@
 #include "CSR_CodyPile.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "CollisionQueryParams.h"
+#include "CSR_PileInventory.h"
+#include "HSW_Bullet.h"
 
 // Sets default values for this component's properties
 UCSR_CodyPile::UCSR_CodyPile()
@@ -13,6 +16,8 @@ UCSR_CodyPile::UCSR_CodyPile()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+	this->PileInven = CreateDefaultSubobject< UCSR_PileInventory> ( TEXT ( "PileInven" ) );
+	
 }
 
 
@@ -29,9 +34,10 @@ void UCSR_CodyPile::BeginPlay()
 void UCSR_CodyPile::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 	// ...
 	if ( this->ExecToggle ) {
+		FVector target = LayCasting ( );
+		UE_LOG ( LogTemp , Warning , TEXT ( "%f %f %f" ) , target.X , target.Y , target.Z );
 		this->InZooming(DeltaTime );
 		this->CameraZoomInMoving( DeltaTime );
 	}
@@ -79,5 +85,47 @@ void UCSR_CodyPile::CameraZoomOutMoving ( float DetaTime )
 	this->SpringArmComp_->SetRelativeLocation ( FMath::Lerp ( this->SpringArmComp_->GetRelativeLocation ( ) , this->InitArmOffsetLocation , DetaTime * 4 ) );
 
 
+}
+
+FVector UCSR_CodyPile::LayCasting ( )
+{
+	FHitResult OutHit;
+	FVector Start = this->CameraComp_->GetComponentLocation ( );
+	FVector End = Start + this->CameraComp_->GetForwardVector ( ) * 100000.0f;
+	ECollisionChannel TraceChannel = ECC_Visibility;
+	FCollisionQueryParams Params;
+	bool bHit = GetWorld ( )->LineTraceSingleByChannel ( OutHit , Start , End , TraceChannel , Params );
+	if ( bHit != NULL ) {
+		DrawDebugLine ( GetWorld ( ) , Start , OutHit.ImpactPoint , FColor::Red , false , 3 );
+		return (OutHit.Location);
+	}
+	return (FVector::ZeroVector);
+}
+
+void UCSR_CodyPile::OnMyActionFire (FVector startLocation , FRotator startRotation )
+{
+	UE_LOG ( LogTemp , Warning , TEXT ( "OnMyActionFire" ) );
+	
+	AHSW_Bullet *Nail = this->PileInven->NailPop( startLocation, startRotation );
+	if ( Nail == nullptr ) {
+		UE_LOG ( LogTemp , Warning , TEXT ( "Nail is empty" ) );
+		return;
+	}
+	FVector target = LayCasting ( );
+	UE_LOG(LogTemp, Error, TEXT("%f %f %f"), target.X, target.Y, target.Z);
+	if ( target == FVector::Zero ( ) ) {
+		UE_LOG ( LogTemp , Warning , TEXT ( "No target" ) );
+		return;
+	}
+	Nail->StartPoint = startLocation;
+	Nail->EndPoint = target;
+	Nail->SetState ( ENailState::SHOOT );
+
+}
+
+void UCSR_CodyPile::OnMyActionBack ( )
+{
+	UE_LOG ( LogTemp , Warning , TEXT ( "OnMyActionBack" ) );
+	this->PileInven->NailPush(nullptr );
 }
 

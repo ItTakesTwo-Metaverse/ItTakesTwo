@@ -11,11 +11,16 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/ArrowComponent.h"
 
 ACSR_Player_Cody::ACSR_Player_Cody ( )
 {
 	this->CodyPileComp = CreateDefaultSubobject< UCSR_CodyPile> ( TEXT ( "CodyPileComp" ) );
 	CodyPileComp->InitComp ( this->CameraComp , this->SpringArmComp, this->SpringArmComp->TargetArmLength );
+
+	this->ArrowComp = CreateDefaultSubobject<UArrowComponent> ( TEXT ( "ArrowComp" ) );
+	this->ArrowComp->SetupAttachment ( RootComponent );
+	this->ArrowComp->SetRelativeLocation ( FVector ( 0 , 70.0f , 70.0f ) );
 }
 
 void ACSR_Player_Cody::BeginPlay()
@@ -71,6 +76,18 @@ void ACSR_Player_Cody::ChangeZoomOut ( )
 	CodyPileComp->ToggleButton ( false );
 }
 
+void ACSR_Player_Cody::ExecFIre ()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ExecFIre" ) );
+	CodyPileComp->OnMyActionFire(this->ArrowComp->GetComponentLocation(), this->GetActorRotation());
+}
+
+void ACSR_Player_Cody::ExecBack ( )
+{
+	UE_LOG ( LogTemp , Warning , TEXT ( "ExecBack" ) );
+	CodyPileComp->OnMyActionBack();
+}
+
 void ACSR_Player_Cody::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -92,6 +109,9 @@ void ACSR_Player_Cody::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	InputKey->BindAction( IA_CJump_ , ETriggerEvent::Started	, this , &ACSR_P_Player::PlayerJump );
 	InputKey->BindAction ( IA_CPile_ , ETriggerEvent::Started , this , &ACSR_Player_Cody::ChangeZoomIn );
 	InputKey->BindAction ( IA_CPile_ , ETriggerEvent::Completed , this , &ACSR_Player_Cody::ChangeZoomOut );
+	InputKey->BindAction ( IA_CFire , ETriggerEvent::Started , this , &ACSR_Player_Cody::ExecFIre );
+	InputKey->BindAction ( IA_CBack , ETriggerEvent::Started , this , &ACSR_Player_Cody::ExecBack );
+
 
 #pragma endregion Input Function binding
 	Setting ( );
