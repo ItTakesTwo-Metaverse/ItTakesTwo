@@ -65,7 +65,7 @@ void AHSW_Hammer::OnMyBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent
 	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
 	if ( bullet )
 	{
-		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Begin Overlap" ) );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Begin Overlap" ) );
 		bCanHanging = true;
 		Nail = bullet;
 
@@ -77,7 +77,7 @@ void AHSW_Hammer::OnMyBoxEndOverlap ( UPrimitiveComponent* OverlappedComponent ,
 	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
 	if ( bullet )
 	{
-		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
 		bCanHanging = false;
 
 	}
