@@ -31,6 +31,8 @@ void URightArmAnim::NativeUpdateAnimation ( float DeltaSeconds )
         //GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Idle" ) );
         //UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Idle" ) );
         break;
+    case ERightAnimState::Paused:
+        break;
     case ERightAnimState::Attack1:
         
         if ( !bIsAttacking )

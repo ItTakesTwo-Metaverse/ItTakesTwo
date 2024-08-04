@@ -40,14 +40,22 @@ public:
 	class UStaticMeshComponent* NailInteractionBox2;
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* NailInteractionBox3;
+	
+	UPROPERTY(EditDefaultsOnly)
+	class UStaticMeshComponent* Lock1;
+	/*UPROPERTY(EditDefaultsOnly)
+	class UStaticMeshComponent* Lock2;*/
+
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float MaxHP = 100;
+	float MaxHP = 2;
 	float HP = MaxHP;
 
 	UFUNCTION()
 	void OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
+	void OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UToolBoxBossFSM* fsm;

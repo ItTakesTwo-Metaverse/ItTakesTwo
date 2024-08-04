@@ -11,6 +11,7 @@
 #include "Components/ActorComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Components/StaticMeshComponent.h"
+#include "HSW_Hammer.h"
 
 
 
@@ -84,9 +85,32 @@ AToolboxBoss::AToolboxBoss()
 		NailInteractionBox3->SetRelativeScale3D ( FVector ( 2 , 0.3 , 2 ) );
 	}
 
+	// 자물쇠1
+	Lock1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Lock1") );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> Lock1Asset (TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	if ( Lock1Asset.Succeeded ( ) )
+	{
+		Lock1->SetStaticMesh(Lock1Asset.Object);
+		Lock1->SetupAttachment(GetMesh());
+		Lock1->SetRelativeLocation(FVector(-300,560,-370));
+		Lock1->SetGenerateOverlapEvents ( true );
+		Lock1->SetCollisionProfileName ( TEXT ( "Lock" ) );
+	}
 
-	// 오른팔 충돌체
+	//// 자물쇠2
+	//Lock2 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "Lock2" ) );
+	//static ConstructorHelpers::FObjectFinder<UStaticMesh> Lock2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	//if ( Lock2Asset.Succeeded ( ) )
+	//{
+	//	Lock2->SetStaticMesh ( Lock2Asset.Object );
+	//	Lock2->SetupAttachment ( GetMesh ( ) );
+	//	Lock2->SetRelativeLocation ( FVector ( -430 , 560 , -370 ) );
+	//}
+
+	// 오른팔 충돌
 	RightArmMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
+	// 자물쇠 충돌
+	Lock1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyLockBeginOverlap );
 
 	// 오른팔 애니메이션 블루프린트 할당
 	ConstructorHelpers::FClassFinder<UAnimInstance> RightArmAttackClass(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Animation/ABP_RightArm.ABP_RightArm_C'"));
@@ -133,6 +157,18 @@ void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent
 	}
 }
 
+
+void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
+{
+	// 플레이어의 망치와 충돌했을 때 자물쇠 데미지
+	if ( OtherActor->IsA<AHSW_Hammer> ( ) )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Collision Hammer&Lock" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Collision Hammer&Lock" ) );
+		fsm->OnMyTakeDamage();
+	}
+	
+}
 
 void AToolboxBoss::SetAnimState ( ERightAnimState NewState )
 {	

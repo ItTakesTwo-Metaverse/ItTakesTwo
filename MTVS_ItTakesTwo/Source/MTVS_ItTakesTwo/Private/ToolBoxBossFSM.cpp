@@ -83,6 +83,7 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 }
 
 
+
 void UToolBoxBossFSM::ChangeState(EBossState NewState)
 {
 	CurrentState = NewState;
@@ -98,7 +99,7 @@ void UToolBoxBossFSM::ChangeState(EBossState NewState)
 		me->SetAnimState ( ERightAnimState::Idle );
 		break;
 	case EBossState::Paused:
-		me->SetAnimState ( ERightAnimState::Idle );
+		me->SetAnimState ( ERightAnimState::Paused );
 		break;
 	case EBossState::Attack1:
 		me->SetAnimState ( ERightAnimState::Attack1 );
@@ -150,10 +151,25 @@ void UToolBoxBossFSM::IdleState( const float& DeltaTime )
 
 void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
 {
-	if ( me->HP <= me->MaxHP / 2 )
+	// 프로토용
+	// 현재 체력이 0이라면
+	if ( me->MaxHP <= 0 )
 	{
-		ChangeState(EBossState::CoolDown);
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "HP = 0 PausedState >> DieState" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "HP = 0 PausedState >> DieState" ) );
+		// 자물쇠를 파괴하고 =============================================================================
+
+		// 죽음 상태로 전이
+		ChangeState ( EBossState::Die );
 	}
+
+
+	// 현재 체력이 절반이라면 (자물쇠 2개중 1개 파괴)
+	//if ( me->HP <= me->MaxHP / 2 )
+	//{
+	//	// 쿨다운 상태로 전이
+	//	ChangeState(EBossState::CoolDown);
+	//}
 }
 
 void UToolBoxBossFSM::Attack1State( const float& DeltaTime )
@@ -162,6 +178,7 @@ void UToolBoxBossFSM::Attack1State( const float& DeltaTime )
 
 	// Attack1 상태 10초 유지 ( 못 박을 수 있는 제한시간 )
 	AttackTimer += DeltaTime;
+	// 10초가 지나면 쿨다운 상태로 전이
 	if ( AttackTimer >= Attack1Duration )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack1State >> CoolDown" ) );
@@ -170,21 +187,11 @@ void UToolBoxBossFSM::Attack1State( const float& DeltaTime )
 
 		AttackTimer = 0; // 공격시간 리셋
 	}
+	// 10초가 지나기 전에 플레이어가 못으로 박스를 태그하면 정지 상태로 전이
 	else if ( me->NailInteractionBox1->ComponentHasTag ( "Bullet" ) )
 	{
 		ChangeState(EBossState::Paused);
 	}
-
-
-	/*if ( 못이 박혔다면 공격1 상태를 유지하고 애니메이션을 일시정지 하고싶다. )
-	{
-		if ( 데미지가 1 / 2(자물쇠)만큼 입었다면 쿨다운 ->> 다시 공격1 상태로 돌아오자 )
-		{
-			ChangeState ( EBossState::CoolDown );
-		}
-			
-	}*/
-	
 }
 
 void UToolBoxBossFSM::Attack2State( const float& DeltaTime )
@@ -221,13 +228,30 @@ void UToolBoxBossFSM::CoolDownState( const float& DeltaTime )
 	}
 }
 
-void UToolBoxBossFSM::DamageState ( const float& DeltaTime )
-{
-
-}
 
 void UToolBoxBossFSM::DieState( const float& DeltaTime )
 {
+
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "DIeState" ) );
+	UE_LOG ( LogTemp , Warning , TEXT ( "DIeState" ) );
 	
+	me->Destroy();
 }
 
+
+void UToolBoxBossFSM::OnMyTakeDamage ( float damage )
+{
+	// 플레이어의 망치에 맞으면 체력을 1 감소시키고 싶다.
+	GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Lock Damage" ) );
+	UE_LOG ( LogTemp , Warning , TEXT ( "Lock Damage" ) );
+	me->MaxHP -= damage;
+
+	if ( me->MaxHP <= 0 )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "HP = 0 PausedState >> DieState" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "HP = 0 PausedState >> DieState" ) );
+
+		// 죽음 상태로 전이
+		ChangeState ( EBossState::Die );
+	}
+}

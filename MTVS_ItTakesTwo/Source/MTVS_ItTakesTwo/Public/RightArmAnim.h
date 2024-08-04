@@ -11,6 +11,7 @@ enum class ERightAnimState : uint8
 {
 	Start,
 	Idle,
+	Paused,
 	Attack1,
 	Attack2,
 	Attack3,

@@ -53,7 +53,7 @@ void AHSW_Bullet::BeginPlay()
 
 	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
 	StartPoint = player->GetActorLocation ( );
-	EndPoint = StartPoint + FVector ( 0 , 0 , -100000 );
+	EndPoint = StartPoint + FVector ( 0 , -100000 , 0 );
 
 
 	//NailHomingTargetComponent = player->GetComponentByClass<USceneComponent> ( );
@@ -79,6 +79,7 @@ void AHSW_Bullet::Tick(float DeltaTime)
 
 void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
 {
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "CollisionHit" ) );
 
 	if ( OtherActor->ActorHasTag ( TEXT ( "NailTag" ) ) )
 	{
@@ -96,6 +97,7 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 	//}
 	else
 	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "else" ) );
 		SetState(ENailState::UNEMBEDDED);
 	}
 }
@@ -103,7 +105,6 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 
 void AHSW_Bullet::TickBasic ( const float& DeltaTime )
 {
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "Basic" ) );
 	//MovementComp->bIsHomingProjectile = false;
 	// 
 	// TO DO

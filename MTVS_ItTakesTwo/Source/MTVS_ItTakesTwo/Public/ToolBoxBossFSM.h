@@ -51,8 +51,6 @@ public:
 	UPROPERTY()
 	class ACharacter* player;
 
-	//UPROPERTY()
-	//class AHSW_Player* HSWplayer;
 
 	UPROPERTY(EditAnywhere)
 	float AttackRange = 3000.0f;
@@ -61,8 +59,6 @@ public:
 	float Attack1Duration;
 
 	bool bAttack1Executed;
-
-
 
 	// 상태변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -79,9 +75,8 @@ public:
 	void Attack4State( const float& DeltaTime );
 	void Attack5State( const float& DeltaTime );
 	void CoolDownState( const float& DeltaTime );
-	void DamageState( const float& DeltaTime );
 	void DieState( const float& DeltaTime );
 	
-	
-		
+
+	void OnMyTakeDamage ( float damage = 1 );
 };
