@@ -12,6 +12,7 @@
 #include "Engine/StaticMesh.h"
 #include "Components/StaticMeshComponent.h"
 #include "HSW_Hammer.h"
+#include "HSW_Bullet.h"
 
 
 
@@ -61,6 +62,8 @@ AToolboxBoss::AToolboxBoss()
 		NailInteractionBox1->SetupAttachment(RightArmMesh, TEXT("joint7" ) );
 		NailInteractionBox1->SetRelativeLocation(FVector(-650,0,0));
 		NailInteractionBox1->SetRelativeScale3D(FVector(1,0.3,1));
+		NailInteractionBox1->SetGenerateOverlapEvents ( true );
+		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
 
 	// 못 상호작용 박스2
@@ -109,8 +112,11 @@ AToolboxBoss::AToolboxBoss()
 
 	// 오른팔 충돌
 	RightArmMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
+	// 못 상호작용 박스 충돌
+	NailInteractionBox1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyNailInteractionBoxBeginOverlap );
 	// 자물쇠 충돌
 	Lock1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyLockBeginOverlap );
+	
 
 	// 오른팔 애니메이션 블루프린트 할당
 	ConstructorHelpers::FClassFinder<UAnimInstance> RightArmAttackClass(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Animation/ABP_RightArm.ABP_RightArm_C'"));
@@ -157,6 +163,38 @@ void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent
 	}
 }
 
+void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
+{
+	// 플레이어의 못이 보스의 오른팔 상호작용 박스에 충돌했을 때 보스 일시정지 상태로 전이
+
+	if ( OtherActor)
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Bullet Collision NailInteractionBox" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Bullet Collision NailInteractionBox" ) );
+
+		if ( fsm->CurrentState == EBossState::Attack1 )
+		{
+			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Attck1 >> Paused" ) );
+			UE_LOG ( LogTemp , Warning , TEXT ( "Attck1 >> Paused" ) );
+			fsm->ChangeState ( EBossState::Paused );
+		}
+	}
+
+
+
+	/*if ( OtherActor->ActorHasTag ( "Bullet" ) )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Bullet Has Tag NailInteractionBox" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Bullet Has Tag NailInteractionBox" ) );
+
+		if ( fsm->CurrentState == EBossState::Attack1 )
+		{
+			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Attck1 >> Paused" ) );
+			UE_LOG ( LogTemp , Warning , TEXT ( "Attck1 >> Paused" ) );
+			fsm->ChangeState(EBossState::Paused);
+		}
+	}*/
+}
 
 void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
@@ -169,6 +207,7 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	}
 	
 }
+
 
 void AToolboxBoss::SetAnimState ( ERightAnimState NewState )
 {	

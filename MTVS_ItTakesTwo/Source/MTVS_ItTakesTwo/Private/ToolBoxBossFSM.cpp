@@ -17,7 +17,7 @@ UToolBoxBossFSM::UToolBoxBossFSM()
 
 	AttackCoolDown = 3; // 예시로 5초 쿨다운 설정
 	AttackTimer = 0;
-	Attack1Duration = 10;
+	Attack1Duration = 20;
 	bAttack1Executed = false;
 }
 
@@ -153,16 +153,17 @@ void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
 {
 	// 프로토용
 	// 현재 체력이 0이라면
-	if ( me->MaxHP <= 0 )
-	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "HP = 0 PausedState >> DieState" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "HP = 0 PausedState >> DieState" ) );
-		// 자물쇠를 파괴하고 =============================================================================
+	//if ( me->MaxHP <= 0 )
+	//{
+	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "HP = 0 PausedState >> DieState" ) );
+	//	UE_LOG ( LogTemp , Warning , TEXT ( "HP = 0 PausedState >> DieState" ) );
+	//	// 자물쇠를 파괴하고 =============================================================================
 
-		// 죽음 상태로 전이
-		ChangeState ( EBossState::Die );
-	}
-
+	//	// 죽음 상태로 전이
+	//	ChangeState ( EBossState::Die );
+	//}
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "PausedState" ) );
+	UE_LOG ( LogTemp , Warning , TEXT ( "PausedState" ) );
 
 	// 현재 체력이 절반이라면 (자물쇠 2개중 1개 파괴)
 	//if ( me->HP <= me->MaxHP / 2 )
@@ -187,11 +188,12 @@ void UToolBoxBossFSM::Attack1State( const float& DeltaTime )
 
 		AttackTimer = 0; // 공격시간 리셋
 	}
-	// 10초가 지나기 전에 플레이어가 못으로 박스를 태그하면 일시정지 상태로 전이
-	else if ( me->NailInteractionBox1->ComponentHasTag ( "Bullet" ) )
-	{
-			ChangeState ( EBossState::Paused );
-	}
+	// 일단 ToolBoxBoss.cpp에서 구현했음
+	//// 10초가 지나기 전에 플레이어가 못으로 박스를 태그하면 일시정지 상태로 전이
+	//else if ( me->NailInteractionBox1->ComponentHasTag ( "Bullet" ) )
+	//{
+	//		ChangeState ( EBossState::Paused );
+	//}
 }
 
 void UToolBoxBossFSM::Attack2State( const float& DeltaTime )
