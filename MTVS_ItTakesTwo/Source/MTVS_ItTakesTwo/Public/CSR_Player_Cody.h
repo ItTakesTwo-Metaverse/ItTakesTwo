@@ -13,10 +13,13 @@ UCLASS()
 class MTVS_ITTAKESTWO_API ACSR_Player_Cody : public ACSR_P_Player
 {
 	GENERATED_BODY()
+public:
+	ACSR_Player_Cody ( );
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 public:
+	
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
@@ -26,9 +29,25 @@ public:
 
 	// PlayerController를 IMC_PlayerController와 맵핑.
 	void MakeEnhancedInputLocalSubSystem();
+
+
+public:
 #pragma region
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ModifyAble" )
+	class UCSR_CodyPile* CodyPileComp;
 
-	
+	UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
+	class UInputAction	*IA_CPile_;
 
-#pragma endregion
+	void ChangeZoomIn ( );
+
+	void ChangeZoomOut( );
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ModifyAble" )
+	TSubclassOf<class UUserWidget> CrosshairUIFactory;
+
+	UPROPERTY ( )
+	class UUserWidget* CrosshairUI;
+
+#pragma endregion PileMovement;
 };

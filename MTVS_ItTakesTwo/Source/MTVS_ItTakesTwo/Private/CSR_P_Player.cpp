@@ -61,9 +61,9 @@ void ACSR_P_Player::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// 카메라 정면 벡터에 맞는 플레이어의 회전값을 구한다.
-	FRotator NewRot = UKismetMathLibrary::MakeRotFromX ( this->ChoosedDirection );
-	// 플레이어에게 해당 회전값을 적용시킨다.
-	SetActorRotation(NewRot);
+	//FRotator NewRot = UKismetMathLibrary::MakeRotFromX ( this->ChoosedDirection );
+	//// 플레이어에게 해당 회전값을 적용시킨다.
+	//SetActorRotation(NewRot);
 	// 풀래이어는 앞으로 이동한다.
 	this->AddMovementInput( this->ChoosedDirection , (this->AbsScale));
 	this->AbsScale = 0.0f;
