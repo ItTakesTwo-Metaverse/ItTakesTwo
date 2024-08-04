@@ -12,6 +12,7 @@ enum class EBossState : uint8
 {
 	Start,
 	Idle,
+	Paused,
 	Attack1, 
 	Attack2, 
 	Attack3, 
@@ -71,6 +72,7 @@ public:
 
 	void StartState( const float& DeltaTime );
 	void IdleState( const float& DeltaTime );
+	void PausedState ( const float& DeltaTime );
 	void Attack1State( const float& DeltaTime );
 	void Attack2State( const float& DeltaTime );
 	void Attack3State( const float& DeltaTime );

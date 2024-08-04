@@ -53,6 +53,9 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	case EBossState::Idle:
 		IdleState( DeltaTime );
 		break;
+	case EBossState::Paused:
+		StartState ( DeltaTime );
+		break;
 	case EBossState::Attack1:
 		Attack1State( DeltaTime );
 		break;
@@ -92,6 +95,9 @@ void UToolBoxBossFSM::ChangeState(EBossState NewState)
 		me->SetAnimState ( ERightAnimState::Start );
 		break;
 	case EBossState::Idle:
+		me->SetAnimState ( ERightAnimState::Idle );
+		break;
+	case EBossState::Paused:
 		me->SetAnimState ( ERightAnimState::Idle );
 		break;
 	case EBossState::Attack1:
@@ -142,12 +148,20 @@ void UToolBoxBossFSM::IdleState( const float& DeltaTime )
 
 }
 
+void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
+{
+	if ( me->HP <= me->MaxHP / 2 )
+	{
+		ChangeState(EBossState::CoolDown);
+	}
+}
+
 void UToolBoxBossFSM::Attack1State( const float& DeltaTime )
 {
 	if ( !player || !me ){ return; }
 
-	// Attack1 상태 유지
-	AttackTimer += GetWorld()->GetDeltaSeconds();
+	// Attack1 상태 10초 유지 ( 못 박을 수 있는 제한시간 )
+	AttackTimer += DeltaTime;
 	if ( AttackTimer >= Attack1Duration )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack1State >> CoolDown" ) );
@@ -156,7 +170,10 @@ void UToolBoxBossFSM::Attack1State( const float& DeltaTime )
 
 		AttackTimer = 0; // 공격시간 리셋
 	}
-
+	else if ( me->NailInteractionBox1->ComponentHasTag ( "Bullet" ) )
+	{
+		ChangeState(EBossState::Paused);
+	}
 
 
 	/*if ( 못이 박혔다면 공격1 상태를 유지하고 애니메이션을 일시정지 하고싶다. )
