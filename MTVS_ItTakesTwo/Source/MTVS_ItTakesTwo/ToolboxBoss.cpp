@@ -27,7 +27,6 @@ AToolboxBoss::AToolboxBoss()
 		GetMesh()->SetSkeletalMesh(BossMeshAsset.Object);
 		GetMesh ( )->SetupAttachment ( RootComponent );
 		GetMesh ( )->SetRelativeLocation ( FVector ( 0 , 0 , 1000 ));
-		GetMesh ( )->SetCollisionProfileName ( TEXT ( "Boss" ) );
 	}
 
 	// 보스 왼팔
@@ -75,7 +74,6 @@ AToolboxBoss::AToolboxBoss()
 		NailInterationBox2->SetupAttachment ( RightArmMesh , TEXT ( "joint5" ) );
 		NailInterationBox2->SetRelativeLocationAndRotation ( FVector ( 240 , 0 , 5 ), FRotator(-3,0,90) );
 		NailInterationBox2->SetRelativeScale3D ( FVector ( 2 , 0.3 , 2 ) );
-
 	}
 
 	NailInterationBox3 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "NailInterationBox3" ) );
@@ -87,12 +85,9 @@ AToolboxBoss::AToolboxBoss()
 		NailInterationBox3->SetupAttachment ( RightArmMesh , TEXT ( "joint4" ) );
 		NailInterationBox3->SetRelativeLocationAndRotation ( FVector ( 0 , -3 ,35 ) , FRotator ( 0 , -8 , 90 ) );
 		NailInterationBox3->SetRelativeScale3D ( FVector ( 2 , 0.3 , 2 ) );
-
 	}
 
-	// 태그 설정하기~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ RightArmMesh->ComponentHasTag ( TEXT ( "testtag") );
-
-	// 충돌체
+	// 오른팔 충돌체
 	RightArmMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
 	
 
@@ -114,10 +109,6 @@ void AToolboxBoss::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	
-
-	RightArmAnimInstance = Cast<URightArmAnim>(RightArmMesh->GetAnimInstance());
-
 }
 
 // Called every frame
@@ -141,6 +132,7 @@ void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent
 	if ( OtherActor->IsA<ACharacter>() )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Destroy Player" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Destroy Player" ) );
 		//OtherActor->Destroy();
 	}
 }
@@ -148,7 +140,8 @@ void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent
 
 
 void AToolboxBoss::SetAnimState ( ERightAnimState NewState )
-{
+{	
+	RightArmAnimInstance = Cast<URightArmAnim> ( RightArmMesh->GetAnimInstance ( ) );
 	if ( RightArmAnimInstance )
 	{
 		RightArmAnimInstance->SetAnimState(NewState);

@@ -2,11 +2,12 @@
 
 
 #include "RightArmAnim.h"
-#include "Animation/AnimInstance.h"
+#include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
 
-URightArmAnim::URightArmAnim( )
-    : AnimState( ERightAnimState::Idle )
-    , bIsAttacking(false)
+URightArmAnim::URightArmAnim ( )
+	: AnimState ( ERightAnimState::Start )
+	, bIsAttacking ( false )
 {}
 
 void URightArmAnim::NativeInitializeAnimation ( )
@@ -20,10 +21,11 @@ void URightArmAnim::NativeUpdateAnimation ( float DeltaSeconds )
 
     switch ( AnimState )
     {
-    /*case ERightAnimState::Start:
+    case ERightAnimState::Start:
         bIsAttacking = false;
-        GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Start" ) );
-        break;*/
+        //GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Start" ) );
+        //UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Start" ) );
+        break;
     case ERightAnimState::Idle:
         bIsAttacking = false;
         //GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Idle" ) );
@@ -36,8 +38,8 @@ void URightArmAnim::NativeUpdateAnimation ( float DeltaSeconds )
             
             if ( Attack1Montage )
             {
-                GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Attack1" ) );
-                UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Attack1" ) );
+                //GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Attack1" ) );
+                //UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Attack1" ) );
                 MontageEndedDelegate.BindUObject ( this , &URightArmAnim::OnAttackMontageEnded );
                 Montage_Play ( Attack1Montage );
                 Montage_SetEndDelegate ( MontageEndedDelegate , Attack1Montage );

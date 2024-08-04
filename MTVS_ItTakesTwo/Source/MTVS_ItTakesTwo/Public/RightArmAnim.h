@@ -9,7 +9,7 @@
 UENUM ( BlueprintType )
 enum class ERightAnimState : uint8
 {
-	//Start,
+	Start,
 	Idle,
 	Attack1,
 	Attack2,
