@@ -25,6 +25,8 @@ public:
 	void MakeEnhancedInputLocalSubSystem();
 #pragma region
 
+	UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
+	class UInputAction	*IA_CATTACK_;
 
 
 

@@ -42,14 +42,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	ERightAnimState AnimState;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bIsAttacking;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
+	bool bIsPausing;
 
 	//UPROPERTY ( EditDefaultsOnly , BlueprintReadWrite )
 	//class UAnimMontage* IdleMontage;
 
 	UPROPERTY ( EditDefaultsOnly , BlueprintReadWrite )
 	class UAnimMontage* Attack1Montage;
+
+	UPROPERTY ( EditDefaultsOnly , BlueprintReadWrite )
+	class UAnimMontage* PausedMotage;
 
 private:
 	FOnMontageEnded MontageEndedDelegate;

@@ -36,8 +36,8 @@ void UCSR_CodyPile::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	// ...
 	if ( this->ExecToggle ) {
-		FVector target = LayCasting ( );
-		UE_LOG ( LogTemp , Warning , TEXT ( "%f %f %f" ) , target.X , target.Y , target.Z );
+		//FVector target = LayCasting ( );
+		//UE_LOG ( LogTemp , Warning , TEXT ( "%f %f %f" ) , target.X , target.Y , target.Z );
 		this->InZooming(DeltaTime );
 		this->CameraZoomInMoving( DeltaTime );
 	}
@@ -96,7 +96,7 @@ FVector UCSR_CodyPile::LayCasting ( )
 	FCollisionQueryParams Params;
 	bool bHit = GetWorld ( )->LineTraceSingleByChannel ( OutHit , Start , End , TraceChannel , Params );
 	if ( bHit != NULL ) {
-		DrawDebugLine ( GetWorld ( ) , Start , OutHit.ImpactPoint , FColor::Red , false , 3 );
+		//DrawDebugLine ( GetWorld ( ) , Start , OutHit.ImpactPoint , FColor::Red , false , 3 );
 		return (OutHit.Location);
 	}
 	return (FVector::ZeroVector);

@@ -7,12 +7,15 @@
 
 URightArmAnim::URightArmAnim ( )
 	: AnimState ( ERightAnimState::Start )
-	, bIsAttacking ( false )
+	/*, bIsAttacking ( false )
+    , bIsPausing ( false )*/
 {}
 
 void URightArmAnim::NativeInitializeAnimation ( )
 {
     Super::NativeInitializeAnimation ( );
+    bIsAttacking = false;
+    bIsPausing = false;
 }
 
 void URightArmAnim::NativeUpdateAnimation ( float DeltaSeconds )
@@ -23,15 +26,28 @@ void URightArmAnim::NativeUpdateAnimation ( float DeltaSeconds )
     {
     case ERightAnimState::Start:
         bIsAttacking = false;
+        bIsPausing = false;
         //GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Start" ) );
         //UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Start" ) );
         break;
     case ERightAnimState::Idle:
         bIsAttacking = false;
+        bIsPausing = false;
         //GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Idle" ) );
         //UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Idle" ) );
         break;
     case ERightAnimState::Paused:
+
+        if ( !bIsPausing )
+        {
+            if ( PausedMotage )
+            {
+                Montage_Play ( PausedMotage );
+                bIsPausing = true;
+            }
+        }
+        
+
         break;
     case ERightAnimState::Attack1:
         
@@ -40,8 +56,8 @@ void URightArmAnim::NativeUpdateAnimation ( float DeltaSeconds )
             
             if ( Attack1Montage )
             {
-                //GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Attack1" ) );
-                //UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Attack1" ) );
+                GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Attack1" ) );
+                UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Attack1" ) );
                 MontageEndedDelegate.BindUObject ( this , &URightArmAnim::OnAttackMontageEnded );
                 Montage_Play ( Attack1Montage );
                 Montage_SetEndDelegate ( MontageEndedDelegate , Attack1Montage );
@@ -59,6 +75,7 @@ void URightArmAnim::NativeUpdateAnimation ( float DeltaSeconds )
         break;
     case ERightAnimState::CoolDown:
         bIsAttacking = false;
+        bIsPausing = false;
         break;
     case ERightAnimState::Die:
         break;

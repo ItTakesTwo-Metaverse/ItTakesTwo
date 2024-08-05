@@ -17,7 +17,7 @@ UToolBoxBossFSM::UToolBoxBossFSM()
 
 	AttackCoolDown = 3; // 예시로 5초 쿨다운 설정
 	AttackTimer = 0;
-	Attack1Duration = 20;
+	Attack1Duration = 15;
 	bAttack1Executed = false;
 }
 
@@ -54,7 +54,7 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		IdleState( DeltaTime );
 		break;
 	case EBossState::Paused:
-		StartState ( DeltaTime );
+		PausedState( DeltaTime );
 		break;
 	case EBossState::Attack1:
 		Attack1State( DeltaTime );
@@ -135,18 +135,18 @@ void UToolBoxBossFSM::StartState ( const float& DeltaTime )
 	FVector dir = player->GetActorLocation ( ) - me->GetActorLocation ( );
 
 	// 플레이어가 가까워지면 Attack1로 전이
-	if ( dir.Size ( ) < AttackRange && !bAttack1Executed )
+	if ( dir.Size ( ) < AttackRange /*&& !bAttack1Executed*/ )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "StartState >> Attack1State" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "StartState >> Attack1State" ) );
 		ChangeState ( EBossState::Attack1 );
-		bAttack1Executed = true;
+		//bAttack1Executed = true;
 	}
 }
 
 void UToolBoxBossFSM::IdleState( const float& DeltaTime )
 {	
-
+	
 }
 
 void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
@@ -226,7 +226,7 @@ void UToolBoxBossFSM::CoolDownState( const float& DeltaTime )
 		UE_LOG ( LogTemp , Warning , TEXT ( "CoolDown >> Idle" ) );
 		ChangeState ( EBossState::Idle );
 		AttackCoolDown = 3; // 쿨다운 시간 리셋
-		bAttack1Executed = false; // 후에 다른 공격 허용하도록 재설정
+		//bAttack1Executed = false; // 후에 다른 공격 허용하도록 재설정
 	}
 }
 
@@ -236,8 +236,16 @@ void UToolBoxBossFSM::DieState( const float& DeltaTime )
 
 	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "DIeState" ) );
 	UE_LOG ( LogTemp , Warning , TEXT ( "DIeState" ) );
+
+	if ( !player || !me ) { return; }
+
+	// Enter ragdoll state if not already in ragdoll
+	if ( !bIsInRagdoll )
+	{
+		me->EnterRagdollState ( );
+		bIsInRagdoll = true;
+	}
 	
-	me->Destroy();
 }
 
 

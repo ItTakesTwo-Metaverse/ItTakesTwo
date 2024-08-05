@@ -27,7 +27,10 @@ void ACSR_Player_May::MakeEnhancedInputLocalSubSystem()
 		UCSR_FunctionLib::ExitGame(GetWorld(), FString("SubSyn is null"));
 	// EnhancedInput을 IMC_...를 맵핑합니다.
 	SubSys->AddMappingContext(this->IMC_PlayerController_, 0);
+
+	
 }
+
 
 void ACSR_Player_May::Tick(float DeltaTime)
 {

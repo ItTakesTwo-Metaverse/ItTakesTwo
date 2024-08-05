@@ -22,6 +22,11 @@ AHSW_Hammer::AHSW_Hammer()
 	MeshComp->SetupAttachment ( RootComponent );
 	MeshComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 
+	//스켈레탈메시
+	HammerMesh = CreateDefaultSubobject<USkeletalMeshComponent> (TEXT ( "HammerMesh" ) );
+	HammerMesh->SetupAttachment(RootComponent);
+	HammerMesh->SetCollisionProfileName ( TEXT ( "Hammer" ) );
+
 }
 
 // Called when the game starts or when spawned

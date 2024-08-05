@@ -59,6 +59,7 @@ public:
 	float Attack1Duration;
 
 	bool bAttack1Executed;
+	bool bIsInRagdoll = false;
 
 	// 상태변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

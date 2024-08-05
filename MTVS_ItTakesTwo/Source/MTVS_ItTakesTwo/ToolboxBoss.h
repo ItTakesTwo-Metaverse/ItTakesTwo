@@ -66,6 +66,6 @@ public:
 	UPROPERTY()
     class URightArmAnim* RightArmAnimInstance;
 
-	
-
+	UFUNCTION()
+	void EnterRagdollState( );
 };

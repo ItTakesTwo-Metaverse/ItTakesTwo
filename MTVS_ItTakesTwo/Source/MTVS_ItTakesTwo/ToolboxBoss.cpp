@@ -29,6 +29,7 @@ AToolboxBoss::AToolboxBoss()
 		GetMesh()->SetSkeletalMesh(BossMeshAsset.Object);
 		GetMesh ( )->SetupAttachment ( RootComponent );
 		GetMesh ( )->SetRelativeLocation ( FVector ( 0 , 0 , 1000 ));
+		
 	}
 
 	// 보스 왼팔
@@ -208,6 +209,32 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	
 }
 
+
+void AToolboxBoss::EnterRagdollState ( )
+{	
+	/*USkeletalMeshComponent* BodyComp = GetMesh ( );
+	USkeletalMeshComponent* LeftArmComp = LeftArmMesh;
+	USkeletalMeshComponent* RightArmComp = RightArmMesh;*/
+	//if ( BodyComp && LeftArmComp && RightArmComp )
+	//{
+		GetMesh ( )->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+		GetMesh ( )->SetSimulatePhysics(true);
+		GetMesh ( )->WakeAllRigidBodies ( );
+		GetMesh ( )->bBlendPhysics = true;
+		
+
+		LeftArmMesh->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+		LeftArmMesh->SetSimulatePhysics ( true );
+		LeftArmMesh->WakeAllRigidBodies ( );
+		LeftArmMesh->bBlendPhysics = true;
+
+		RightArmMesh->SetSimulatePhysics ( true );
+		RightArmMesh->WakeAllRigidBodies ( );
+		RightArmMesh->bBlendPhysics = true;
+		
+
+	//}
+}
 
 void AToolboxBoss::SetAnimState ( ERightAnimState NewState )
 {	
