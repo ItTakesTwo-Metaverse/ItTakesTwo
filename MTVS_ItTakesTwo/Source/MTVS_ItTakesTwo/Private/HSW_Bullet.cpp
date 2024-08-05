@@ -5,7 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "../ToolboxBoss.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AHSW_Bullet::AHSW_Bullet()
@@ -81,18 +81,11 @@ void AHSW_Bullet::Tick(float DeltaTime)
 void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
 {
 
-	if ( OtherActor->IsA<AToolboxBoss> ( ) )
+	if ( OtherComp->ComponentHasTag ( TEXT ( "NailTag" ) ) )
 	{
-		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "BossHit" ) );
-		if ( OtherComp->ComponentHasTag ( TEXT ( "NailTag" ) ) )
-		{
-			GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "CollisionHit" ) );
-			SetState ( ENailState::EMBEDDED );
-		}
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "CollisionHit" ) );
+		SetState(ENailState::EMBEDDED);
 	}
-	
-
-
 	//if ( OtherActor->ActorHasTag ( TEXT ( "Wall1" ) ) )
 	//{
 	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "Wall1" ) );
@@ -122,7 +115,7 @@ void AHSW_Bullet::TickBasic ( const float& DeltaTime )
 	// 못이 벽에 박히지 못했다면
 	// -> Unembedded 상태로 변경.
 
-	SetState ( ENailState::SHOOT );
+	//SetState ( ENailState::SHOOT );
 }
 
 void AHSW_Bullet::TickShoot ( const float& DeltaTime )
@@ -169,7 +162,8 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	// 플레이어에게 곡선을 그리며 이동하고싶다.
 
 	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Return" ) );
-	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
+	APlayerController* SecondPlayerController = UGameplayStatics::GetPlayerController ( GetWorld ( ) , 1 );
+	auto* player = SecondPlayerController->GetPawn();
 	Distance = (player->GetActorLocation() - this->GetActorLocation ( )).Size();
 	SetActorLocation ( FMath::Lerp ( this->GetActorLocation ( ) , player->GetActorLocation ( ) , 0.1 ));
 	//UE_LOG ( LogTemp , Warning , TEXT ( "%f" ),dist );
@@ -183,11 +177,11 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 
 	// 조건
 	// 플레이어에게 도착하면 
-	//if ( Distance < NailDefaultDist )
-	//{
+	if ( Distance < NailDefaultDist )
+	{
 	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "End" ) );
-	//	//SetState(ENailState::BASIC);
-	//}
+		SetState(ENailState::BASIC);
+	}
 	// -> Basic상태로 변경.
 }
 
@@ -203,11 +197,13 @@ void AHSW_Bullet::SetState ( ENailState NextState )
 	case ENailState::BASIC:
 		MovementComp->ProjectileGravityScale = 0;	
 		MovementComp->bShouldBounce = true;
+		MeshComp->SetVisibility ( false );
 		break;
 	case ENailState::SHOOT:
 		break;
 	case ENailState::EMBEDDED:
 		MovementComp->bShouldBounce = false;
+
 		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
 		break;
 	case ENailState::UNEMBEDDED:
@@ -218,10 +214,12 @@ void AHSW_Bullet::SetState ( ENailState NextState )
 		break;
 	case ENailState::RETURNING:
 		BoxComp->SetEnableGravity ( false );
+		BoxComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
+
 		MovementComp->bShouldBounce = false;
 		MovementComp->ProjectileGravityScale = 0;
 
-		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
+		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 		break;
 	default:
 		break;
