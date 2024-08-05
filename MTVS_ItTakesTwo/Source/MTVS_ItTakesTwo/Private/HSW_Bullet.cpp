@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "../ToolboxBoss.h"
 
 // Sets default values
 AHSW_Bullet::AHSW_Bullet()
@@ -80,11 +81,18 @@ void AHSW_Bullet::Tick(float DeltaTime)
 void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
 {
 
-	if ( OtherComp->ComponentHasTag ( TEXT ( "NailTag" ) ) )
+	if ( OtherActor->IsA<AToolboxBoss> ( ) )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "CollisionHit" ) );
-		SetState(ENailState::EMBEDDED);
+		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "BossHit" ) );
+		if ( OtherComp->ComponentHasTag ( TEXT ( "NailTag" ) ) )
+		{
+			GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "CollisionHit" ) );
+			SetState ( ENailState::EMBEDDED );
+		}
 	}
+	
+
+
 	//if ( OtherActor->ActorHasTag ( TEXT ( "Wall1" ) ) )
 	//{
 	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "Wall1" ) );
