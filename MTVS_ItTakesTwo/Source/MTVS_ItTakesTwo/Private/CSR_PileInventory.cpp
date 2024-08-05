@@ -83,7 +83,7 @@ void UCSR_PileInventory::NailPush (AHSW_Bullet* Nail )
 	if ( Naill != nullptr ) {
 		Naill->SetState ( ENailState::RETURNING );
 		NailInven.Push ( Naill );
-		SetVisibleOff( Naill );
+		//SetVisibleOff( Naill );
 	}
 }
 
