@@ -28,6 +28,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* MeshComp;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	class USkeletalMeshComponent* HammerMesh;
 
 	UFUNCTION ( )
 	void OnMyBoxHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit );
@@ -38,6 +41,7 @@ public:
 
 	UFUNCTION()
 	void OnMyBoxEndOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex);
+
 
 	UPROPERTY ()
 	class AHSW_Bullet* Nail;
