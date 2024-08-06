@@ -18,7 +18,7 @@ enum class ERightAnimState : uint8
 	Attack4,
 	Attack5,
 	CoolDown,
-	Die
+	DestroyRightArm
 };
 
 

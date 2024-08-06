@@ -15,7 +15,7 @@ UToolBoxBossFSM::UToolBoxBossFSM()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	AttackCoolDown = 3; // 예시로 5초 쿨다운 설정
+	AttackCoolDown = 3; // 예시로 3초 쿨다운 설정
 	AttackTimer = 0;
 	Attack1Duration = 15;
 	bAttack1Executed = false;
@@ -74,8 +74,8 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	case EBossState::CoolDown:
 		CoolDownState( DeltaTime );
 		break;
-	case EBossState::Die:
-		DieState( DeltaTime );
+	case EBossState::DestroyRightArm:
+		DestroyRightArmState( DeltaTime );
 		break;
 	default:
 		break;
@@ -119,8 +119,8 @@ void UToolBoxBossFSM::ChangeState(EBossState NewState)
 	case EBossState::CoolDown:
 		me->SetAnimState ( ERightAnimState::CoolDown );
 		break;
-	case EBossState::Die:
-		me->SetAnimState ( ERightAnimState::Die );
+	case EBossState::DestroyRightArm:
+		me->SetAnimState ( ERightAnimState::DestroyRightArm );
 		break;
 	default:
 		break;
@@ -231,7 +231,7 @@ void UToolBoxBossFSM::CoolDownState( const float& DeltaTime )
 }
 
 
-void UToolBoxBossFSM::DieState( const float& DeltaTime )
+void UToolBoxBossFSM::DestroyRightArmState( const float& DeltaTime )
 {
 
 	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "DIeState" ) );
@@ -264,6 +264,6 @@ void UToolBoxBossFSM::OnMyTakeDamage ( float damage )
 		UE_LOG ( LogTemp , Warning , TEXT ( "HP = 0 PausedState >> DieState" ) );
 
 		// 죽음 상태로 전이
-		ChangeState ( EBossState::Die );
+		ChangeState ( EBossState::DestroyRightArm );
 	}
 }

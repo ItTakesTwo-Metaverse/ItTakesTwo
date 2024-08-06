@@ -77,7 +77,7 @@ void URightArmAnim::NativeUpdateAnimation ( float DeltaSeconds )
         bIsAttacking = false;
         bIsPausing = false;
         break;
-    case ERightAnimState::Die:
+    case ERightAnimState::DestroyRightArm:
         break;
     default:
         break;

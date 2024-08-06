@@ -19,7 +19,7 @@ enum class EBossState : uint8
 	Attack4, 
 	Attack5,
 	CoolDown, 
-	Die
+	DestroyRightArm
 };
 
 
@@ -76,7 +76,7 @@ public:
 	void Attack4State( const float& DeltaTime );
 	void Attack5State( const float& DeltaTime );
 	void CoolDownState( const float& DeltaTime );
-	void DieState( const float& DeltaTime );
+	void DestroyRightArmState ( const float& DeltaTime );
 	
 
 	void OnMyTakeDamage ( float damage = 1 );

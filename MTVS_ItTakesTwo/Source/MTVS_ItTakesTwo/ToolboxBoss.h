@@ -43,13 +43,12 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* Lock1;
-	/*UPROPERTY(EditDefaultsOnly)
-	class UStaticMeshComponent* Lock2;*/
+	UPROPERTY(EditDefaultsOnly)
+	class UStaticMeshComponent* Lock2;
 
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float MaxHP = 2;
-	float HP = MaxHP;
+	float MaxHP = 10;
 
 	UFUNCTION()
 	void OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

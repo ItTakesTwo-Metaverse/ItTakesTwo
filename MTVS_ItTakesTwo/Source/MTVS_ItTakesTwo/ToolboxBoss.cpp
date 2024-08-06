@@ -101,15 +101,15 @@ AToolboxBoss::AToolboxBoss()
 		Lock1->SetCollisionProfileName ( TEXT ( "Lock" ) );
 	}
 
-	//// 자물쇠2
-	//Lock2 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "Lock2" ) );
-	//static ConstructorHelpers::FObjectFinder<UStaticMesh> Lock2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
-	//if ( Lock2Asset.Succeeded ( ) )
-	//{
-	//	Lock2->SetStaticMesh ( Lock2Asset.Object );
-	//	Lock2->SetupAttachment ( GetMesh ( ) );
-	//	Lock2->SetRelativeLocation ( FVector ( -430 , 560 , -370 ) );
-	//}
+	// 자물쇠2
+	Lock2 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "Lock2" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> Lock2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	if ( Lock2Asset.Succeeded ( ) )
+	{
+		Lock2->SetStaticMesh ( Lock2Asset.Object );
+		Lock2->SetupAttachment ( GetMesh ( ) );
+		Lock2->SetRelativeLocation ( FVector ( -430 , 560 , -370 ) );
+	}
 
 	// 오른팔 충돌
 	RightArmMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
