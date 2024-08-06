@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "RightArmAnim.h"
 #include "ToolboxBoss.generated.h"
 
 UCLASS()

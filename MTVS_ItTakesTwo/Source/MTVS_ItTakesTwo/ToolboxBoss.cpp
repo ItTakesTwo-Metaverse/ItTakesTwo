@@ -61,8 +61,8 @@ AToolboxBoss::AToolboxBoss()
 	{
 		NailInteractionBox1->SetStaticMesh( NailInteractionBox1Asset.Object);
 		NailInteractionBox1->SetupAttachment(RightArmMesh, TEXT("joint7" ) );
-		NailInteractionBox1->SetRelativeLocation(FVector(-650,0,0));
-		NailInteractionBox1->SetRelativeScale3D(FVector(1,0.3,1));
+		NailInteractionBox1->SetRelativeLocation(FVector(-720,-10,0));
+		NailInteractionBox1->SetRelativeScale3D(FVector(1.5,0.3,1.5));
 		NailInteractionBox1->SetGenerateOverlapEvents ( true );
 		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
@@ -74,7 +74,7 @@ AToolboxBoss::AToolboxBoss()
 	{
 		NailInteractionBox2->SetStaticMesh ( NailInteractionBox2Asset.Object );
 		NailInteractionBox2->SetupAttachment ( RightArmMesh , TEXT ( "joint5" ) );
-		NailInteractionBox2->SetRelativeLocationAndRotation ( FVector ( 240 , 0 , 5 ), FRotator(-3,0,90) );
+		NailInteractionBox2->SetRelativeLocationAndRotation ( FVector ( 235 , 0 , 15 ), FRotator(-13,0,90) );
 		NailInteractionBox2->SetRelativeScale3D ( FVector ( 2 , 0.3 , 2 ) );
 	}
 
@@ -119,12 +119,12 @@ AToolboxBoss::AToolboxBoss()
 	Lock1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyLockBeginOverlap );
 	
 
-	// 오른팔 애니메이션 블루프린트 할당
-	ConstructorHelpers::FClassFinder<UAnimInstance> RightArmAttackClass(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Animation/ABP_RightArm.ABP_RightArm_C'"));
-	if ( RightArmAttackClass.Succeeded ( ) )
-	{
-		RightArmMesh->SetAnimInstanceClass(RightArmAttackClass.Class);
-	}
+	//// 오른팔 애니메이션 블루프린트 할당
+	//ConstructorHelpers::FClassFinder<UAnimInstance> RightArmAttackClass(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Animation/ABP_RightArm.ABP_RightArm_C'"));
+	//if ( RightArmAttackClass.Succeeded ( ) )
+	//{
+	//	RightArmMesh->SetAnimInstanceClass(RightArmAttackClass.Class);
+	//}
 
 	// FSM 컴포넌트 추가
 	fsm = CreateDefaultSubobject<UToolBoxBossFSM> ( TEXT ( "FSM" ) );

@@ -7,8 +7,6 @@
 
 URightArmAnim::URightArmAnim ( )
 	: AnimState ( ERightAnimState::Start )
-	/*, bIsAttacking ( false )
-    , bIsPausing ( false )*/
 {}
 
 void URightArmAnim::NativeInitializeAnimation ( )
