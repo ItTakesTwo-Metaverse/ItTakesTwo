@@ -44,7 +44,7 @@ AToolboxBoss::AToolboxBoss()
 
 	// 보스 오른팔
 	RightArmMesh = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "RightArmMesh" ) );
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_boss_right_arm.SKM_boss_right_arm'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/newRightArm1/SKM_boss_right_arm.SKM_boss_right_arm'"));
 	if (RightArmMeshAsset.Succeeded())
 	{
 		RightArmMesh->SetSkeletalMesh(RightArmMeshAsset.Object);
