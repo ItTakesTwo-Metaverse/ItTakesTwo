@@ -57,7 +57,7 @@ void AHSW_Hammer::Tick(float DeltaTime)
 
 void AHSW_Hammer::OnMyBoxHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
 {
-	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
+	bullet = Cast<AHSW_Bullet> ( OtherActor );
 //	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Hammer" ) );
 	if ( bullet )
 	{
@@ -89,6 +89,12 @@ void AHSW_Hammer::AttachHammerToNail ( )
 {
 	if ( bCanHanging )
 	{
-
+		bIsHanging = true;
+		MeshComp->AttachToComponent ( bullet->MeshComp , FAttachmentTransformRules::KeepRelativeTransform , TEXT ( "AttachingPoint" ) );
 	}
+}
+
+void AHSW_Hammer::DetachHammerFromNail ( )
+{
+	bIsHanging = false;
 }

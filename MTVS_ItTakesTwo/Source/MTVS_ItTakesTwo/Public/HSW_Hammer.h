@@ -54,6 +54,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite )
 	class AHSW_Bullet* bullet;
 
-	UFUNCTION ( );
-	void AttachHammerToNail ();
+	UFUNCTION ( BlueprintCallable)
+	void AttachHammerToNail ( );
+	UFUNCTION ( BlueprintCallable )
+	void DetachHammerFromNail ( );
+
 };
