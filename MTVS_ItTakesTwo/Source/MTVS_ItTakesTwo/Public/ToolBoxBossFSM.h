@@ -12,14 +12,14 @@ enum class EBossState : uint8
 {
 	Start,
 	Idle,
+	CoolDown ,
+	Attack1,
 	Paused,
-	Attack1, 
+	DestroyRightArm,
 	Attack2, 
 	Attack3, 
 	Attack4, 
-	Attack5,
-	CoolDown, 
-	DestroyRightArm
+	Attack5
 };
 
 
@@ -58,7 +58,6 @@ public:
 	float AttackTimer;
 	float Attack1Duration;
 
-	bool bAttack1Executed;
 	bool bIsInRagdoll = false;
 
 	// 상태변수
@@ -69,14 +68,14 @@ public:
 
 	void StartState( const float& DeltaTime );
 	void IdleState( const float& DeltaTime );
-	void PausedState ( const float& DeltaTime );
+	void CoolDownState ( const float& DeltaTime );
 	void Attack1State( const float& DeltaTime );
+	void PausedState ( const float& DeltaTime );
+	void DestroyRightArmState ( const float& DeltaTime );
 	void Attack2State( const float& DeltaTime );
 	void Attack3State( const float& DeltaTime );
 	void Attack4State( const float& DeltaTime );
 	void Attack5State( const float& DeltaTime );
-	void CoolDownState( const float& DeltaTime );
-	void DestroyRightArmState ( const float& DeltaTime );
 	
 
 	void OnMyTakeDamage ( float damage = 1 );

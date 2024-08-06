@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "RightArmAnim.h"
+#include "RightArmAnimInstance.h"
 #include "ToolboxBoss.generated.h"
 
 UCLASS()
@@ -16,7 +16,7 @@ public:
 	// Sets default values for this character's properties
 	AToolboxBoss();
 
-	void SetAnimState ( ERightAnimState NewState );
+	void SetAnimState ( ERightArmAnimState NewState );
 
 protected:
 	// Called when the game starts or when spawned
@@ -49,7 +49,7 @@ public:
 
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float MaxHP = 10;
+	float LockHP = 10;
 
 	UFUNCTION()
 	void OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -64,7 +64,7 @@ public:
 	class UToolBoxBossFSM* fsm;
 
 	UPROPERTY()
-    class URightArmAnim* RightArmAnimInstance;
+    class URightArmAnimInstance* RightArmAnimInstance;
 
 	UFUNCTION()
 	void EnterRagdollState( );
