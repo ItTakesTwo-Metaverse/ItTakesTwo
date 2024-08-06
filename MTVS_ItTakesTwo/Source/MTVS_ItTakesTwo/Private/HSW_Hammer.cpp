@@ -23,9 +23,9 @@ AHSW_Hammer::AHSW_Hammer()
 	MeshComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 
 	//스켈레탈메시
-	HammerMesh = CreateDefaultSubobject<USkeletalMeshComponent> (TEXT ( "HammerMesh" ) );
-	HammerMesh->SetupAttachment(RootComponent);
-	HammerMesh->SetCollisionProfileName ( TEXT ( "Hammer" ) );
+	//HammerMesh = CreateDefaultSubobject<USkeletalMeshComponent> (TEXT ( "HammerMesh" ) );
+	//HammerMesh->SetupAttachment(RootComponent);
+	//HammerMesh->SetCollisionProfileName ( TEXT ( "Hammer" ) );
 
 }
 
@@ -67,23 +67,28 @@ void AHSW_Hammer::OnMyBoxHit ( UPrimitiveComponent* HitComponent , AActor* Other
 
 void AHSW_Hammer::OnMyBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
-	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
+	bullet = Cast<AHSW_Bullet> ( OtherActor );
 	if ( bullet )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Begin Overlap" ) );
 		bCanHanging = true;
-		Nail = bullet;
-
 	}
 }
 
 void AHSW_Hammer::OnMyBoxEndOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex )
 {
-	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
 	if ( bullet )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
 		bCanHanging = false;
+
+	}
+}
+
+void AHSW_Hammer::AttachHammerToNail ( )
+{
+	if ( bCanHanging )
+	{
 
 	}
 }

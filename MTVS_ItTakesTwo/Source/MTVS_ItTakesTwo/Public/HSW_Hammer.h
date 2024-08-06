@@ -29,8 +29,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* MeshComp;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	class USkeletalMeshComponent* HammerMesh;
+	//UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	//class USkeletalMeshComponent* HammerMesh;
 
 	UFUNCTION ( )
 	void OnMyBoxHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit );
@@ -50,4 +50,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite )
 	bool bIsHanging;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite )
+	class AHSW_Bullet* bullet;
+
+	UFUNCTION ( );
+	void AttachHammerToNail ();
 };
