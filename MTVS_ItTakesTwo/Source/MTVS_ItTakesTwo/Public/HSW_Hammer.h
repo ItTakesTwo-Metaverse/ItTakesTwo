@@ -64,7 +64,7 @@ public:
 	void HammerRotation ( float DeltaTime);
 
 	UFUNCTION ( )
-	void MoveToNail ( );
+	void MoveToNail ( float deltatime );
 
 	UFUNCTION ( BlueprintCallable )
 	void ClickToMove ( );

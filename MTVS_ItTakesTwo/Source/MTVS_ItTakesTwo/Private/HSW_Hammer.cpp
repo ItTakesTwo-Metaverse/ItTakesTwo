@@ -46,7 +46,7 @@ void AHSW_Hammer::Tick(float DeltaTime)
 	
 	if ( bMoveToNail )
 	{
-		MoveToNail ( );
+		MoveToNail ( DeltaTime );
 	}
 	//매달려 있다면
 	else if ( bIsHanging )
@@ -97,14 +97,16 @@ void AHSW_Hammer::ClickToMove ( )
 	}
 }
 
-void AHSW_Hammer::MoveToNail ( )
+void AHSW_Hammer::MoveToNail ( float deltatime)
 {
 	if ( bullet )
 	{
 		FVector currentLocation = this->GetActorLocation ( );
 		FVector nailLocation = bullet->GetActorLocation ( );
 		float distance = ( nailLocation - currentLocation).Size ( );
-		SetActorLocation ( FMath::Lerp ( currentLocation , nailLocation , 0.1 ) );
+		FVector dir = (nailLocation-currentLocation).GetSafeNormal();
+		SetActorLocation ( FMath::Lerp ( currentLocation , nailLocation , 0.1f ));
+		//SetActorLocation ( currentLocation + dir * 500.f * deltatime );
 		if ( distance < 200 )
 		{
 			bIsHanging = true;
@@ -113,7 +115,6 @@ void AHSW_Hammer::MoveToNail ( )
 			MeshComp->AttachToComponent ( bullet->MeshComp , FAttachmentTransformRules::SnapToTargetNotIncludingScale , TEXT ( "AttachingPoint" ) );
 		}
 	}
-
 }
 
 
