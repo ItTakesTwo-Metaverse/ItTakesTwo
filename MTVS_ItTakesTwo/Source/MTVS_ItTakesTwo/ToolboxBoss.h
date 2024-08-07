@@ -42,30 +42,58 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* NailInteractionBox3;
 	
-	UPROPERTY(EditDefaultsOnly)
-	class UStaticMeshComponent* Lock1;
-	UPROPERTY(EditDefaultsOnly)
-	class UStaticMeshComponent* Lock2;
+	UPROPERTY( EditDefaultsOnly )
+	class USkeletalMeshComponent* Lock1;
+	UPROPERTY( EditDefaultsOnly )
+	class USkeletalMeshComponent* LockBody1;
+	UPROPERTY ( EditDefaultsOnly )
+	class USkeletalMeshComponent* Lock2;
+	UPROPERTY( EditDefaultsOnly )
+	class USkeletalMeshComponent* LockBody2;
 
+	UPROPERTY(EditDefaultsOnly )
+	class UStaticMeshComponent* Drill;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UPROPERTY( EditDefaultsOnly )
 	float LockHP = 10;
 
+	FTimerHandle DrillAttackTimerHandle;
+
+	float DrillAttackDuration;
+
+	float DrillDamage;
+
+	UPROPERTY(EditDefaultsOnly )
+	class UProceduralMeshComponent* FloorMesh;
+
+
+	// 보스 오른팔 충돌했을 때 플레이어 파괴
 	UFUNCTION()
 	void OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
+	// 보스 오른팔 타겟박스 못 상호작용했을 때 보스 일시정지 상태로 전이
 	UFUNCTION()
 	void OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
 
+	// 자물쇠 망치공격 당했을 때 자물쇠 데미지
 	UFUNCTION()
 	void OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
 	
+
+	void OnMyTakeDamage ( float damage = 1 );
+
+	void EnterRagdollState( );
+
+	void StartDrillAttack( );
+
+	void DrillHitGround( );
+
+	void ApplyDrillDamageAndCreateHole( );
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UToolBoxBossFSM* fsm;
 
 	UPROPERTY()
     class URightArmAnimInstance* RightArmAnimInstance;
 
-	UFUNCTION()
-	void EnterRagdollState( );
 };

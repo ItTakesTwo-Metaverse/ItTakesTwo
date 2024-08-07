@@ -56,7 +56,7 @@ void URightArmAnimInstance::NativeUpdateAnimation ( float DeltaSeconds )
     case ERightArmAnimState::DestroyRightArm:
         break;
 
-    case ERightArmAnimState::Attack2:
+    case ERightArmAnimState::Attack2Drill1:
         break;
 
     case ERightArmAnimState::Attack3:

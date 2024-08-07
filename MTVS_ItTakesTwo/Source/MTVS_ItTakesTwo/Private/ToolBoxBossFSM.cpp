@@ -63,8 +63,8 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	case EBossState::DestroyRightArm:
 		DestroyRightArmState ( DeltaTime );
 		break;
-	case EBossState::Attack2:
-		Attack2State( DeltaTime );
+	case EBossState::Attack2Drill1:
+		Attack2Drill1State ( DeltaTime );
 		break;
 	case EBossState::Attack3:
 		Attack3State( DeltaTime );
@@ -108,8 +108,8 @@ void UToolBoxBossFSM::ChangeState(EBossState NewState)
 	case EBossState::DestroyRightArm:
 		me->SetAnimState ( ERightArmAnimState::DestroyRightArm );
 		break;
-	case EBossState::Attack2:
-		me->SetAnimState ( ERightArmAnimState::Attack2 );
+	case EBossState::Attack2Drill1:
+		me->SetAnimState ( ERightArmAnimState::Attack2Drill1 );
 		break;
 	case EBossState::Attack3:
 		me->SetAnimState ( ERightArmAnimState::Attack3 );
@@ -223,9 +223,13 @@ void UToolBoxBossFSM::DestroyRightArmState ( const float& DeltaTime )
 	}
 }
 
-void UToolBoxBossFSM::Attack2State( const float& DeltaTime )
+void UToolBoxBossFSM::Attack2Drill1State( const float& DeltaTime )
 {
-	
+	if ( !bIsAttackDrill )
+	{
+		me->Drill->SetVisibility(true);
+		bIsAttackDrill = true;
+	}
 }
 
 void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
@@ -243,21 +247,3 @@ void UToolBoxBossFSM::Attack5State( const float& DeltaTime )
 	
 }
 
-
-void UToolBoxBossFSM::OnMyTakeDamage ( float damage )
-{
-	// 플레이어의 망치에 맞으면 자물쇠HP를 1 감소시키고 싶다.
-	GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Lock Damage" ) );
-	UE_LOG ( LogTemp , Warning , TEXT ( "Lock Damage" ) );
-	me->LockHP -= damage;
-	
-	// 현재 체력이 0이라면
-	if ( me->LockHP <= 0 )
-	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "HP = 0 PausedState >> DestroyRightArmState" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "HP = 0 PausedState >> DestroyRightArmState" ) );
-
-		// 죽음 상태로 전이
-		ChangeState ( EBossState::DestroyRightArm );
-	}
-}

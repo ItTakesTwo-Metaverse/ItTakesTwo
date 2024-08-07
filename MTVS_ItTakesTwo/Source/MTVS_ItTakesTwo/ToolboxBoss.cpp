@@ -11,8 +11,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "HSW_Hammer.h"
 #include "HSW_Bullet.h"
-#include "CSR_Player_Cody.h"
-#include "CSR_Player_May.h"
+#include "GameFramework/Character.h"
+#include "ProceduralMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 
@@ -61,8 +62,7 @@ AToolboxBoss::AToolboxBoss()
 	{
 		NailInteractionBox1->SetStaticMesh( NailInteractionBox1Asset.Object);
 		NailInteractionBox1->SetupAttachment(RightArmMesh, TEXT("joint7" ) );
-		NailInteractionBox1->SetRelativeLocation(FVector(-690 ,-10, 10 )); 
-		NailInteractionBox1->SetRelativeScale3D(FVector(1,0.3,1));
+		NailInteractionBox1->SetRelativeLocation(FVector( -3158 , -521 , 381 )); 
 		NailInteractionBox1->SetGenerateOverlapEvents ( true );
 		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
@@ -74,8 +74,9 @@ AToolboxBoss::AToolboxBoss()
 	{
 		NailInteractionBox2->SetStaticMesh ( NailInteractionBox2Asset.Object );
 		NailInteractionBox2->SetupAttachment ( RightArmMesh , TEXT ( "joint5" ) );
-		NailInteractionBox2->SetRelativeLocationAndRotation ( FVector ( -20 , 10 , 45 ), FRotator(-5,0,90) );
-		NailInteractionBox2->SetRelativeScale3D ( FVector ( 1.5 , 0.3 , 1.5 ) );
+		NailInteractionBox2->SetRelativeLocationAndRotation ( FVector ( -1145 , -42 , -520 ), FRotator( -1 , 0 , -124 ) );
+		NailInteractionBox1->SetGenerateOverlapEvents ( true );
+		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
 
 	// 못 상호작용 박스3
@@ -85,33 +86,69 @@ AToolboxBoss::AToolboxBoss()
 	{
 		NailInteractionBox3->SetStaticMesh ( NailInteractionBox3Asset.Object );
 		NailInteractionBox3->SetupAttachment ( RightArmMesh , TEXT ( "joint4" ) ); 
-		NailInteractionBox3->SetRelativeLocationAndRotation ( FVector ( -210 , 0 , 90 ) , FRotator ( -15 , 0 , 90 ) );
-		NailInteractionBox3->SetRelativeScale3D ( FVector ( 1.5 , 0.3 , 1.5 ) );
+		NailInteractionBox3->SetRelativeLocationAndRotation ( FVector ( -1033 , 54 , -254 ) , FRotator ( -12 , -10 , -107 ) );
+		NailInteractionBox1->SetGenerateOverlapEvents ( true );
+		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
 
 	// 자물쇠1
-	Lock1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Lock1") );
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> Lock1Asset (TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	Lock1 = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Lock1") );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> Lock1Asset (TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/lock/SM_Locker_002.SM_Locker_002'" ) );
 	if ( Lock1Asset.Succeeded ( ) )
 	{
-		Lock1->SetStaticMesh(Lock1Asset.Object);
+		Lock1->SetSkeletalMesh (Lock1Asset.Object);
 		Lock1->SetupAttachment(GetMesh());
-		Lock1->SetRelativeLocation(FVector(-300,560,-370));
-		Lock1->SetGenerateOverlapEvents ( true );
-		Lock1->SetCollisionProfileName ( TEXT ( "Lock" ) );
+		Lock1->SetRelativeLocation(FVector( -318 , 553 , -397 ));
+	}
+
+	LockBody1 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "LockBody1" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LockBody1Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/lock/SM_Locker_001.SM_Locker_001'" ) );
+	if ( LockBody1Asset.Succeeded ( ) )
+	{
+		LockBody1->SetSkeletalMesh ( LockBody1Asset.Object );
+		LockBody1->SetupAttachment ( Lock1 );
+		LockBody1->SetGenerateOverlapEvents ( true );
+		LockBody1->SetCollisionProfileName ( TEXT ( "Lock" ) );
 	}
 
 	// 자물쇠2
-	Lock2 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "Lock2" ) );
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> Lock2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	Lock2 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "Lock2" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> Lock2Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/lock/SM_Locker_002.SM_Locker_002'" ) );
 	if ( Lock2Asset.Succeeded ( ) )
 	{
-		Lock2->SetStaticMesh ( Lock2Asset.Object );
+		Lock2->SetSkeletalMesh ( Lock2Asset.Object );
 		Lock2->SetupAttachment ( GetMesh ( ) );
-		Lock2->SetRelativeLocation ( FVector ( -430 , 560 , -370 ) );
-		Lock1->SetGenerateOverlapEvents ( true );
-		Lock1->SetCollisionProfileName ( TEXT ( "Lock" ) );
+		Lock2->SetRelativeLocation ( FVector ( -388 , 553 , -397 ) );
 	}
+
+	LockBody2 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "LockBody2" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LockBody2Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/lock/SM_Locker_001.SM_Locker_001'" ) );
+	if ( LockBody2Asset.Succeeded ( ) )
+	{
+		LockBody2->SetSkeletalMesh ( LockBody2Asset.Object );
+		LockBody2->SetupAttachment ( Lock2 );
+		LockBody2->SetGenerateOverlapEvents ( true );
+		LockBody2->SetCollisionProfileName ( TEXT ( "Lock" ) );
+	}
+
+	Drill = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Drill" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> DrillAsset ( TEXT ( "/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/drill/drill.drill'" ) );
+	if( DrillAsset .Succeeded())
+	{
+		Drill->SetStaticMesh ( DrillAsset.Object );
+		Drill->SetupAttachment( RightArmMesh , TEXT ( "joint8" ) ); 
+		Drill->SetRelativeLocation ( FVector ( 823 , -511 , 150 ) );
+		Drill->SetVisibility ( false );
+	}
+	
+
+	FloorMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("FloorMesh" ));
+
+	DrillAttackDuration = 2.0f;
+	DrillDamage = 50.0f;
+
+
+
 
 	// 오른팔 충돌
 	RightArmMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
@@ -158,7 +195,7 @@ void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent
 {
 	
 	// 플레이어와 충돌했을 때 플레이어 파괴
-	if ( OtherActor->IsA<ACSR_Player_Cody>() && OtherActor->IsA<ACSR_Player_May> ( ) )
+	if ( OtherActor->IsA<ACharacter>() )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Destroy Player" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "Destroy Player" ) );
@@ -207,11 +244,28 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Collision Hammer&Lock" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "Collision Hammer&Lock" ) );
-		fsm->OnMyTakeDamage();
+		OnMyTakeDamage();
 	}
 	
 }
 
+void AToolboxBoss::OnMyTakeDamage ( float damage )
+{
+	// 플레이어의 망치에 맞으면 자물쇠HP를 1 감소시키고 싶다.
+	GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Lock Damage" ) );
+	UE_LOG ( LogTemp , Warning , TEXT ( "Lock Damage" ) );
+	LockHP -= damage;
+
+	// 현재 체력이 0이라면
+	if ( LockHP <= 0 )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "HP = 0 PausedState >> DestroyRightArmState" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "HP = 0 PausedState >> DestroyRightArmState" ) );
+
+		// 죽음 상태로 전이
+		fsm->ChangeState ( EBossState::DestroyRightArm );
+	}
+}
 
 void AToolboxBoss::EnterRagdollState ( )
 {	
@@ -237,6 +291,65 @@ void AToolboxBoss::EnterRagdollState ( )
 		
 
 	//}
+}
+
+// Function to start the drill attack
+void AToolboxBoss::StartDrillAttack ( )
+{
+	//PlayAnimMontage ( DrillAttackMontage );
+	
+	 // 드릴 공격 지속시간을 처리하는 타이머 시작
+	GetWorld()->GetTimerManager().SetTimer(DrillAttackTimerHandle, this, &AToolboxBoss::DrillHitGround, DrillAttackDuration, false );
+}
+
+// 바닥에 부딪힐 때 드릴 공격 처리
+void AToolboxBoss::DrillHitGround ( )
+{
+	ApplyDrillDamageAndCreateHole ( );
+
+	// 베타 때 이펙트, 사운드 추가
+}
+
+// 드릴 데미지 처리 및 구멍 뚫기
+void AToolboxBoss::ApplyDrillDamageAndCreateHole ( )
+{
+	// 드릴 위치 및 트레이스 방향 정해주기
+	FVector DrillLocation = Drill->GetComponentLocation ( );
+	FVector DrillEnd = DrillLocation - FVector ( 0 , 0 , 100 ); // 트레이스 방향 아래로
+
+	// 라인트레이스 히트 위치 찾기
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor ( this );
+
+	if ( GetWorld ( )->LineTraceSingleByChannel ( HitResult , DrillLocation , DrillEnd , ECC_Visibility , Params ) )
+	{
+		FVector HitLocation = HitResult.Location;
+
+		// 히트 위치에 구멍을 만들고 싶다.
+		// 이것은 단순화된 예입니다. 구멍이 있는 프로시저 메쉬를 업데이트해야 합니다.
+		// 메쉬 수정을 처리하려면 더 복잡한 논리가 필요합니다.
+
+		// Example: 주변 액터들에게 데미지처리
+		float DrillRadius = 200.0f;
+		TArray<AActor*> OverlappingActors;
+		UGameplayStatics::GetAllActorsOfClass ( GetWorld ( ) , ACharacter::StaticClass ( ) , OverlappingActors );
+
+		for ( AActor* Actor : OverlappingActors )
+		{
+			if ( Actor && (Actor != this) && (Actor->GetDistanceTo ( this ) <= DrillRadius) )
+			{
+				UGameplayStatics::ApplyDamage ( Actor , DrillDamage , GetController ( ) , this , UDamageType::StaticClass ( ) );
+			}
+		}
+
+		// 예: 프로시저 메쉬 업데이트
+		// 이를 위해서는 메쉬 구조와 구멍을 생성하는 방법에 따라 보다 구체적인 코드가 필요합니다.
+		// 여기서는 단순성을 위해 히트 위치를 기록합니다.
+		UE_LOG ( LogTemp , Warning , TEXT ( "Drill hit at: %s" ) , *HitLocation.ToString ( ) );
+
+		// TODO: 여기에 절차 메쉬 수정 코드를 추가합니다
+	}
 }
 
 void AToolboxBoss::SetAnimState ( ERightArmAnimState NewState )

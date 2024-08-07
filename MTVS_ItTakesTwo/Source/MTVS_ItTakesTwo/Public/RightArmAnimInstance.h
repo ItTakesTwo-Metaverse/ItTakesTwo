@@ -15,7 +15,7 @@ enum class ERightArmAnimState : uint8
 	Attack1 ,
 	Paused ,
 	DestroyRightArm,
-	Attack2 ,
+	Attack2Drill1 ,
 	Attack3 ,
 	Attack4 ,
 	Attack5 ,
