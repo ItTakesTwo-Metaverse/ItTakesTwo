@@ -26,13 +26,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* BoxComp;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite )
 	class UStaticMeshComponent* MeshComp;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	class USkeletalMeshComponent* HammerMesh;
+	//UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	//class USkeletalMeshComponent* HammerMesh;
 
-	UFUNCTION ( )
+	UFUNCTION ()
 	void OnMyBoxHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit );
 
 	//Overlap이 작동할 함수
@@ -46,8 +46,30 @@ public:
 	UPROPERTY ()
 	class AHSW_Bullet* Nail;
 
+	bool bMoveToNail;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite )
 	bool bCanHanging;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite )
 	bool bIsHanging;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite )
+	class AHSW_Bullet* bullet;
+
+	UFUNCTION ( BlueprintCallable)
+	void AttachHammerToNail ( );
+	UFUNCTION ( BlueprintCallable )
+	void DetachHammerFromNail ( );
+
+	UFUNCTION (  )
+	void HammerRotation ( );
+
+	UFUNCTION ( )
+	void MoveToNail ( );
+
+	UFUNCTION ( BlueprintCallable )
+	void ClickToMove ( );
+
+
+	UFUNCTION ( )
+	FVector GetHammerSocketLocation ( );
 };

@@ -23,9 +23,9 @@ AHSW_Hammer::AHSW_Hammer()
 	MeshComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 
 	//스켈레탈메시
-	HammerMesh = CreateDefaultSubobject<USkeletalMeshComponent> (TEXT ( "HammerMesh" ) );
-	HammerMesh->SetupAttachment(RootComponent);
-	HammerMesh->SetCollisionProfileName ( TEXT ( "Hammer" ) );
+	//HammerMesh = CreateDefaultSubobject<USkeletalMeshComponent> (TEXT ( "HammerMesh" ) );
+	//HammerMesh->SetupAttachment(RootComponent);
+	//HammerMesh->SetCollisionProfileName ( TEXT ( "Hammer" ) );
 
 }
 
@@ -43,47 +43,110 @@ void AHSW_Hammer::BeginPlay()
 void AHSW_Hammer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if ( bIsHanging )
+	
+	if ( bMoveToNail )
 	{
-		//SetActorLocation ( Nail->GetActorLocation ( ) );
-		//Nail ->	Socket 
-		//player -> socket -> hammer
-		//SceneComponent
-		//this->AttachToActor ( Nail );
+		MoveToNail ( );
+	}
+	//매달려 있다면
+	else if ( bIsHanging )
+	{
+	//계속해서 진자운동 하고싶다.
+		//HammerRotation();
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Rotating" ) );
 	}
 
 }
 
 void AHSW_Hammer::OnMyBoxHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
 {
-	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
+	//bullet = Cast<AHSW_Bullet> ( OtherActor );
 //	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Hammer" ) );
 	if ( bullet )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Hammer and nail" ) );
+		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Hammer and nail" ) );
 	}
 }
 
 void AHSW_Hammer::OnMyBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
-	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
+	bullet = Cast<AHSW_Bullet> ( OtherActor );
 	if ( bullet )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Begin Overlap" ) );
 		bCanHanging = true;
-		Nail = bullet;
-
 	}
 }
 
 void AHSW_Hammer::OnMyBoxEndOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex )
 {
-	AHSW_Bullet* bullet = Cast<AHSW_Bullet> ( OtherActor );
 	if ( bullet )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
 		bCanHanging = false;
 
 	}
+}
+
+void AHSW_Hammer::ClickToMove ( )
+{
+	if ( bCanHanging )
+	{
+		bMoveToNail = true;
+		bCanHanging = false;
+	}
+}
+
+void AHSW_Hammer::MoveToNail ( )
+{
+	if ( bullet )
+	{
+		FVector currentLocation = this->GetActorLocation ( );
+		FVector nailLocation = bullet->GetActorLocation ( );
+		float distance = ( nailLocation - currentLocation).Size ( );
+		SetActorLocation ( FMath::Lerp ( currentLocation , nailLocation , 0.05 ) );
+		if ( distance < 100 )
+		{
+			bIsHanging = true;
+			bMoveToNail = false;
+			GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Attach!" ) );
+			MeshComp->AttachToComponent ( bullet->MeshComp , FAttachmentTransformRules::SnapToTargetNotIncludingScale , TEXT ( "AttachingPoint" ) );
+		}
+	}
+
+}
+
+
+
+void AHSW_Hammer::AttachHammerToNail ( )
+{
+
+
+
+}
+
+
+
+void AHSW_Hammer::DetachHammerFromNail ( )
+{
+	bIsHanging = false;
+	if ( bullet )
+	{
+		MeshComp->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+	}
+}
+
+void AHSW_Hammer::HammerRotation ( )
+{
+	//현재 매쉬의 위치 가져오기
+	FVector CurrentLocation = MeshComp->GetComponentLocation ( );
+
+}
+
+
+
+FVector AHSW_Hammer::GetHammerSocketLocation ( )
+{
+	FVector socketLocation = MeshComp->GetSocketLocation ( TEXT ( "PlayerAttachingPoint" ) );
+	return socketLocation;
 }

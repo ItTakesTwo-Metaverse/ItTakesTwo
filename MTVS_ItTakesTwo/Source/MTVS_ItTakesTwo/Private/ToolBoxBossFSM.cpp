@@ -5,7 +5,6 @@
 #include "../ToolboxBoss.h"
 #include "HSW_Player.h"
 #include "GameFramework/Character.h"
-#include "RightArmAnim.h"
 #include "Animation/AnimMontage.h"
 
 // Sets default values for this component's properties
@@ -15,10 +14,9 @@ UToolBoxBossFSM::UToolBoxBossFSM()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	AttackCoolDown = 3; // 예시로 5초 쿨다운 설정
+	AttackCoolDown = 3; // 예시로 3초 쿨다운 설정
 	AttackTimer = 0;
 	Attack1Duration = 15;
-	bAttack1Executed = false;
 }
 
 
@@ -53,11 +51,17 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	case EBossState::Idle:
 		IdleState( DeltaTime );
 		break;
-	case EBossState::Paused:
-		PausedState( DeltaTime );
+	case EBossState::CoolDown:
+		CoolDownState ( DeltaTime );
 		break;
 	case EBossState::Attack1:
 		Attack1State( DeltaTime );
+		break;
+	case EBossState::Paused:
+		PausedState ( DeltaTime );
+		break;
+	case EBossState::DestroyRightArm:
+		DestroyRightArmState ( DeltaTime );
 		break;
 	case EBossState::Attack2:
 		Attack2State( DeltaTime );
@@ -70,12 +74,6 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		break;
 	case EBossState::Attack5:
 		Attack5State( DeltaTime );
-		break;
-	case EBossState::CoolDown:
-		CoolDownState( DeltaTime );
-		break;
-	case EBossState::Die:
-		DieState( DeltaTime );
 		break;
 	default:
 		break;
@@ -93,34 +91,34 @@ void UToolBoxBossFSM::ChangeState(EBossState NewState)
 	switch ( NewState )
 	{
 	case EBossState::Start:
-		me->SetAnimState ( ERightAnimState::Start );
+		me->SetAnimState ( ERightArmAnimState::Start );
 		break;
 	case EBossState::Idle:
-		me->SetAnimState ( ERightAnimState::Idle );
-		break;
-	case EBossState::Paused:
-		me->SetAnimState ( ERightAnimState::Paused );
-		break;
-	case EBossState::Attack1:
-		me->SetAnimState ( ERightAnimState::Attack1 );
-		break;
-	case EBossState::Attack2:
-		me->SetAnimState ( ERightAnimState::Attack2 );
-		break;
-	case EBossState::Attack3:
-		me->SetAnimState ( ERightAnimState::Attack3 );
-		break;
-	case EBossState::Attack4:
-		me->SetAnimState ( ERightAnimState::Attack4 );
-		break;
-	case EBossState::Attack5:
-		me->SetAnimState ( ERightAnimState::Attack5 );
+		me->SetAnimState ( ERightArmAnimState::Idle );
 		break;
 	case EBossState::CoolDown:
-		me->SetAnimState ( ERightAnimState::CoolDown );
+		me->SetAnimState ( ERightArmAnimState::CoolDown );
 		break;
-	case EBossState::Die:
-		me->SetAnimState ( ERightAnimState::Die );
+	case EBossState::Attack1:
+		me->SetAnimState ( ERightArmAnimState::Attack1 );
+		break;
+	case EBossState::Paused:
+		me->SetAnimState ( ERightArmAnimState::Paused );
+		break;
+	case EBossState::DestroyRightArm:
+		me->SetAnimState ( ERightArmAnimState::DestroyRightArm );
+		break;
+	case EBossState::Attack2:
+		me->SetAnimState ( ERightArmAnimState::Attack2 );
+		break;
+	case EBossState::Attack3:
+		me->SetAnimState ( ERightArmAnimState::Attack3 );
+		break;
+	case EBossState::Attack4:
+		me->SetAnimState ( ERightArmAnimState::Attack4 );
+		break;
+	case EBossState::Attack5:
+		me->SetAnimState ( ERightArmAnimState::Attack5 );
 		break;
 	default:
 		break;
@@ -135,18 +133,54 @@ void UToolBoxBossFSM::StartState ( const float& DeltaTime )
 	FVector dir = player->GetActorLocation ( ) - me->GetActorLocation ( );
 
 	// 플레이어가 가까워지면 Attack1로 전이
-	if ( dir.Size ( ) < AttackRange /*&& !bAttack1Executed*/ )
+	if ( dir.Size ( ) < AttackRange )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "StartState >> Attack1State" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "StartState >> Attack1State" ) );
 		ChangeState ( EBossState::Attack1 );
-		//bAttack1Executed = true;
 	}
 }
 
 void UToolBoxBossFSM::IdleState( const float& DeltaTime )
 {	
 	
+}
+
+void UToolBoxBossFSM::CoolDownState ( const float& DeltaTime )
+{
+	AttackCoolDown -= DeltaTime;
+
+	if ( AttackCoolDown <= 0 )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "CoolDown >> Idle" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "CoolDown >> Idle" ) );
+		ChangeState ( EBossState::Idle );
+		AttackCoolDown = 3; // 쿨다운 시간 리셋
+		//bAttack1Executed = false; // 후에 다른 공격 허용하도록 재설정
+	}
+}
+
+void UToolBoxBossFSM::Attack1State ( const float& DeltaTime )
+{
+	if ( !player || !me ) { return; }
+
+	// Attack1 상태 10초 유지 ( 못 박을 수 있는 제한시간 )
+	AttackTimer += DeltaTime;
+	// 10초가 지나면 쿨다운 상태로 전이
+	if ( AttackTimer >= Attack1Duration )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack1State >> CoolDown" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Attack1State >> CoolDown" ) );
+		ChangeState ( EBossState::CoolDown );
+
+		AttackTimer = 0; // 공격시간 리셋
+	}
+	// 일단 ToolBoxBoss.cpp에서 구현했음
+	//// 10초가 지나기 전에 플레이어가 못으로 박스를 태그하면 일시정지 상태로 전이
+	//else if ( me->NailInteractionBox1->ComponentHasTag ( "Bullet" ) )
+	//{
+	//		ChangeState ( EBossState::Paused );
+	//}
 }
 
 void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
@@ -173,27 +207,20 @@ void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
 	//}
 }
 
-void UToolBoxBossFSM::Attack1State( const float& DeltaTime )
+void UToolBoxBossFSM::DestroyRightArmState ( const float& DeltaTime )
 {
-	if ( !player || !me ){ return; }
 
-	// Attack1 상태 10초 유지 ( 못 박을 수 있는 제한시간 )
-	AttackTimer += DeltaTime;
-	// 10초가 지나면 쿨다운 상태로 전이
-	if ( AttackTimer >= Attack1Duration )
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "DIeState" ) );
+	UE_LOG ( LogTemp , Warning , TEXT ( "DIeState" ) );
+
+	if ( !player || !me ) { return; }
+
+	// Enter ragdoll state if not already in ragdoll
+	if ( !bIsInRagdoll )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack1State >> CoolDown" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "Attack1State >> CoolDown" ) );
-		ChangeState ( EBossState::CoolDown );
-
-		AttackTimer = 0; // 공격시간 리셋
+		me->EnterRagdollState ( );
+		bIsInRagdoll = true;
 	}
-	// 일단 ToolBoxBoss.cpp에서 구현했음
-	//// 10초가 지나기 전에 플레이어가 못으로 박스를 태그하면 일시정지 상태로 전이
-	//else if ( me->NailInteractionBox1->ComponentHasTag ( "Bullet" ) )
-	//{
-	//		ChangeState ( EBossState::Paused );
-	//}
 }
 
 void UToolBoxBossFSM::Attack2State( const float& DeltaTime )
@@ -216,54 +243,21 @@ void UToolBoxBossFSM::Attack5State( const float& DeltaTime )
 	
 }
 
-void UToolBoxBossFSM::CoolDownState( const float& DeltaTime )
-{
-	AttackCoolDown -= DeltaTime;
-
-	if ( AttackCoolDown <= 0 )
-	{	
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "CoolDown >> Idle" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "CoolDown >> Idle" ) );
-		ChangeState ( EBossState::Idle );
-		AttackCoolDown = 3; // 쿨다운 시간 리셋
-		//bAttack1Executed = false; // 후에 다른 공격 허용하도록 재설정
-	}
-}
-
-
-void UToolBoxBossFSM::DieState( const float& DeltaTime )
-{
-
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "DIeState" ) );
-	UE_LOG ( LogTemp , Warning , TEXT ( "DIeState" ) );
-
-	if ( !player || !me ) { return; }
-
-	// Enter ragdoll state if not already in ragdoll
-	if ( !bIsInRagdoll )
-	{
-		me->EnterRagdollState ( );
-		bIsInRagdoll = true;
-	}
-	
-}
-
 
 void UToolBoxBossFSM::OnMyTakeDamage ( float damage )
 {
-	// 플레이어의 망치에 맞으면 체력을 1 감소시키고 싶다.
+	// 플레이어의 망치에 맞으면 자물쇠HP를 1 감소시키고 싶다.
 	GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Lock Damage" ) );
 	UE_LOG ( LogTemp , Warning , TEXT ( "Lock Damage" ) );
-	me->MaxHP -= damage;
-
-	// 프로토용
+	me->LockHP -= damage;
+	
 	// 현재 체력이 0이라면
-	if ( me->MaxHP <= 0 )
+	if ( me->LockHP <= 0 )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "HP = 0 PausedState >> DieState" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "HP = 0 PausedState >> DieState" ) );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "HP = 0 PausedState >> DestroyRightArmState" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "HP = 0 PausedState >> DestroyRightArmState" ) );
 
 		// 죽음 상태로 전이
-		ChangeState ( EBossState::Die );
+		ChangeState ( EBossState::DestroyRightArm );
 	}
 }

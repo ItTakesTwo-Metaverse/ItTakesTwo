@@ -7,7 +7,6 @@
 #include "Components/SceneComponent.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
-#include "RightArmAnim.h"
 #include "Components/ActorComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Components/StaticMeshComponent.h"
@@ -23,7 +22,7 @@ AToolboxBoss::AToolboxBoss()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// 보스 몸체
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BossMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_boss_body.SKM_boss_body'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BossMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/SKM_boss_fin_body.SKM_boss_fin_body'"));
 	if (BossMeshAsset.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(BossMeshAsset.Object);
@@ -34,7 +33,7 @@ AToolboxBoss::AToolboxBoss()
 
 	// 보스 왼팔
 	LeftArmMesh = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "LeftArmMesh" ) );
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LeftArmMeshAsset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_boss_left_arm.SKM_boss_left_arm'" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LeftArmMeshAsset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/SKM_boss_fin_left_arm.SKM_boss_fin_left_arm'" ) );
 	if ( LeftArmMeshAsset.Succeeded ( ) )
 	{
 		LeftArmMesh->SetSkeletalMesh ( LeftArmMeshAsset.Object );
@@ -44,7 +43,7 @@ AToolboxBoss::AToolboxBoss()
 
 	// 보스 오른팔
 	RightArmMesh = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "RightArmMesh" ) );
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/Meshes/SKM_boss_right_arm.SKM_boss_right_arm'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> RightArmMeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/SKM_boss_fin_right_arm.SKM_boss_fin_right_arm'"));
 	if (RightArmMeshAsset.Succeeded())
 	{
 		RightArmMesh->SetSkeletalMesh(RightArmMeshAsset.Object);
@@ -61,7 +60,7 @@ AToolboxBoss::AToolboxBoss()
 	{
 		NailInteractionBox1->SetStaticMesh( NailInteractionBox1Asset.Object);
 		NailInteractionBox1->SetupAttachment(RightArmMesh, TEXT("joint7" ) );
-		NailInteractionBox1->SetRelativeLocation(FVector(-650,0,0));
+		NailInteractionBox1->SetRelativeLocation(FVector(-690 ,-10, 10 )); 
 		NailInteractionBox1->SetRelativeScale3D(FVector(1,0.3,1));
 		NailInteractionBox1->SetGenerateOverlapEvents ( true );
 		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
@@ -74,8 +73,8 @@ AToolboxBoss::AToolboxBoss()
 	{
 		NailInteractionBox2->SetStaticMesh ( NailInteractionBox2Asset.Object );
 		NailInteractionBox2->SetupAttachment ( RightArmMesh , TEXT ( "joint5" ) );
-		NailInteractionBox2->SetRelativeLocationAndRotation ( FVector ( 240 , 0 , 5 ), FRotator(-3,0,90) );
-		NailInteractionBox2->SetRelativeScale3D ( FVector ( 2 , 0.3 , 2 ) );
+		NailInteractionBox2->SetRelativeLocationAndRotation ( FVector ( -20 , 10 , 45 ), FRotator(-5,0,90) );
+		NailInteractionBox2->SetRelativeScale3D ( FVector ( 1.5 , 0.3 , 1.5 ) );
 	}
 
 	// 못 상호작용 박스3
@@ -84,9 +83,9 @@ AToolboxBoss::AToolboxBoss()
 	if ( NailInteractionBox3Asset.Succeeded ( ) )
 	{
 		NailInteractionBox3->SetStaticMesh ( NailInteractionBox3Asset.Object );
-		NailInteractionBox3->SetupAttachment ( RightArmMesh , TEXT ( "joint4" ) );
-		NailInteractionBox3->SetRelativeLocationAndRotation ( FVector ( 0 , -3 ,35 ) , FRotator ( 0 , -8 , 90 ) );
-		NailInteractionBox3->SetRelativeScale3D ( FVector ( 2 , 0.3 , 2 ) );
+		NailInteractionBox3->SetupAttachment ( RightArmMesh , TEXT ( "joint4" ) ); 
+		NailInteractionBox3->SetRelativeLocationAndRotation ( FVector ( -210 , 0 , 90 ) , FRotator ( -15 , 0 , 90 ) );
+		NailInteractionBox3->SetRelativeScale3D ( FVector ( 1.5 , 0.3 , 1.5 ) );
 	}
 
 	// 자물쇠1
@@ -101,15 +100,15 @@ AToolboxBoss::AToolboxBoss()
 		Lock1->SetCollisionProfileName ( TEXT ( "Lock" ) );
 	}
 
-	//// 자물쇠2
-	//Lock2 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "Lock2" ) );
-	//static ConstructorHelpers::FObjectFinder<UStaticMesh> Lock2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
-	//if ( Lock2Asset.Succeeded ( ) )
-	//{
-	//	Lock2->SetStaticMesh ( Lock2Asset.Object );
-	//	Lock2->SetupAttachment ( GetMesh ( ) );
-	//	Lock2->SetRelativeLocation ( FVector ( -430 , 560 , -370 ) );
-	//}
+	// 자물쇠2
+	Lock2 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "Lock2" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> Lock2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	if ( Lock2Asset.Succeeded ( ) )
+	{
+		Lock2->SetStaticMesh ( Lock2Asset.Object );
+		Lock2->SetupAttachment ( GetMesh ( ) );
+		Lock2->SetRelativeLocation ( FVector ( -430 , 560 , -370 ) );
+	}
 
 	// 오른팔 충돌
 	RightArmMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
@@ -120,7 +119,7 @@ AToolboxBoss::AToolboxBoss()
 	
 
 	// 오른팔 애니메이션 블루프린트 할당
-	ConstructorHelpers::FClassFinder<UAnimInstance> RightArmAttackClass(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Animation/ABP_RightArm.ABP_RightArm_C'"));
+	ConstructorHelpers::FClassFinder<UAnimInstance> RightArmAttackClass(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Anim/ABP_RightArmAnim.ABP_RightArmAnim_C'"));
 	if ( RightArmAttackClass.Succeeded ( ) )
 	{
 		RightArmMesh->SetAnimInstanceClass(RightArmAttackClass.Class);
@@ -236,9 +235,9 @@ void AToolboxBoss::EnterRagdollState ( )
 	//}
 }
 
-void AToolboxBoss::SetAnimState ( ERightAnimState NewState )
+void AToolboxBoss::SetAnimState ( ERightArmAnimState NewState )
 {	
-	RightArmAnimInstance = Cast<URightArmAnim> ( RightArmMesh->GetAnimInstance ( ) );
+	RightArmAnimInstance = Cast<URightArmAnimInstance> ( RightArmMesh->GetAnimInstance ( ) );
 	if ( RightArmAnimInstance )
 	{
 		RightArmAnimInstance->SetAnimState(NewState);
