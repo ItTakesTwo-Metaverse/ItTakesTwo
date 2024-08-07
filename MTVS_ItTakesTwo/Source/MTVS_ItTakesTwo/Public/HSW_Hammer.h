@@ -61,7 +61,7 @@ public:
 	void DetachHammerFromNail ( );
 
 	UFUNCTION (  )
-	void HammerRotation ( );
+	void HammerRotation ( float DeltaTime);
 
 	UFUNCTION ( )
 	void MoveToNail ( );
@@ -69,7 +69,10 @@ public:
 	UFUNCTION ( BlueprintCallable )
 	void ClickToMove ( );
 
-
 	UFUNCTION ( )
 	FVector GetHammerSocketLocation ( );
+
+	float Amplitude = 60;
+	float Frequency = 0.7;
+	float CurrentTime = 0;
 };

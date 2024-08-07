@@ -52,8 +52,8 @@ void AHSW_Hammer::Tick(float DeltaTime)
 	else if ( bIsHanging )
 	{
 	//계속해서 진자운동 하고싶다.
-		//HammerRotation();
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Rotating" ) );
+		HammerRotation( DeltaTime );
+		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Rotating" ) );
 	}
 
 }
@@ -104,8 +104,8 @@ void AHSW_Hammer::MoveToNail ( )
 		FVector currentLocation = this->GetActorLocation ( );
 		FVector nailLocation = bullet->GetActorLocation ( );
 		float distance = ( nailLocation - currentLocation).Size ( );
-		SetActorLocation ( FMath::Lerp ( currentLocation , nailLocation , 0.05 ) );
-		if ( distance < 100 )
+		SetActorLocation ( FMath::Lerp ( currentLocation , nailLocation , 0.1 ) );
+		if ( distance < 200 )
 		{
 			bIsHanging = true;
 			bMoveToNail = false;
@@ -136,11 +136,15 @@ void AHSW_Hammer::DetachHammerFromNail ( )
 	}
 }
 
-void AHSW_Hammer::HammerRotation ( )
+void AHSW_Hammer::HammerRotation (float DeltaTime )
 {
 	//현재 매쉬의 위치 가져오기
-	FVector CurrentLocation = MeshComp->GetComponentLocation ( );
+	//FVector CurrentLocation = MeshComp->GetComponentLocation ( );
+	CurrentTime += DeltaTime;
+	float Angle = Amplitude * FMath::Sin ( CurrentTime * Frequency * 2.0f * PI );
 
+	FRotator newRotation = FRotator( 0.0f , 0.0f , Angle);
+	MeshComp->SetRelativeRotation ( newRotation );
 }
 
 

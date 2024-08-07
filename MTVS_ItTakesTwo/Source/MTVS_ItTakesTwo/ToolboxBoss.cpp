@@ -7,7 +7,7 @@
 #include "Components/SceneComponent.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
-#include "RightArmAnim.h"
+//#include "RightArmAnim.h"
 #include "Components/ActorComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Components/StaticMeshComponent.h"
