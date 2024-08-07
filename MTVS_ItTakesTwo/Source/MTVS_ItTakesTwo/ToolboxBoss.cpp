@@ -5,13 +5,14 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "ToolBoxBossFSM.h"
 #include "Components/SceneComponent.h"
-#include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 #include "Components/ActorComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Components/StaticMeshComponent.h"
 #include "HSW_Hammer.h"
 #include "HSW_Bullet.h"
+#include "CSR_Player_Cody.h"
+#include "CSR_Player_May.h"
 
 
 
@@ -108,6 +109,8 @@ AToolboxBoss::AToolboxBoss()
 		Lock2->SetStaticMesh ( Lock2Asset.Object );
 		Lock2->SetupAttachment ( GetMesh ( ) );
 		Lock2->SetRelativeLocation ( FVector ( -430 , 560 , -370 ) );
+		Lock1->SetGenerateOverlapEvents ( true );
+		Lock1->SetCollisionProfileName ( TEXT ( "Lock" ) );
 	}
 
 	// 오른팔 충돌
@@ -119,10 +122,10 @@ AToolboxBoss::AToolboxBoss()
 	
 
 	// 오른팔 애니메이션 블루프린트 할당
-	ConstructorHelpers::FClassFinder<UAnimInstance> RightArmAttackClass(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Anim/ABP_RightArmAnim.ABP_RightArmAnim_C'"));
-	if ( RightArmAttackClass.Succeeded ( ) )
+	ConstructorHelpers::FClassFinder<UAnimInstance> TempRightArmAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Anim/ABP_RightArm.ABP_RightArm'_C'"));
+	if ( TempRightArmAnim.Succeeded ( ) )
 	{
-		RightArmMesh->SetAnimInstanceClass(RightArmAttackClass.Class);
+		RightArmMesh->SetAnimInstanceClass( TempRightArmAnim.Class);
 	}
 
 	// FSM 컴포넌트 추가
@@ -153,8 +156,9 @@ void AToolboxBoss::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	
 	// 플레이어와 충돌했을 때 플레이어 파괴
-	if ( OtherActor->IsA<ACharacter>() )
+	if ( OtherActor->IsA<ACSR_Player_Cody>() && OtherActor->IsA<ACSR_Player_May> ( ) )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Destroy Player" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "Destroy Player" ) );
@@ -222,10 +226,10 @@ void AToolboxBoss::EnterRagdollState ( )
 		GetMesh ( )->bBlendPhysics = true;
 		
 
-		LeftArmMesh->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+		/*LeftArmMesh->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 		LeftArmMesh->SetSimulatePhysics ( true );
 		LeftArmMesh->WakeAllRigidBodies ( );
-		LeftArmMesh->bBlendPhysics = true;
+		LeftArmMesh->bBlendPhysics = true;*/
 
 		RightArmMesh->SetSimulatePhysics ( true );
 		RightArmMesh->WakeAllRigidBodies ( );

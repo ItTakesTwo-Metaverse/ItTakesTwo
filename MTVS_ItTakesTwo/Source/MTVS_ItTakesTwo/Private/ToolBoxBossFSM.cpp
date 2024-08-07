@@ -5,7 +5,7 @@
 #include "../ToolboxBoss.h"
 #include "HSW_Player.h"
 #include "GameFramework/Character.h"
-#include "Animation/AnimMontage.h"
+#include "RightArmAnimInstance.h"
 
 // Sets default values for this component's properties
 UToolBoxBossFSM::UToolBoxBossFSM()
@@ -210,8 +210,8 @@ void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
 void UToolBoxBossFSM::DestroyRightArmState ( const float& DeltaTime )
 {
 
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "DIeState" ) );
-	UE_LOG ( LogTemp , Warning , TEXT ( "DIeState" ) );
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroy Right Arm State" ) );
+	UE_LOG ( LogTemp , Warning , TEXT ( "Destroy Right Arm State" ) );
 
 	if ( !player || !me ) { return; }
 
