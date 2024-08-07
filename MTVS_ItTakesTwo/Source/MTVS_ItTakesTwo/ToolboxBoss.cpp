@@ -56,7 +56,7 @@ AToolboxBoss::AToolboxBoss()
 
 	// 못 상호작용 박스1
 	NailInteractionBox1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("NailInterationBox1" ));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox1Asset(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox1Asset(TEXT("/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/target/Target1.Target1'" ) );
 	if ( NailInteractionBox1Asset.Succeeded ( ) )
 	{
 		NailInteractionBox1->SetStaticMesh( NailInteractionBox1Asset.Object);
@@ -69,7 +69,7 @@ AToolboxBoss::AToolboxBoss()
 
 	// 못 상호작용 박스2
 	NailInteractionBox2 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "NailInterationBox2" ) );
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/target/target2.target2'" ) );
 	if ( NailInteractionBox2Asset.Succeeded ( ) )
 	{
 		NailInteractionBox2->SetStaticMesh ( NailInteractionBox2Asset.Object );
@@ -80,7 +80,7 @@ AToolboxBoss::AToolboxBoss()
 
 	// 못 상호작용 박스3
 	NailInteractionBox3 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "NailInterationBox3" ) );
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox3Asset ( TEXT ( "/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox3Asset ( TEXT ( "/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/target/Target3.Target3'" ) );
 	if ( NailInteractionBox3Asset.Succeeded ( ) )
 	{
 		NailInteractionBox3->SetStaticMesh ( NailInteractionBox3Asset.Object );
