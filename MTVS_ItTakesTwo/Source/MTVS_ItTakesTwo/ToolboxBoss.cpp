@@ -12,7 +12,6 @@
 #include "HSW_Hammer.h"
 #include "HSW_Bullet.h"
 #include "GameFramework/Character.h"
-#include "ProceduralMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -61,8 +60,8 @@ AToolboxBoss::AToolboxBoss()
 	if ( NailInteractionBox1Asset.Succeeded ( ) )
 	{
 		NailInteractionBox1->SetStaticMesh( NailInteractionBox1Asset.Object);
-		NailInteractionBox1->SetupAttachment(RightArmMesh, TEXT("joint7" ) );
-		NailInteractionBox1->SetRelativeLocation(FVector( -3158 , -521 , 381 )); 
+		NailInteractionBox1->SetupAttachment(RightArmMesh, TEXT("joint5" ) );
+		NailInteractionBox1->SetRelativeLocation(FVector( -1190 , -502 , 392 )); 
 		NailInteractionBox1->SetGenerateOverlapEvents ( true );
 		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
@@ -141,13 +140,8 @@ AToolboxBoss::AToolboxBoss()
 		Drill->SetVisibility ( false );
 	}
 	
-
-	FloorMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("FloorMesh" ));
-
 	DrillAttackDuration = 2.0f;
 	DrillDamage = 50.0f;
-
-
 
 
 	// 오른팔 충돌
@@ -207,7 +201,6 @@ void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent
 void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
 	// 플레이어의 못이 보스의 오른팔 상호작용 박스에 충돌했을 때 보스 일시정지 상태로 전이
-
 	if ( OtherActor)
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Bullet Collision NailInteractionBox" ) );
@@ -220,21 +213,6 @@ void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* Ove
 			fsm->ChangeState ( EBossState::Paused );
 		}
 	}
-
-
-
-	/*if ( OtherActor->ActorHasTag ( "Bullet" ) )
-	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Bullet Has Tag NailInteractionBox" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "Bullet Has Tag NailInteractionBox" ) );
-
-		if ( fsm->CurrentState == EBossState::Attack1 )
-		{
-			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Attck1 >> Paused" ) );
-			UE_LOG ( LogTemp , Warning , TEXT ( "Attck1 >> Paused" ) );
-			fsm->ChangeState(EBossState::Paused);
-		}
-	}*/
 }
 
 void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
@@ -269,88 +247,40 @@ void AToolboxBoss::OnMyTakeDamage ( float damage )
 
 void AToolboxBoss::EnterRagdollState ( )
 {	
-	/*USkeletalMeshComponent* BodyComp = GetMesh ( );
-	USkeletalMeshComponent* LeftArmComp = LeftArmMesh;
-	USkeletalMeshComponent* RightArmComp = RightArmMesh;*/
-	//if ( BodyComp && LeftArmComp && RightArmComp )
-	//{
-		GetMesh ( )->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
-		GetMesh ( )->SetSimulatePhysics(true);
-		GetMesh ( )->WakeAllRigidBodies ( );
-		GetMesh ( )->bBlendPhysics = true;
-		
-
-		/*LeftArmMesh->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
-		LeftArmMesh->SetSimulatePhysics ( true );
-		LeftArmMesh->WakeAllRigidBodies ( );
-		LeftArmMesh->bBlendPhysics = true;*/
-
+	if ( RightArmMesh )
+	{
 		RightArmMesh->SetSimulatePhysics ( true );
 		RightArmMesh->WakeAllRigidBodies ( );
 		RightArmMesh->bBlendPhysics = true;
-		
-
-	//}
+	}
 }
 
 // Function to start the drill attack
 void AToolboxBoss::StartDrillAttack ( )
 {
-	//PlayAnimMontage ( DrillAttackMontage );
+	//PlayAnimMontage ( Attack2Drill1Montage );
 	
 	 // 드릴 공격 지속시간을 처리하는 타이머 시작
 	GetWorld()->GetTimerManager().SetTimer(DrillAttackTimerHandle, this, &AToolboxBoss::DrillHitGround, DrillAttackDuration, false );
 }
 
-// 바닥에 부딪힐 때 드릴 공격 처리
+// 드릴이 바닥에 닿을 때 HoleMesh 스폰해주기
 void AToolboxBoss::DrillHitGround ( )
 {
-	ApplyDrillDamageAndCreateHole ( );
-
-	// 베타 때 이펙트, 사운드 추가
+	
+	// Optionally, hide or remove the original floor mesh
 }
 
-// 드릴 데미지 처리 및 구멍 뚫기
-void AToolboxBoss::ApplyDrillDamageAndCreateHole ( )
+void AToolboxBoss::SpawnHoleMesh ( const FVector& Location , const FRotator& Rotation )
 {
-	// 드릴 위치 및 트레이스 방향 정해주기
-	FVector DrillLocation = Drill->GetComponentLocation ( );
-	FVector DrillEnd = DrillLocation - FVector ( 0 , 0 , 100 ); // 트레이스 방향 아래로
-
-	// 라인트레이스 히트 위치 찾기
-	FHitResult HitResult;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor ( this );
-
-	if ( GetWorld ( )->LineTraceSingleByChannel ( HitResult , DrillLocation , DrillEnd , ECC_Visibility , Params ) )
+	if ( HoleMeshClass )
 	{
-		FVector HitLocation = HitResult.Location;
-
-		// 히트 위치에 구멍을 만들고 싶다.
-		// 이것은 단순화된 예입니다. 구멍이 있는 프로시저 메쉬를 업데이트해야 합니다.
-		// 메쉬 수정을 처리하려면 더 복잡한 논리가 필요합니다.
-
-		// Example: 주변 액터들에게 데미지처리
-		float DrillRadius = 200.0f;
-		TArray<AActor*> OverlappingActors;
-		UGameplayStatics::GetAllActorsOfClass ( GetWorld ( ) , ACharacter::StaticClass ( ) , OverlappingActors );
-
-		for ( AActor* Actor : OverlappingActors )
-		{
-			if ( Actor && (Actor != this) && (Actor->GetDistanceTo ( this ) <= DrillRadius) )
-			{
-				UGameplayStatics::ApplyDamage ( Actor , DrillDamage , GetController ( ) , this , UDamageType::StaticClass ( ) );
-			}
-		}
-
-		// 예: 프로시저 메쉬 업데이트
-		// 이를 위해서는 메쉬 구조와 구멍을 생성하는 방법에 따라 보다 구체적인 코드가 필요합니다.
-		// 여기서는 단순성을 위해 히트 위치를 기록합니다.
-		UE_LOG ( LogTemp , Warning , TEXT ( "Drill hit at: %s" ) , *HitLocation.ToString ( ) );
-
-		// TODO: 여기에 절차 메쉬 수정 코드를 추가합니다
+		// Spawn the hole mesh at the given location and rotation
+		GetWorld ( )->SpawnActor<AActor> ( HoleMeshClass , Location , Rotation );
 	}
 }
+
+
 
 void AToolboxBoss::SetAnimState ( ERightArmAnimState NewState )
 {	

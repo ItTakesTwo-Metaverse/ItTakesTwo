@@ -64,7 +64,7 @@ public:
 	float DrillDamage;
 
 	UPROPERTY(EditDefaultsOnly )
-	class UProceduralMeshComponent* FloorMesh;
+	TSubclassOf<AActor> HoleMeshClass;
 
 
 	// 보스 오른팔 충돌했을 때 플레이어 파괴
@@ -88,7 +88,7 @@ public:
 
 	void DrillHitGround( );
 
-	void ApplyDrillDamageAndCreateHole( );
+	void SpawnHoleMesh ( const FVector& Location , const FRotator& Rotation);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UToolBoxBossFSM* fsm;
