@@ -28,7 +28,6 @@ AToolboxBoss::AToolboxBoss()
 	{
 		GetMesh()->SetSkeletalMesh(BossMeshAsset.Object);
 		GetMesh ( )->SetupAttachment ( RootComponent );
-		GetMesh ( )->SetRelativeLocation ( FVector ( 0 , 0 , 1000 ));
 		
 	}
 
@@ -60,8 +59,8 @@ AToolboxBoss::AToolboxBoss()
 	if ( NailInteractionBox1Asset.Succeeded ( ) )
 	{
 		NailInteractionBox1->SetStaticMesh( NailInteractionBox1Asset.Object);
-		NailInteractionBox1->SetupAttachment(RightArmMesh, TEXT("joint5" ) );
-		NailInteractionBox1->SetRelativeLocation(FVector( -1190 , -502 , 392 )); 
+		NailInteractionBox1->SetupAttachment(RightArmMesh, TEXT("joint20" ) );
+		NailInteractionBox1->SetRelativeLocation(FVector( -2546 , -523 , 386 )); 
 		NailInteractionBox1->SetGenerateOverlapEvents ( true );
 		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
@@ -131,19 +130,15 @@ AToolboxBoss::AToolboxBoss()
 	}
 
 	Drill = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Drill" ) );
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> DrillAsset ( TEXT ( "/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/drill/drill.drill'" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> DrillAsset ( TEXT ( "//Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/drill/drill_DRILL.drill_DRILL'" ) );
 	if( DrillAsset .Succeeded())
 	{
 		Drill->SetStaticMesh ( DrillAsset.Object );
-		Drill->SetupAttachment( RightArmMesh , TEXT ( "joint8" ) ); 
-		Drill->SetRelativeLocation ( FVector ( 823 , -511 , 150 ) );
-		Drill->SetVisibility ( false );
+		Drill->SetupAttachment( RightArmMesh , TEXT ( "joint8" ) );
+		Drill->SetRelativeLocation ( FVector ( 390 , -520 , 550 ) );
+		//Drill->SetVisibility ( false );
 	}
 	
-	DrillAttackDuration = 2.0f;
-	DrillDamage = 50.0f;
-
-
 	// 오른팔 충돌
 	RightArmMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
 	// 못 상호작용 박스 충돌
@@ -254,32 +249,6 @@ void AToolboxBoss::EnterRagdollState ( )
 		RightArmMesh->bBlendPhysics = true;
 	}
 }
-
-// Function to start the drill attack
-void AToolboxBoss::StartDrillAttack ( )
-{
-	//PlayAnimMontage ( Attack2Drill1Montage );
-	
-	 // 드릴 공격 지속시간을 처리하는 타이머 시작
-	GetWorld()->GetTimerManager().SetTimer(DrillAttackTimerHandle, this, &AToolboxBoss::DrillHitGround, DrillAttackDuration, false );
-}
-
-// 드릴이 바닥에 닿을 때 HoleMesh 스폰해주기
-void AToolboxBoss::DrillHitGround ( )
-{
-	
-	// Optionally, hide or remove the original floor mesh
-}
-
-void AToolboxBoss::SpawnHoleMesh ( const FVector& Location , const FRotator& Rotation )
-{
-	if ( HoleMeshClass )
-	{
-		// Spawn the hole mesh at the given location and rotation
-		GetWorld ( )->SpawnActor<AActor> ( HoleMeshClass , Location , Rotation );
-	}
-}
-
 
 
 void AToolboxBoss::SetAnimState ( ERightArmAnimState NewState )

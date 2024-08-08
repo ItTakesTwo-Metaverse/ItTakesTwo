@@ -53,18 +53,18 @@ public:
 
 	UPROPERTY(EditDefaultsOnly )
 	class UStaticMeshComponent* Drill;
+	
+	UPROPERTY(EditDefaultsOnly )
+	class UStaticMeshComponent* DrillCircle;
+	
+	UPROPERTY(EditDefaultsOnly )
+	class UStaticMeshComponent* DrillArm1;
+	
+	UPROPERTY(EditDefaultsOnly )
+	class UStaticMeshComponent* DrillArm2;
 
 	UPROPERTY( EditDefaultsOnly )
 	float LockHP = 10;
-
-	FTimerHandle DrillAttackTimerHandle;
-
-	float DrillAttackDuration;
-
-	float DrillDamage;
-
-	UPROPERTY(EditDefaultsOnly )
-	TSubclassOf<AActor> HoleMeshClass;
 
 
 	// 보스 오른팔 충돌했을 때 플레이어 파괴
@@ -83,12 +83,6 @@ public:
 	void OnMyTakeDamage ( float damage = 1 );
 
 	void EnterRagdollState( );
-
-	void StartDrillAttack( );
-
-	void DrillHitGround( );
-
-	void SpawnHoleMesh ( const FVector& Location , const FRotator& Rotation);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UToolBoxBossFSM* fsm;
