@@ -75,7 +75,7 @@ public:
 	UFUNCTION ( )
 	FVector GetHammerSocketLocation ( );
 
-	float Amplitude = 60;
+	float Amplitude = -90;
 	float Frequency = 0.7;
 	float CurrentTime = 0;
 };

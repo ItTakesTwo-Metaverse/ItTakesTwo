@@ -87,7 +87,7 @@ void AHSW_Hammer::OnMyBoxEndOverlap ( UPrimitiveComponent* OverlappedComponent ,
 {
 	bCanHanging = false;
 	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
-	if ( bMoveToNail == false)
+	if ( (bMoveToNail == true && bIsHanging == false) || (bMoveToNail == false && bIsHanging == true) )
 	{
 		bullet = nullptr;
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "bullet null" ) );
@@ -124,7 +124,17 @@ void AHSW_Hammer::MoveToNail ( float deltatime)
 			bIsHanging = true;
 			bMoveToNail = false;
 			GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Attach!" ) );
-			MeshComp->AttachToComponent ( bullet->MeshComp , FAttachmentTransformRules::SnapToTargetNotIncludingScale , TEXT ( "AttachingPoint" ) );
+
+			//소켓의 위치와 회전을 가져온다.
+			FTransform SocketTransform = bullet->MeshComp->GetSocketTransform ( TEXT ( "AttachingPoint" ) );
+
+			//this->AttachToActor( bullet, FAttachmentTransformRules::SnapToTargetNotIncludingScale , TEXT ( "AttachingPoint" ) );
+			this->AttachToActor( bullet, FAttachmentTransformRules::SnapToTargetIncludingScale );
+
+			this->SetActorLocation ( SocketTransform.GetLocation ( ) );
+			this->SetActorRotation ( SocketTransform.GetRotation());
+
+
 		}
 	}
 	else
@@ -168,8 +178,8 @@ void AHSW_Hammer::HammerRotation (float DeltaTime )
 	float Angle = Amplitude * FMath::Sin ( CurrentTime * Frequency * 2.0f * PI );
 
 	FRotator newRotation = FRotator( 0.0f , 0.0f , Angle);
-	MeshComp->SetRelativeRotation ( newRotation );
-
+	this->SetActorRelativeRotation ( newRotation );
+	//MeshComp->SetRelativeRotation ( newRotation );
 }
 
 
