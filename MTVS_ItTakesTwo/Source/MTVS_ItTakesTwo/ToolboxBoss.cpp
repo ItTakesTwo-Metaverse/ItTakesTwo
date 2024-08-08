@@ -147,7 +147,7 @@ AToolboxBoss::AToolboxBoss()
 		DrillCircle->SetSkeletalMesh ( DrillCircleAsset.Object );
 		DrillCircle->SetupAttachment ( Drill );
 		DrillCircle->SetRelativeLocation ( FVector ( -18 , 380 , 0 ) );
-		DrillArm1->SetVisibility ( false );
+		DrillCircle->SetVisibility ( false );
 	}
 
 	DrillArm1 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "DrillArm1" ) );
