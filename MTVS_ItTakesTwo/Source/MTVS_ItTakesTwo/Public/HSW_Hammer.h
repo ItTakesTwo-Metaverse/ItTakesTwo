@@ -28,6 +28,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite )
 	class UStaticMeshComponent* MeshComp;
+
+	UPROPERTY( )
+	class AHSW_Player_May* may;
 	
 	//UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	//class USkeletalMeshComponent* HammerMesh;
@@ -45,7 +48,7 @@ public:
 
 	UPROPERTY ()
 	class AHSW_Bullet* Nail;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite )
 	bool bMoveToNail;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite )
 	bool bCanHanging;

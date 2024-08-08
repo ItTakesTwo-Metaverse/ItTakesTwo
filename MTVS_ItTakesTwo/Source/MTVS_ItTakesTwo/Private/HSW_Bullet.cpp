@@ -54,7 +54,7 @@ void AHSW_Bullet::BeginPlay()
 
 	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
 	StartPoint = player->GetActorLocation ( );
-	EndPoint = StartPoint + FVector ( 0 , -100000 , 0 );
+	EndPoint = StartPoint + FVector ( 100000 , 0 , 0 );
 
 
 	//NailHomingTargetComponent = player->GetComponentByClass<USceneComponent> ( );
@@ -86,11 +86,11 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "CollisionHit" ) );
 		SetState(ENailState::EMBEDDED);
 	}
-	//if ( OtherActor->ActorHasTag ( TEXT ( "Wall1" ) ) )
-	//{
+	else if ( OtherActor->ActorHasTag ( TEXT ( "Wall1" ) ) )
+	{
 	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "Wall1" ) );
-	//	SetState ( ENailState::EMBEDDED );
-	//}
+		SetState ( ENailState::EMBEDDED );
+	}
 	//else if ( OtherActor->ActorHasTag ( TEXT ( "Wall2" ) ) )
 	//{
 	//	State = ENailState::UNEMBEDDED;
@@ -114,8 +114,7 @@ void AHSW_Bullet::TickBasic ( const float& DeltaTime )
 	// -> Embedded 상태로 변경.
 	// 못이 벽에 박히지 못했다면
 	// -> Unembedded 상태로 변경.
-
-	//SetState ( ENailState::SHOOT );
+	SetState ( ENailState::SHOOT );
 }
 
 void AHSW_Bullet::TickShoot ( const float& DeltaTime )

@@ -4,6 +4,8 @@
 #include "HSW_Hammer.h"
 #include "Components/BoxComponent.h"
 #include "../Public/HSW_Bullet.h"
+#include "HSW_Player_May.h"
+#include "Components/SceneComponent.h"
 
 // Sets default values
 AHSW_Hammer::AHSW_Hammer()
@@ -37,6 +39,8 @@ void AHSW_Hammer::BeginPlay()
 	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Hammer::OnMyBoxHit );
 	BoxComp->OnComponentBeginOverlap.AddDynamic ( this , &AHSW_Hammer::OnMyBoxBeginOverlap );
 	BoxComp->OnComponentEndOverlap.AddDynamic ( this , &AHSW_Hammer::OnMyBoxEndOverlap );
+
+	may = Cast<AHSW_Player_May>(GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( ));
 }
 
 // Called every frame
@@ -70,21 +74,23 @@ void AHSW_Hammer::OnMyBoxHit ( UPrimitiveComponent* HitComponent , AActor* Other
 
 void AHSW_Hammer::OnMyBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
+	bCanHanging = true;
 	bullet = Cast<AHSW_Bullet> ( OtherActor );
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Begin Overlap" ) );
 	if ( bullet )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Begin Overlap" ) );
-		bCanHanging = true;
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "bullet exist" ) );
 	}
 }
 
 void AHSW_Hammer::OnMyBoxEndOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex )
 {
-	if ( bullet )
+	bCanHanging = false;
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
+	if ( bMoveToNail == false)
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
-		bCanHanging = false;
-
+		bullet = nullptr;
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "bullet null" ) );
 	}
 }
 
@@ -99,21 +105,31 @@ void AHSW_Hammer::ClickToMove ( )
 
 void AHSW_Hammer::MoveToNail ( float deltatime)
 {
+	
 	if ( bullet )
 	{
+		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , FString::Printf ( TEXT ( "invoke" ) ) );
 		FVector currentLocation = this->GetActorLocation ( );
 		FVector nailLocation = bullet->GetActorLocation ( );
+		FString testString = FString::Printf ( TEXT ( "%f, %f, %f" ) , nailLocation.X , nailLocation.Y , nailLocation.Z );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , testString);
 		float distance = ( nailLocation - currentLocation).Size ( );
 		FVector dir = (nailLocation-currentLocation).GetSafeNormal();
-		SetActorLocation ( FMath::Lerp ( currentLocation , nailLocation , 0.1f ));
+		SetActorLocation ( FMath::Lerp ( currentLocation , nailLocation , 0.05f ));
 		//SetActorLocation ( currentLocation + dir * 500.f * deltatime );
-		if ( distance < 200 )
+
+		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , FString::Printf(TEXT ( "%f" ),distance ));
+		if ( distance < 150 )
 		{
 			bIsHanging = true;
 			bMoveToNail = false;
 			GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Attach!" ) );
 			MeshComp->AttachToComponent ( bullet->MeshComp , FAttachmentTransformRules::SnapToTargetNotIncludingScale , TEXT ( "AttachingPoint" ) );
 		}
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "nullnull" ) );
 	}
 }
 
@@ -134,6 +150,13 @@ void AHSW_Hammer::DetachHammerFromNail ( )
 	if ( bullet )
 	{
 		MeshComp->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+		auto* otherSceneComp = may->GetComponentByClass<USceneComponent> ( );
+		SetActorLocation ( otherSceneComp->GetComponentLocation ( ) );
+
+		FString testString = FString::Printf ( TEXT ( "%f, %f, %f" ) , otherSceneComp->GetComponentLocation ( ).X , otherSceneComp->GetComponentLocation ( ).Y , otherSceneComp->GetComponentLocation ( ).Z );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , testString );
+		
+
 	}
 }
 
@@ -146,8 +169,8 @@ void AHSW_Hammer::HammerRotation (float DeltaTime )
 
 	FRotator newRotation = FRotator( 0.0f , 0.0f , Angle);
 	MeshComp->SetRelativeRotation ( newRotation );
-}
 
+}
 
 
 FVector AHSW_Hammer::GetHammerSocketLocation ( )
