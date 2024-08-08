@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "HSW_BulletManager.h"
@@ -15,6 +15,12 @@ AHSW_BulletManager::AHSW_BulletManager()
 void AHSW_BulletManager::BeginPlay()
 {
 	Super::BeginPlay();
+	for ( int32 i = 0; i < 3; i++ )
+	{
+		FActorSpawnParameters params;
+		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		auto* bullet = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory , params );
+	}
 	
 }
 
