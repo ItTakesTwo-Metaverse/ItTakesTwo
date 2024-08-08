@@ -2,6 +2,7 @@
 
 
 #include "HSW_BulletManager.h"
+#include "HSW_Bullet.h"
 
 // Sets default values
 AHSW_BulletManager::AHSW_BulletManager()
@@ -19,7 +20,10 @@ void AHSW_BulletManager::BeginPlay()
 	{
 		FActorSpawnParameters params;
 		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		auto* bullet = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory , params );
+		auto* nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory , params );
+
+		nail->SetActive ( false );
+		Magazine.Add ( nail );
 	}
 	
 }
@@ -29,5 +33,34 @@ void AHSW_BulletManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+AHSW_Bullet* AHSW_BulletManager::NailPop ( FVector v , FRotator r )
+{
+	if ( Magazine.IsEmpty ( ) == true )
+	{
+		UE_LOG( LogTemp , Warning , TEXT ( "NailPush : NailInven_Out is Empty" ) );
+		return nullptr;
+	}
+	AHSW_Bullet* nail = Magazine.Pop ( );
+	nail->SetActive ( true );
+	Magazine_Out.Push ( nail );
+	nail->SetActorLocationAndRotation ( v , r );
+	return nail;
+}
+
+void AHSW_BulletManager::NailPush ( AHSW_Bullet* Nail )
+{
+	if ( Magazine_Out.IsEmpty ( ) == true )
+	{
+		UE_LOG ( LogTemp , Warning , TEXT ( "NailPush : NailInven_Out is Empty" ) );
+		return;
+	}
+	AHSW_Bullet* nail = Magazine_Out.Pop ( );
+	if ( nail != nullptr )
+	{
+		nail->SetState ( ENailState::RETURNING );
+		Magazine.Push ( nail );
+	}
 }
 

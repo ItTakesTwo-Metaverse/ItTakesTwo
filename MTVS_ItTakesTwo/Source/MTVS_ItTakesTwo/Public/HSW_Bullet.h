@@ -80,4 +80,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly )
 	float Speed = 5000;
+
+	void SetActive ( bool bValue );
 };

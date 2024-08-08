@@ -24,9 +24,16 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY ( )
+	class AHSW_Bullet* Bullet;
+	UPROPERTY ( )
 	TArray<class AHSW_Bullet*> Magazine;
+	UPROPERTY ( )
+	TArray<class AHSW_Bullet*> Magazine_Out;
 
 	UPROPERTY(EditAnywhere )
 	TSubclassOf<class AHSW_Bullet> BulletFactory;
+
+	AHSW_Bullet* NailPop ( FVector v , FRotator r);
+	void NailPush ( AHSW_Bullet* Nail );
 
 };

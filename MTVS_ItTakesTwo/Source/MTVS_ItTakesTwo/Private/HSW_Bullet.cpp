@@ -224,3 +224,16 @@ void AHSW_Bullet::SetState ( ENailState NextState )
 		break;
 	}
 }
+
+void AHSW_Bullet::SetActive ( bool bValue )
+{
+	MeshComp->SetVisibility ( bValue );
+	if ( bValue )
+	{
+		BoxComp->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
+	}
+	else
+	{
+		BoxComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+	}
+}
