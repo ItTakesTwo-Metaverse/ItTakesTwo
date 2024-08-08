@@ -136,7 +136,7 @@ AToolboxBoss::AToolboxBoss()
 	{
 		Drill->SetStaticMesh ( DrillAsset.Object );
 		Drill->SetupAttachment( RightArmMesh , TEXT ( "joint8" ) );
-		Drill->SetRelativeLocation ( FVector ( 390 , -520 , 550 ) );
+		Drill->SetRelativeLocationAndRotation ( FVector ( 290 , -520 , 480 ), FRotator(6,0,0 ));
 		Drill->SetVisibility ( false );
 	}
 
@@ -146,7 +146,7 @@ AToolboxBoss::AToolboxBoss()
 	{
 		DrillCircle->SetSkeletalMesh ( DrillCircleAsset.Object );
 		DrillCircle->SetupAttachment ( Drill );
-		DrillCircle->SetRelativeLocation ( FVector ( -18 , 380 , 0 ) );
+		DrillCircle->SetRelativeLocation ( FVector ( -5 , 380 , 0 ) );
 		DrillCircle->SetVisibility ( false );
 	}
 
