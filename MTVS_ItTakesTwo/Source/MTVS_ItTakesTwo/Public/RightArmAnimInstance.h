@@ -15,7 +15,7 @@ enum class ERightArmAnimState : uint8
 	Attack1 ,
 	Paused ,
 	DestroyRightArm,
-	Attack2Drill1 ,
+	Attack2Drill ,
 	Attack3 ,
 	Attack4 ,
 	Attack5 ,
@@ -45,8 +45,10 @@ public:
 	ERightArmAnimState AnimState;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool bIsAttacking;
+	bool bIsAttacking1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
 	bool bIsPausing;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
+	bool bIsAttacking2;
 
 };

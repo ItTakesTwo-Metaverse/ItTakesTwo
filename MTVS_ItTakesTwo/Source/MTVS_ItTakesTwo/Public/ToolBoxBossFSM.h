@@ -16,7 +16,7 @@ enum class EBossState : uint8
 	Attack1,
 	Paused,
 	DestroyRightArm,
-	Attack2Drill1 ,
+	Attack2Drill ,
 	Attack3, 
 	Attack4, 
 	Attack5
@@ -73,7 +73,7 @@ public:
 	void Attack1State( const float& DeltaTime );
 	void PausedState ( const float& DeltaTime );
 	void DestroyRightArmState ( const float& DeltaTime );
-	void Attack2Drill1State( const float& DeltaTime );
+	void Attack2DrillState( const float& DeltaTime );
 	void Attack3State( const float& DeltaTime );
 	void Attack4State( const float& DeltaTime );
 	void Attack5State( const float& DeltaTime );

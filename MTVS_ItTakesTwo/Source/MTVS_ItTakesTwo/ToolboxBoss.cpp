@@ -129,6 +129,7 @@ AToolboxBoss::AToolboxBoss()
 		LockBody2->SetCollisionProfileName ( TEXT ( "Lock" ) );
 	}
 
+	// 전동 드릴
 	Drill = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Drill" ) );
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> DrillAsset ( TEXT ( "//Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/drill/drill_DRILL.drill_DRILL'" ) );
 	if( DrillAsset .Succeeded())
@@ -136,7 +137,35 @@ AToolboxBoss::AToolboxBoss()
 		Drill->SetStaticMesh ( DrillAsset.Object );
 		Drill->SetupAttachment( RightArmMesh , TEXT ( "joint8" ) );
 		Drill->SetRelativeLocation ( FVector ( 390 , -520 , 550 ) );
-		//Drill->SetVisibility ( false );
+		Drill->SetVisibility ( false );
+	}
+
+	DrillCircle = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "DrillCircle" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DrillCircleAsset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/drill/SKM_drill_circle.SKM_drill_circle'" ) );
+	if ( DrillCircleAsset.Succeeded ( ) )
+	{
+		DrillCircle->SetSkeletalMesh ( DrillCircleAsset.Object );
+		DrillCircle->SetupAttachment ( Drill );
+		DrillCircle->SetRelativeLocation ( FVector ( -18 , 380 , 0 ) );
+		DrillArm1->SetVisibility ( false );
+	}
+
+	DrillArm1 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "DrillArm1" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DrillArm1Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/drill/SKM_drill_v002_arm1.SKM_drill_v002_arm1'" ) );
+	if ( DrillArm1Asset.Succeeded ( ) )
+	{
+		DrillArm1->SetSkeletalMesh ( DrillArm1Asset.Object );
+		DrillArm1->SetupAttachment ( DrillCircle );
+		DrillArm1->SetVisibility ( false );
+	}
+
+	DrillArm2 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "DrillArm2" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DrillArm2Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/drill/SKM_drill_v002_arm2.SKM_drill_v002_arm2'" ) );
+	if ( DrillArm2Asset.Succeeded ( ) )
+	{
+		DrillArm2->SetSkeletalMesh ( DrillArm2Asset.Object );
+		DrillArm2->SetupAttachment ( DrillCircle );
+		DrillArm2->SetVisibility ( false );
 	}
 	
 	// 오른팔 충돌
@@ -145,7 +174,8 @@ AToolboxBoss::AToolboxBoss()
 	NailInteractionBox1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyNailInteractionBoxBeginOverlap );
 	// 자물쇠 충돌
 	Lock1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyLockBeginOverlap );
-	
+	// 드릴, 나무판자 충돌 (드릴뚫기공격)
+	DrillCircle->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyDrillOverlap );
 
 	// 오른팔 애니메이션 블루프린트 할당
 	ConstructorHelpers::FClassFinder<UAnimInstance> TempRightArmAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Anim/ABP_RightArm.ABP_RightArm'_C'"));
@@ -196,7 +226,7 @@ void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent
 void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
 	// 플레이어의 못이 보스의 오른팔 상호작용 박스에 충돌했을 때 보스 일시정지 상태로 전이
-	if ( OtherActor)
+	if ( OtherActor )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Bullet Collision NailInteractionBox" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "Bullet Collision NailInteractionBox" ) );
@@ -217,26 +247,20 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Collision Hammer&Lock" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "Collision Hammer&Lock" ) );
-		OnMyTakeDamage();
+		LockHP -= damage;
 	}
 	
 }
 
-void AToolboxBoss::OnMyTakeDamage ( float damage )
-{
-	// 플레이어의 망치에 맞으면 자물쇠HP를 1 감소시키고 싶다.
-	GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Lock Damage" ) );
-	UE_LOG ( LogTemp , Warning , TEXT ( "Lock Damage" ) );
-	LockHP -= damage;
-
-	// 현재 체력이 0이라면
-	if ( LockHP <= 0 )
+void AToolboxBoss::OnMyDrillOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
+{	
+	// 드릴공격 판자 뚫기
+	if ( OtherActor && OtherActor != this )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "HP = 0 PausedState >> DestroyRightArmState" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "HP = 0 PausedState >> DestroyRightArmState" ) );
-
-		// 죽음 상태로 전이
-		fsm->ChangeState ( EBossState::DestroyRightArm );
+		if ( OtherComponent && OtherComponent->ComponentHasTag ( TEXT ( "HoleMesh" ) ) )
+		{
+			OtherActor->Destroy ( );
+		}
 	}
 }
 
@@ -249,7 +273,6 @@ void AToolboxBoss::EnterRagdollState ( )
 		RightArmMesh->bBlendPhysics = true;
 	}
 }
-
 
 void AToolboxBoss::SetAnimState ( ERightArmAnimState NewState )
 {	

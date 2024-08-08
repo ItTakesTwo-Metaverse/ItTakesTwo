@@ -55,17 +55,17 @@ public:
 	class UStaticMeshComponent* Drill;
 	
 	UPROPERTY(EditDefaultsOnly )
-	class UStaticMeshComponent* DrillCircle;
+	class USkeletalMeshComponent* DrillCircle;
 	
 	UPROPERTY(EditDefaultsOnly )
-	class UStaticMeshComponent* DrillArm1;
+	class USkeletalMeshComponent* DrillArm1;
 	
 	UPROPERTY(EditDefaultsOnly )
-	class UStaticMeshComponent* DrillArm2;
+	class USkeletalMeshComponent* DrillArm2;
 
 	UPROPERTY( EditDefaultsOnly )
 	float LockHP = 10;
-
+	float damage = 1;
 
 	// 보스 오른팔 충돌했을 때 플레이어 파괴
 	UFUNCTION()
@@ -79,8 +79,8 @@ public:
 	UFUNCTION()
 	void OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
 	
-
-	void OnMyTakeDamage ( float damage = 1 );
+	 UFUNCTION()
+    void OnMyDrillOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void EnterRagdollState( );
 

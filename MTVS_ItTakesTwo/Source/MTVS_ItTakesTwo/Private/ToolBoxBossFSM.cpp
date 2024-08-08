@@ -16,7 +16,7 @@ UToolBoxBossFSM::UToolBoxBossFSM()
 
 	AttackCoolDown = 3; // 예시로 3초 쿨다운 설정
 	AttackTimer = 0;
-	Attack1Duration = 15;
+	Attack1Duration = 12;
 }
 
 
@@ -63,8 +63,8 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	case EBossState::DestroyRightArm:
 		DestroyRightArmState ( DeltaTime );
 		break;
-	case EBossState::Attack2Drill1:
-		Attack2Drill1State ( DeltaTime );
+	case EBossState::Attack2Drill:
+		Attack2DrillState ( DeltaTime );
 		break;
 	case EBossState::Attack3:
 		Attack3State( DeltaTime );
@@ -108,8 +108,8 @@ void UToolBoxBossFSM::ChangeState(EBossState NewState)
 	case EBossState::DestroyRightArm:
 		me->SetAnimState ( ERightArmAnimState::DestroyRightArm );
 		break;
-	case EBossState::Attack2Drill1:
-		me->SetAnimState ( ERightArmAnimState::Attack2Drill1 );
+	case EBossState::Attack2Drill:
+		me->SetAnimState ( ERightArmAnimState::Attack2Drill );
 		break;
 	case EBossState::Attack3:
 		me->SetAnimState ( ERightArmAnimState::Attack3 );
@@ -143,6 +143,14 @@ void UToolBoxBossFSM::StartState ( const float& DeltaTime )
 
 void UToolBoxBossFSM::IdleState( const float& DeltaTime )
 {	
+	if ( me->LockHP > 5 ) // 자물쇠가 2개라면 공격1을 반복한다.
+	{
+		ChangeState ( EBossState::Attack1 );
+	}
+	else if ( me->LockHP <= 5 ) // 자물쇠가 1개라면 공격2(드릴) 상태로 전이한다.
+	{
+		ChangeState ( EBossState::Attack2Drill );
+	}
 	
 }
 
@@ -156,7 +164,6 @@ void UToolBoxBossFSM::CoolDownState ( const float& DeltaTime )
 		UE_LOG ( LogTemp , Warning , TEXT ( "CoolDown >> Idle" ) );
 		ChangeState ( EBossState::Idle );
 		AttackCoolDown = 3; // 쿨다운 시간 리셋
-		//bAttack1Executed = false; // 후에 다른 공격 허용하도록 재설정
 	}
 }
 
@@ -164,9 +171,9 @@ void UToolBoxBossFSM::Attack1State ( const float& DeltaTime )
 {
 	if ( !player || !me ) { return; }
 
-	// Attack1 상태 10초 유지 ( 못 박을 수 있는 제한시간 )
+	// Attack1 벽에 닿아 멈춘 후 4초 유지 ( 못 박을 수 있는 제한시간 )
 	AttackTimer += DeltaTime;
-	// 10초가 지나면 쿨다운 상태로 전이
+	// 4초가 지나면 쿨다운 상태로 전이
 	if ( AttackTimer >= Attack1Duration )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack1State >> CoolDown" ) );
@@ -175,36 +182,38 @@ void UToolBoxBossFSM::Attack1State ( const float& DeltaTime )
 
 		AttackTimer = 0; // 공격시간 리셋
 	}
-	// 일단 ToolBoxBoss.cpp에서 구현했음
-	//// 10초가 지나기 전에 플레이어가 못으로 박스를 태그하면 일시정지 상태로 전이
-	//else if ( me->NailInteractionBox1->ComponentHasTag ( "Bullet" ) )
-	//{
-	//		ChangeState ( EBossState::Paused );
-	//}
+	
 }
 
 void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
-{
-	// 프로토용
-	// 현재 체력이 0이라면
-	//if ( me->MaxHP <= 0 )
-	//{
-	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "HP = 0 PausedState >> DieState" ) );
-	//	UE_LOG ( LogTemp , Warning , TEXT ( "HP = 0 PausedState >> DieState" ) );
-	//	// 자물쇠를 파괴하고 =============================================================================
+{	
+	// 일시정지 상태에서 12초간 유지 ( 자물쇠 파괴할 수 있는 제한시간 )
+	AttackTimer += DeltaTime;
 
-	//	// 죽음 상태로 전이
-	//	ChangeState ( EBossState::Die );
-	//}
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "PausedState" ) );
-	UE_LOG ( LogTemp , Warning , TEXT ( "PausedState" ) );
+	if( AttackTimer >= Attack1Duration ) // 제한시간이 초과했을 때
+	{
+		if ( me->LockHP <= 5 ) // 자물쇠가 1개 파괴된다면
+		{
+			GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroyed Lock1 / PausedState >> CoolDownState" ) );
+			UE_LOG ( LogTemp , Warning , TEXT ( "Destroyed Lock1 / PausedState >> CoolDownState" ) );
 
-	// 현재 체력이 절반이라면 (자물쇠 2개중 1개 파괴)
-	//if ( me->HP <= me->MaxHP / 2 )
-	//{
-	//	// 쿨다운 상태로 전이
-	//	ChangeState(EBossState::CoolDown);
-	//}
+			// 쿨다운 상태로 전이
+			ChangeState ( EBossState::CoolDown );
+		}
+		else if ( me->LockHP <= 0 ) // 현재 체력이 0이라면
+		{
+			GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroyed Lock2 PausedState >> DestroyRightArmState" ) );
+			UE_LOG ( LogTemp , Warning , TEXT ( "Destroyed Lock2 >> DestroyRightArmState" ) );
+
+			// 죽음 상태로 전이
+			ChangeState ( EBossState::DestroyRightArm );
+		}
+
+		AttackTimer = 0; // 공격시간 리셋
+	}
+	
+
+	
 }
 
 void UToolBoxBossFSM::DestroyRightArmState ( const float& DeltaTime )
@@ -216,20 +225,21 @@ void UToolBoxBossFSM::DestroyRightArmState ( const float& DeltaTime )
 	if ( !player || !me ) { return; }
 
 	// Enter ragdoll state if not already in ragdoll
-	if ( !bIsInRagdoll )
-	{
+	//if ( !bIsInRagdoll )
+	//{
 		me->EnterRagdollState ( );
-		bIsInRagdoll = true;
-	}
+		//bIsInRagdoll = true;
+	//}
 }
 
-void UToolBoxBossFSM::Attack2Drill1State( const float& DeltaTime )
+void UToolBoxBossFSM::Attack2DrillState( const float& DeltaTime )
 {
-	if ( !bIsAttackDrill )
-	{
+	//if ( !bIsAttackDrill )
+	//{
+		//bIsAttackDrill = true;
 		me->Drill->SetVisibility(true);
-		bIsAttackDrill = true;
-	}
+		
+	//}
 }
 
 void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
