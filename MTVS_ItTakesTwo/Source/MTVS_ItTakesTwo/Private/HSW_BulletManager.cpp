@@ -10,6 +10,10 @@ AHSW_BulletManager::AHSW_BulletManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "MeshComp" ) );
+	MeshComp->SetupAttachment ( RootComponent );
+	MeshComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+
 }
 
 // Called when the game starts or when spawned
@@ -26,6 +30,7 @@ void AHSW_BulletManager::BeginPlay()
 		Magazine.Add ( nail );
 	}
 	
+	SocketIndex = 0;
 }
 
 // Called every frame
@@ -43,20 +48,21 @@ AHSW_Bullet* AHSW_BulletManager::NailPop ( FVector v , FRotator r )
 		return nullptr;
 	}
 	AHSW_Bullet* nail = Magazine.Pop ( );
-	nail->SetActive ( true );
+	nail->NailReadytoShoot ( v , r );
 	Magazine_Out.Push ( nail );
-	nail->SetActorLocationAndRotation ( v , r );
 	return nail;
 }
 
-void AHSW_BulletManager::NailPush ( AHSW_Bullet* Nail )
+void AHSW_BulletManager::NailPush ( FVector v , FRotator r )
 {
 	if ( Magazine_Out.IsEmpty ( ) == true )
 	{
 		UE_LOG ( LogTemp , Warning , TEXT ( "NailPush : NailInven_Out is Empty" ) );
 		return;
 	}
+
 	AHSW_Bullet* nail = Magazine_Out.Pop ( );
+	SocketIndex = Magazine.Num();
 	if ( nail != nullptr )
 	{
 		nail->SetState ( ENailState::RETURNING );
@@ -64,3 +70,16 @@ void AHSW_BulletManager::NailPush ( AHSW_Bullet* Nail )
 	}
 }
 
+FVector AHSW_BulletManager::GetNailBagSocketLocation ( )
+{
+	FString SocketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , SocketIndex );
+	FName SocketName ( *SocketNameString );
+	return MeshComp->GetSocketLocation ( SocketName );
+}
+
+FRotator AHSW_BulletManager::GetNailBagSocketRotation ( )
+{
+	FString SocketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , SocketIndex );
+	FName SocketName ( *SocketNameString );
+	return MeshComp->GetSocketRotation ( SocketName );
+}

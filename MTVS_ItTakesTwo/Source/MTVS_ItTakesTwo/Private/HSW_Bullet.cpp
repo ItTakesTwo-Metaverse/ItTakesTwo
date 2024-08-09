@@ -74,6 +74,7 @@ void AHSW_Bullet::Tick(float DeltaTime)
 	case ENailState::EMBEDDED:		TickEmbedded ( DeltaTime );			break;
 	case ENailState::UNEMBEDDED:	TickUnembedded ( DeltaTime );		break;
 	case ENailState::RETURNING:		TickReturning ( DeltaTime );		break;
+	case ENailState::GOTOBAG:		TickReturning ( DeltaTime );		break;
 	}
 
 }
@@ -114,7 +115,7 @@ void AHSW_Bullet::TickBasic ( const float& DeltaTime )
 	// -> Embedded 상태로 변경.
 	// 못이 벽에 박히지 못했다면
 	// -> Unembedded 상태로 변경.
-	SetState ( ENailState::SHOOT );
+	//SetState ( ENailState::SHOOT );
 }
 
 void AHSW_Bullet::TickShoot ( const float& DeltaTime )
@@ -128,7 +129,7 @@ void AHSW_Bullet::TickShoot ( const float& DeltaTime )
 
 	FVector dir =  EndPoint - StartPoint ;
 	dir.Normalize ( );
-	SetActorLocation (GetActorLocation() + dir* Speed * DeltaTime,true);
+	SetActorLocation (GetActorLocation() + dir* Speed * DeltaTime, true);
 }
 
 void AHSW_Bullet::TickEmbedded ( const float& DeltaTime )
@@ -160,11 +161,14 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	// To Do
 	// 플레이어에게 곡선을 그리며 이동하고싶다.
 
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Return" ) );
-	APlayerController* SecondPlayerController = UGameplayStatics::GetPlayerController ( GetWorld ( ) , 1 );
-	auto* player = SecondPlayerController->GetPawn();
-	Distance = (player->GetActorLocation() - this->GetActorLocation ( )).Size();
-	SetActorLocation ( FMath::Lerp ( this->GetActorLocation ( ) , player->GetActorLocation ( ) , 0.1 ));
+	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Return" ) );
+	//APlayerController* SecondPlayerController = UGameplayStatics::GetPlayerController ( GetWorld ( ) , 1 );
+	//auto* player = SecondPlayerController->GetPawn();
+	//Distance = (player->GetActorLocation() - this->GetActorLocation ( )).Size();
+	//SetActorLocation ( FMath::Lerp ( this->GetActorLocation ( ) , player->GetActorLocation ( ) , 0.1 ),);
+	SetNailReturnDestination ( );
+	Distance = (nailDestLocation - this->GetActorLocation()).Size ( );
+	SetActorLocationAndRotation ( FMath::Lerp ( this->GetActorLocation ( ) , nailDestLocation , 0.1 ) , FMath::Lerp ( this->GetActorRotation ( ) , nailDestRotation , 0.1 ) );
 	//UE_LOG ( LogTemp , Warning , TEXT ( "%f" ),dist );
 
 	//MovementComp->bIsHomingProjectile = true;
@@ -179,13 +183,18 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	if ( Distance < NailDefaultDist )
 	{
 	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "End" ) );
-		SetState(ENailState::BASIC);
+		SetState(ENailState::GOTOBAG);
 	}
 	// -> Basic상태로 변경.
 }
 
 
-void AHSW_Bullet::SetState ( ENailState NextState )
+void AHSW_Bullet::TickGoToBag ( const float& DeltaTime )
+{
+	GoToNailBag ( );
+}
+
+void AHSW_Bullet::SetState ( ENailState NextState)
 {
 
 	State = NextState;
@@ -220,6 +229,9 @@ void AHSW_Bullet::SetState ( ENailState NextState )
 
 		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 		break;
+	case ENailState::GOTOBAG:
+
+		break;
 	default:
 		break;
 	}
@@ -236,4 +248,30 @@ void AHSW_Bullet::SetActive ( bool bValue )
 	{
 		BoxComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 	}
+}
+
+void AHSW_Bullet::SetNailReturnDestination ()
+{
+	nailDestLocation = NailBag->MeshComp->GetSocketLocation(TEXT("hand_l" ));
+	nailDestRotation = NailBag->MeshComp->GetSocketRotation ( TEXT ( "hand_l" ) );
+}
+
+// NailPop 되면서 손위에 올려놓을 때 쓰는 함수
+void AHSW_Bullet::NailReadytoShoot ( FVector v , FRotator r )
+{
+	SetActive ( true );
+	SetActorLocationAndRotation ( v , r );
+}
+
+void AHSW_Bullet::GoToNailBag ( )
+{
+	FVector v = NailBag->GetNailBagSocketLocation ( );
+	FRotator r = NailBag->GetNailBagSocketRotation ( );
+	SetActorLocationAndRotation ( FMath::Lerp ( this->GetActorLocation ( ) , v , 0.1 ) , FMath::Lerp ( this->GetActorRotation ( ) , r , 0.1 ) );
+}
+
+void AHSW_Bullet::SetShootVector ( FVector start , FVector end )
+{
+	StartPoint = start;
+	EndPoint = end;
 }
