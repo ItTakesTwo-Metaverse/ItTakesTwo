@@ -50,4 +50,5 @@ public:
     bool CanAddPress ( );
     bool CanAddJumpMove ( );
     bool CanAddJump( );
+    bool CanAddRun( );
 };

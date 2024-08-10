@@ -81,4 +81,8 @@ public:
 	void InitSecondJump( );
 
 	bool SecondJump = false;
+
+	void RunStart( const FInputActionValue& Value );
+
+	void RunEnd ( const FInputActionValue& Value );
 };

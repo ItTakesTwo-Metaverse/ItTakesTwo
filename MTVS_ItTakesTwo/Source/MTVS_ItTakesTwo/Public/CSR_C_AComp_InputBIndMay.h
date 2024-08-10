@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CSR_P_AComp_InputBInd.h"
+#include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputActionValue.h"
 #include "CSR_C_AComp_InputBIndMay.generated.h"
 
 /**
@@ -20,10 +21,10 @@ public:
 	virtual void SetupInputComponent ( class UEnhancedInputComponent* InputKey ) override;
 
 	UPROPERTY ( EditDefaultsOnly )
-	class ACSR_Player_May* CodyCharacter_;
+	class ACSR_Player_May* MayCharacter_;
 
 	UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
 	class UInputAction	*IA_CATTACK_;
 
-	
+	void OnAttackAction(const FInputActionValue& Value );
 };

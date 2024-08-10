@@ -27,10 +27,14 @@ public:
 	void MakeEnhancedInputLocalSubSystem();
 #pragma region
 public:
+	UPROPERTY(EditDefaultsOnly )
+	class USceneComponent *HammerLocation;
+
 	UPROPERTY ( EditDefaultsOnly )
 	class UCSR_C_AComp_InputBIndMay* KeyBindComponent;
 
-
+	UPROPERTY(EditDefaultsOnly )
+	class UCSR_MayUseHammerObj *UseHammerComp;
 
 
 #pragma endregion

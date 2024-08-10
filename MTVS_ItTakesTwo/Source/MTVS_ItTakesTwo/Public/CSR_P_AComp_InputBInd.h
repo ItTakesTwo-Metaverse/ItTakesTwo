@@ -45,5 +45,12 @@ public:
 	class UInputAction* IA_CJump_;
 
 	void InputJump( const FInputActionValue& Value );
+
+	UPROPERTY ( EditDefaultsOnly , Category = "ModifyAble" )
+	class UInputAction* IA_CRun_;
+
+	void OnRunToggleButton( const FInputActionValue& Value );
+
+	void OffRunToggleButton( const FInputActionValue& Value );
 };
 
