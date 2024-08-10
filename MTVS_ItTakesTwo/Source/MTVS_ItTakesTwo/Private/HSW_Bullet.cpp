@@ -205,7 +205,7 @@ void AHSW_Bullet::SetState ( ENailState NextState)
 	case ENailState::BASIC:
 		MovementComp->ProjectileGravityScale = 0;	
 		MovementComp->bShouldBounce = true;
-		MeshComp->SetVisibility ( false );
+		MeshComp->SetVisibility ( true );
 		break;
 	case ENailState::SHOOT:
 		break;
@@ -250,6 +250,7 @@ void AHSW_Bullet::SetActive ( bool bValue )
 	}
 }
 
+//리턴될때 소켓 hand_l의 위치를 받는다.
 void AHSW_Bullet::SetNailReturnDestination ()
 {
 	nailDestLocation = NailBag->MeshComp->GetSocketLocation(TEXT("hand_l" ));

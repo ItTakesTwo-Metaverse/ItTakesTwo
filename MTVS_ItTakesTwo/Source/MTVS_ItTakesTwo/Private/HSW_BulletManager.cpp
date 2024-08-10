@@ -20,17 +20,20 @@ AHSW_BulletManager::AHSW_BulletManager()
 void AHSW_BulletManager::BeginPlay()
 {
 	Super::BeginPlay();
-	for ( int32 i = 0; i < 3; i++ )
-	{
-		FActorSpawnParameters params;
-		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		auto* nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory , params );
+	//for ( int32 i = 0; i < 3; i++ )
+	//{
+	//	FActorSpawnParameters params;
+	//	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//	FString SocketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , i );
+	//	FName SocketName ( *SocketNameString );
+	//	FTransform t = this->MeshComp->GetSocketTransform ( SocketName );
+	//	auto* nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory , t , params );
 
-		nail->SetActive ( false );
-		Magazine.Add ( nail );
-	}
-	
-	SocketIndex = 0;
+	//	nail->SetState ( ENailState::BASIC );
+	//	Magazine.Add ( nail );
+	//}
+	//
+	//SocketIndex = 0;
 }
 
 // Called every frame
