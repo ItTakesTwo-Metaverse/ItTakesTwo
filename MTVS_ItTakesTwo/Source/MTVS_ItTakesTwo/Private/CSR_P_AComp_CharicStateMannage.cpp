@@ -34,6 +34,7 @@ bool UCSR_P_AComp_CharicStateMannage::TotalControlState ( int32 NewState )
 			return (this->CanAddJumpMove());
 			break;
 		case RUN:
+			return (this->CanAddRun( ));
 			break;
 		case AIRMOVE:
 			break;
@@ -104,3 +105,12 @@ bool UCSR_P_AComp_CharicStateMannage::CanAddJump ( )
 	}
 	return true;
 }
+
+bool UCSR_P_AComp_CharicStateMannage::CanAddRun ( )
+{
+	if ( this->CurrentState & (AIRSIT | SCJUMP | DAMAGED | PRESS | DIE | JUMP) ) {
+		return false;
+	}
+	return true;
+}
+

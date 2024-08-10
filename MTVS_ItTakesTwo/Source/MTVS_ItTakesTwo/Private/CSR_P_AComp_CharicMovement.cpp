@@ -54,7 +54,12 @@ void UCSR_P_AComp_CharicMovement::TickComponent(float DeltaTime, ELevelTick Tick
 		break;
 	case NORMALEMOVE:
 		UE_LOG ( LogTemp , Warning , TEXT ( "NORMALEMOVE" ) );
+		//UE_LOG ( LogTemp , Warning , TEXT ( "chose Di %f %f" ) , this->ChoosedDirection.X , this->ChoosedDirection.Y );
+		//UE_LOG ( LogTemp , Warning , TEXT ( "abc : %f" ) , this->AbsScale );
+		this->MoveFlag = DONTMOVE;
+		this->Character_->CharacterStateMannageComp->RemoveState(MOVE);
 		this->Character_->AddMovementInput ( this->ChoosedDirection , (this->AbsScale) );
+		this->ChoosedDirection = FVector::ZeroVector;
 		this->AbsScale = 0.0f;
 		break;
 	case JUMPMOVEE:
@@ -78,11 +83,11 @@ void UCSR_P_AComp_CharicMovement::TickComponent(float DeltaTime, ELevelTick Tick
 		// 감속 치를 더한 이동속도
 		FVector Vec = (FVector( this->CharacterStateComp->Velocity.X, this->CharacterStateComp->Velocity.Y, 0.0f ) + DesVec).GetClampedToMaxSize ( 600.0f );
 		Vec.Z =  this->CharacterStateComp->Velocity.Z;
+		//UE_LOG ( LogTemp , Warning , TEXT ( "chose Di %f %f %f" ) , this->CharacterStateComp->Velocity.X , this->CharacterStateComp->Velocity.Y , this->CharacterStateComp->Velocity.Z);
 
 		// 해당 이동속도를 캐릭터에 적용.
 		this->CharacterStateComp->Velocity = Vec;
-		this->ChoosedDirection.X = 0; 
-		this->ChoosedDirection.Y = 0;
+		this->ChoosedDirection = FVector::ZeroVector;
 		break;
 	}
 }
@@ -95,9 +100,10 @@ void UCSR_P_AComp_CharicMovement::Setting ( )
 
 void UCSR_P_AComp_CharicMovement::PlayerMoveSelect ( const FInputActionValue& Value )
 {
-	FVector2D V = Value.Get<FVector2D> ( ); 
+	FVector2D V = Value.Get<FVector2D> ( );
 	// TargetValue는 입력 키 X, Y 의 절대값 value를 더하여 이동량을 결정한다.
 	float TargetValue = UCSR_FunctionLib::SelectABSUpperFloat ( V.X , V.Y );
+	//UE_LOG(LogTemp, Warning, TEXT("%f %f" ), V.X , V.Y);
 
 	// TagetValue의 크기에 따라 이동속도를 결정한다.
 	if ( TargetValue < this->StickSensitivity_NoInput ) {
@@ -172,5 +178,19 @@ void UCSR_P_AComp_CharicMovement::InitSecondJump ( )
 {
 	this->SecondJump = true;
 	this->Acceleration = 0;
+}
+
+void UCSR_P_AComp_CharicMovement::RunStart ( const FInputActionValue& Value )
+{
+	if ( this->Character_->CharacterStateMannageComp->AddState ( RUN ) )
+	{
+		this->CharacterStateComp->MaxWalkSpeed = 1000;
+	}
+}
+
+void UCSR_P_AComp_CharicMovement::RunEnd ( const FInputActionValue& Value )
+{
+	this->Character_->CharacterStateMannageComp->RemoveState ( RUN );
+	this->CharacterStateComp->MaxWalkSpeed = 600;
 }
 

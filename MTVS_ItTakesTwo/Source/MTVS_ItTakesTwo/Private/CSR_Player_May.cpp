@@ -8,51 +8,65 @@
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
 #include "CSR_P_AComp_InputBInd.h"
 #include "CSR_C_AComp_InputBIndMay.h"
+#include "CSR_MayUseHammerObj.h"
+#include "Components/SceneComponent.h"
 
 ACSR_Player_May::ACSR_Player_May ( )
 {
+	this->UseHammerComp = CreateDefaultSubobject< UCSR_MayUseHammerObj> ( TEXT ( "UseHammerComp" ) );
+	if ( this->UseHammerComp == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_Player_May : this->UseHammerComp is null" ) );
+	}
 	this->KeyBindComponent = CreateDefaultSubobject<UCSR_C_AComp_InputBIndMay> ( TEXT ( "KeyBindComponent" ) );
-
+	if ( this->KeyBindComponent == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_Player_May : this->KeyBindComponent is null" ) );
+	}
+	this->HammerLocation = CreateDefaultSubobject<USceneComponent> ( TEXT ( "HammerLocation" ) );
+	if ( this->HammerLocation == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_Player_May : this->HammerLocation is null" ) );
+	}
+	this->HammerLocation->SetupAttachment(RootComponent);
+	this->HammerLocation->SetRelativeLocation(FVector(-100.0f, 0.0f, 0.0f));
 }
 
-void ACSR_Player_May::BeginPlay()
+void ACSR_Player_May::BeginPlay ( )
 {
-	Super::BeginPlay();
-	this->MakeEnhancedInputLocalSubSystem();
+	Super::BeginPlay ( );
+	this->MakeEnhancedInputLocalSubSystem ( );
 }
 
 // PlayerController를 IMC_PlayerController와 맵핑.
 
-void ACSR_Player_May::MakeEnhancedInputLocalSubSystem()
+void ACSR_Player_May::MakeEnhancedInputLocalSubSystem ( )
 {
 	// 해당 Mannger의 컨트롤러가 존재하는지 확인합니다.
-	APlayerController* Player_1 = UGameplayStatics::GetPlayerController(this->GetWorld(), 0);
+	APlayerController* Player_1 = UGameplayStatics::GetPlayerController ( this->GetWorld ( ) , 0 );
 	if ( Player_1 == nullptr ) {
-		UCSR_FunctionLib::ExitGame(GetWorld(), FString("Player_1 is null"));
+		UCSR_FunctionLib::ExitGame ( GetWorld ( ) , FString ( "Player_1 is null" ) );
 	}
 
 	// EnhancedInput을 연결합니다.
-	UEnhancedInputLocalPlayerSubsystem* SubSys = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(Player_1->GetLocalPlayer());
+	UEnhancedInputLocalPlayerSubsystem* SubSys = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem> ( Player_1->GetLocalPlayer ( ) );
 	if ( SubSys == nullptr ) {
-		UCSR_FunctionLib::ExitGame(GetWorld(), FString("SubSyn is null"));
+		UCSR_FunctionLib::ExitGame ( GetWorld ( ) , FString ( "SubSyn is null" ) );
 	}
 	// EnhancedInput을 IMC_...를 맵핑합니다.
-	SubSys->AddMappingContext(this->IMC_PlayerController_, 0);
+	SubSys->AddMappingContext ( this->IMC_PlayerController_ , 0 );
 }
 
 
-void ACSR_Player_May::Tick(float DeltaTime)
+void ACSR_Player_May::Tick ( float DeltaTime )
 {
-	Super::Tick(DeltaTime);
+	Super::Tick ( DeltaTime );
 }
 
-void ACSR_Player_May::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ACSR_Player_May::SetupPlayerInputComponent ( UInputComponent* PlayerInputComponent )
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Super::SetupPlayerInputComponent ( PlayerInputComponent );
 #pragma region
-	UEnhancedInputComponent* InputKey = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
-	if (InputKey == nullptr) {
-		UCSR_FunctionLib::ExitGame(GetWorld(), FString("ACSR_Player_May : InputKey is null"));
+	UEnhancedInputComponent* InputKey = CastChecked<UEnhancedInputComponent> ( PlayerInputComponent );
+	if ( InputKey == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( GetWorld ( ) , FString ( "ACSR_Player_May : InputKey is null" ) );
 	}
 
 	this->KeyBindComponent->SetupInputComponent( InputKey );
