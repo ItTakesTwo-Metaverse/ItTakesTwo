@@ -15,7 +15,7 @@ class MTVS_ITTAKESTWO_API UCSR_CodyPile : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UCSR_CodyPile();
-
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -26,6 +26,9 @@ public:
 
 public:
 	UPROPERTY(EditDefaultsOnly )
+	class ACSR_Player_Cody *charic_;
+
+	UPROPERTY(EditDefaultsOnly )
 	class USpringArmComponent *SpringArmComp_;
 
 	UPROPERTY(EditDefaultsOnly )
@@ -33,6 +36,12 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
 	class UCSR_PileInventory *PileInven;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ModifyAble" )
+	TSubclassOf<class UUserWidget> CrosshairUIFactory;
+
+	UPROPERTY ( )
+	class UUserWidget* CrosshairUI;
 
 	UPROPERTY(EditDefaultsOnly )
 	FVector InitArmOffsetLocation = FVector(0.0f, 0.0f ,0.0f );
@@ -52,7 +61,7 @@ public:
 	UPROPERTY(EditDefaultsOnly )
 	float AfterCameraFov = 90.0f;
 
-	void InitComp(class UCameraComponent* CameraComp , class USpringArmComponent* SpringArm, float ArmSpringDistance );
+	void InitComp(class UCameraComponent* CameraComp , class USpringArmComponent* SpringArm, float ArmSpringDistance , class ACSR_Player_Cody *charic);
 
 	bool ExecToggle = false;
 
