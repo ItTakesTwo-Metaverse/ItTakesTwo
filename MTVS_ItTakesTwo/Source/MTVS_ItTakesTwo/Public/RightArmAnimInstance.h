@@ -41,10 +41,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetAnimState( ERightArmAnimState NewState);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ERightArmAnimState AnimState;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
 	bool bIsAttacking1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
 	bool bIsPausing;
@@ -52,5 +52,4 @@ public:
 	bool bIsAttacking2;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
 	bool bIsAttacking3;
-
 };

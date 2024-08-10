@@ -58,13 +58,11 @@ public:
 	class USkeletalMeshComponent* DrillCircle;
 	
 	UPROPERTY(EditDefaultsOnly )
-	class USkeletalMeshComponent* DrillArm1;
-	
-	UPROPERTY(EditDefaultsOnly )
-	class USkeletalMeshComponent* DrillArm2;
+	class USkeletalMeshComponent* DrillArms;
 
 	UPROPERTY( EditDefaultsOnly )
-	float LockHP = 10;
+	float Lock1HP = 5;
+	float Lock2HP = 5;
 	float damage = 1;
 
 	// 보스 오른팔 충돌했을 때 플레이어 파괴
@@ -92,5 +90,6 @@ public:
 
 	UPROPERTY()
     class URightArmAnimInstance* RightArmAnimInstance;
+
 
 };

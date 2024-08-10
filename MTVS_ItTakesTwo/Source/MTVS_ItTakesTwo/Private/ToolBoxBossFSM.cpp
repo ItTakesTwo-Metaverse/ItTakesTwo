@@ -14,9 +14,9 @@ UToolBoxBossFSM::UToolBoxBossFSM()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	AttackCoolDown = 5; // 예시로 5초 쿨다운 설정
+	AttackCoolDown = 3;
 	AttackTimer = 0;
-	Attack1Duration = 12; // Attack1 : 팔 휘두르기 공격 시간
+	Attack1Duration = 20; // Attack1 : 팔 휘두르기 공격 시간 (애님8초+대기4) 12초 / 테스트용 20초
 	Attack2Duration = 20; // Attack2 : 전동드릴 바닥 뚫는 공격 시간
 	Attack3Duration = 13; // Attack3 : 전동드릴 회전 공격 시간
 }
@@ -145,16 +145,23 @@ void UToolBoxBossFSM::StartState ( const float& DeltaTime )
 
 void UToolBoxBossFSM::IdleState( const float& DeltaTime )
 {	
-	bIsAttack2 = false;
+	bIsAttack1 = false;
 	bIsAttack3 = false;
 
-	if ( me->LockHP > 5 ) // 자물쇠가 2개라면 공격1을 반복한다.
+	if ( me->Lock1HP > 0 ) // 자물쇠1을 파괴하지 못했다면 공격1 상태를 반복한다.
 	{
 		ChangeState ( EBossState::Attack1 );
 	}
-	else if ( me->LockHP <= 5 ) // 자물쇠가 1개라면 공격2(드릴) 상태로 전이한다.
+	else if ( me->Lock1HP <= 0 && me->Lock2HP > 0 ) // 자물쇠2를 파괴하지 못했다면 공격3 ~ 공격1 상태를 반복한다.
 	{
-		ChangeState ( EBossState::Attack2 );
+		if ( !bIsAttack2 )
+		{
+			ChangeState ( EBossState::Attack2 );
+		}
+		else if ( bIsAttack2 )
+		{
+			ChangeState ( EBossState::Attack3 );
+		}
 	}
 	
 }
@@ -168,7 +175,7 @@ void UToolBoxBossFSM::CoolDownState ( const float& DeltaTime )
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "CoolDown >> Idle" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "CoolDown >> Idle" ) );
 		ChangeState ( EBossState::Idle );
-		AttackCoolDown = 5; // 쿨다운 시간 리셋
+		AttackCoolDown = 3; // 쿨다운 시간 리셋
 	}
 }
 
@@ -178,16 +185,18 @@ void UToolBoxBossFSM::Attack1State ( const float& DeltaTime )
 
 	// Attack1 벽에 닿아 멈춘 후 4초 유지 ( 못 박을 수 있는 제한시간 )
 	AttackTimer += DeltaTime;
-	
-	if ( AttackTimer >= Attack1Duration ) // 애니메이션 8초 + 4초가 지나면 쿨다운 상태로 전이
+	if ( !bIsAttack1 )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack1State >> CoolDown" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "Attack1State >> CoolDown" ) );
-		ChangeState ( EBossState::CoolDown );
+		if ( AttackTimer > Attack1Duration ) // 애니메이션 8초 + 4초가 지나면 쿨다운 상태로 전이
+		{	
+			GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack1State >> CoolDown" ) );
+			UE_LOG ( LogTemp , Warning , TEXT ( "Attack1State >> CoolDown" ) );
+			ChangeState ( EBossState::CoolDown );
 
-		AttackTimer = 0; // 공격시간 리셋
+			bIsAttack1 = true;
+			AttackTimer = 0; // 공격시간 리셋
+		}
 	}
-	
 }
 
 void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
@@ -197,34 +206,39 @@ void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
 
 	if ( AttackTimer <= Attack1Duration )
 	{
-		if ( me->LockHP <= 5 ) // 자물쇠가 1개 파괴된다면
+		if ( me->Lock1HP > 0 ) // 자물쇠1이 존재할 때
 		{
-			GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroyed Lock1 / PausedState >> CoolDownState" ) );
-			UE_LOG ( LogTemp , Warning , TEXT ( "Destroyed Lock1 / PausedState >> CoolDownState" ) );
+			if ( me->Lock1HP == 0 ) // 자물쇠1이 파괴된다면 /////여기서부터 안들어옴
+			{
+				GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroyed Lock1 PausedState >> CoolDown" ) );
+				UE_LOG ( LogTemp , Warning , TEXT ( "Destroyed Lock1 >> CoolDown" ) );
 
-			// 쿨다운 상태로 전이
-			ChangeState ( EBossState::CoolDown );
-
+				// 쿨다운 -> 공격2 상태로 전이
+				ChangeState ( EBossState::CoolDown );
+				AttackTimer = 0; // 공격시간 리셋
+				return; // 상태를 바꿨으므로 함수 종료
+			}
 		}
-		else if ( me->LockHP == 0 ) // 자물쇠 2개가 파괴된다면
+		else if ( me->Lock1HP == 0 && me->Lock2HP > 0 ) // 자물쇠1이 없고 자물쇠2만 있을 때
 		{
-			GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroyed Lock2 PausedState >> DieState" ) );
-			UE_LOG ( LogTemp , Warning , TEXT ( "Destroyed Lock2 >> DieState" ) );
-
-			// 죽음 상태로 전이
-			ChangeState ( EBossState::Die );
+			if ( me->Lock2HP == 0 ) // 자물쇠2가 파괴된다면
+			{
+				ChangeState( EBossState::Die );
+				AttackTimer = 0; // 공격시간 리셋
+				return; // 상태를 바꿨으므로 함수 종료
+			}
 		}
 	}
 	else if( AttackTimer > Attack1Duration ) // 제한시간이 초과했을 때
 	{
 		// 쿨다운 상태로 전이
 		ChangeState ( EBossState::CoolDown );
+		AttackTimer = 0; // 공격시간 리셋
 	}
-	AttackTimer = 0; // 공격시간 리셋
 }
 
 void UToolBoxBossFSM::Attack2State( const float& DeltaTime )
-{	
+{
 	AttackTimer += DeltaTime;
 
 	if ( !bIsAttack2 )
@@ -232,15 +246,14 @@ void UToolBoxBossFSM::Attack2State( const float& DeltaTime )
 		me->Drill->SetVisibility(true);
 		me->DrillCircle->SetVisibility ( true );
 		bIsAttack2 = true;
-
-		if ( AttackTimer >= Attack2Duration ) // 바닥뚫기가 끝나면
-		{
-			GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack2State >> Attack3State" ) );
-			UE_LOG ( LogTemp , Warning , TEXT ( "Attack2State >> Attack3State" ) );
-
-			// 드릴 회전 공격으로 전이
-			ChangeState(EBossState::Attack3);
-		}
+	}
+	if ( AttackTimer > Attack2Duration ) // 바닥뚫기가 끝나면
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack2State >> Attack3State" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Attack2State >> Attack3State" ) );
+		
+		// 드릴 회전 공격으로 전이
+		ChangeState(EBossState::Attack3);
 		AttackTimer = 0; // 공격시간 리셋
 	}
 }
@@ -250,20 +263,31 @@ void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
 	AttackTimer += DeltaTime;
 
 	if ( !bIsAttack3 )
-	{
-		me->DrillArm1->SetVisibility ( true );
-		me->DrillArm2->SetVisibility ( true );
+	{	
+		me->Drill->SetVisibility ( true );
+		me->DrillCircle->SetVisibility ( true );
+		me->DrillArms->SetVisibility ( true );
+
 		bIsAttack3 = true;
+		
+	}
+	if ( AttackTimer > Attack3Duration ) // 드릴 회전 공격이 끝나면
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack3State >> Attack1State" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Attack3State >> Attack1State" ) );
 
-		if ( AttackTimer >= Attack3Duration ) // 드릴 회전 공격이 끝나면
-		{
-			GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack3State >> CoolDown" ) );
-			UE_LOG ( LogTemp , Warning , TEXT ( "Attack3State >> CoolDown" ) );
-
-			// 쿨다운 상태로 전이
-			ChangeState ( EBossState::CoolDown );
-		}
 		AttackTimer = 0; // 공격시간 리셋
+
+		me->Drill->SetVisibility ( false );
+		me->DrillCircle->SetVisibility ( false );
+		me->DrillArms->SetVisibility ( false );
+
+		bIsAttack3 = false;
+		bIsAttack1 = false;
+
+		// 공격1 상태로 전이
+		ChangeState ( EBossState::Attack1 );
+
 	}
 }
 
@@ -280,8 +304,8 @@ void UToolBoxBossFSM::Attack5State( const float& DeltaTime )
 void UToolBoxBossFSM::DieState ( const float& DeltaTime )
 {
 
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroy Right Arm State" ) );
-	UE_LOG ( LogTemp , Warning , TEXT ( "Destroy Right Arm State" ) );
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Die State" ) );
+	UE_LOG ( LogTemp , Warning , TEXT ( "Die State" ) );
 
 	if ( !player || !me ) { return; }
 

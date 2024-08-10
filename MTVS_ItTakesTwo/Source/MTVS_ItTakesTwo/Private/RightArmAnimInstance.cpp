@@ -41,18 +41,28 @@ void URightArmAnimInstance::NativeUpdateAnimation ( float DeltaSeconds )
  
     case ERightArmAnimState::Attack1:
             bIsAttacking1 = true;
+            bIsPausing = false;
+            bIsAttacking2 = false;
+            bIsAttacking3 = false;
         break;
 
     case ERightArmAnimState::Paused:
+            bIsAttacking1 = true;
             bIsPausing = true;
+            bIsAttacking3 = false;
         break;
 
     case ERightArmAnimState::Attack2:
             bIsAttacking2 = true;
+            //PlayDrillCircle1Montage();
         break;
 
     case ERightArmAnimState::Attack3:
             bIsAttacking3 = true;
+			bIsAttacking1 = false;
+			//PlayDrillCircle2Montage ( );
+			//PlayDrillArm1Montage ( );
+			//PlayDrillArm2Montage ( );
         break;
 
     case ERightArmAnimState::Attack4:
@@ -73,3 +83,4 @@ void URightArmAnimInstance::SetAnimState ( ERightArmAnimState NewState )
 {
     AnimState = NewState;
 }
+

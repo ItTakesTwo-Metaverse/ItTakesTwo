@@ -50,10 +50,9 @@ public:
 
 	UPROPERTY()
 	class ACharacter* player;
-
-
+	
 	UPROPERTY(EditAnywhere)
-	float AttackRange = 5000.0f;
+	float AttackRange = 4050.0f;
 	float AttackCoolDown;
 	float AttackTimer;
 	float Attack1Duration;
@@ -61,6 +60,7 @@ public:
 	float Attack3Duration;
 
 	bool bIsInRagdoll = false;
+	bool bIsAttack1 = false;
 	bool bIsAttack2 = false;
 	bool bIsAttack3 = false;
 
