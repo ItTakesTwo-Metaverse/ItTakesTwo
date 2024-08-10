@@ -11,7 +11,7 @@ AHSW_BulletManager::AHSW_BulletManager()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "MeshComp" ) );
-	MeshComp->SetupAttachment ( RootComponent );
+	SetRootComponent ( MeshComp );
 	MeshComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 
 }
@@ -20,20 +20,34 @@ AHSW_BulletManager::AHSW_BulletManager()
 void AHSW_BulletManager::BeginPlay()
 {
 	Super::BeginPlay();
-	//for ( int32 i = 0; i < 3; i++ )
-	//{
-	//	FActorSpawnParameters params;
-	//	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	//	FString SocketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , i );
-	//	FName SocketName ( *SocketNameString );
-	//	FTransform t = this->MeshComp->GetSocketTransform ( SocketName );
-	//	auto* nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory , t , params );
+	for ( int32 i = 0; i < 3; i++ )
+	{
+		FActorSpawnParameters params;
+		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		FString SocketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , i );
+		FName SocketName ( *SocketNameString );
 
-	//	nail->SetState ( ENailState::BASIC );
-	//	Magazine.Add ( nail );
-	//}
-	//
-	//SocketIndex = 0;
+		FTransform t = this->MeshComp->GetSocketTransform ( SocketName );
+		UE_LOG ( LogTemp , Log , TEXT ( "Socket Transform: %s" ) , *t.ToString ( ) );
+
+		auto* nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory , t,params );
+
+		if ( nail )
+		{
+		nail->AttachToActor ( this , FAttachmentTransformRules::SnapToTargetIncludingScale );
+		nail->SetActorLocation ( t.GetLocation ( ) );
+		nail->SetActorRotation ( t.GetRotation ( ) );
+			Magazine.Add ( nail );
+		}
+		else 
+		{
+			GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Nail Not Spawned" ) );
+		}
+
+		
+	}
+
+	SocketIndex = 0;
 }
 
 // Called every frame
