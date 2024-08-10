@@ -137,6 +137,8 @@ AToolboxBoss::AToolboxBoss()
 		Drill->SetStaticMesh ( DrillAsset.Object );
 		Drill->SetupAttachment( RightArmMesh , TEXT ( "joint8" ) );
 		Drill->SetRelativeLocationAndRotation ( FVector ( 290 , -520 , 480 ), FRotator(6,0,0 ));
+		Drill->SetGenerateOverlapEvents ( true );
+		Drill->SetCollisionProfileName ( TEXT ( "Drill" ) );
 		Drill->SetVisibility ( false );
 	}
 
@@ -147,6 +149,8 @@ AToolboxBoss::AToolboxBoss()
 		DrillCircle->SetSkeletalMesh ( DrillCircleAsset.Object );
 		DrillCircle->SetupAttachment ( Drill );
 		DrillCircle->SetRelativeLocation ( FVector ( -5 , 380 , 0 ) );
+		DrillCircle->SetGenerateOverlapEvents ( true );
+		DrillCircle->SetCollisionProfileName ( TEXT ( "Drill" ) );
 		DrillCircle->SetVisibility ( false );
 	}
 
@@ -156,6 +160,9 @@ AToolboxBoss::AToolboxBoss()
 	{
 		DrillArm1->SetSkeletalMesh ( DrillArm1Asset.Object );
 		DrillArm1->SetupAttachment ( DrillCircle );
+		DrillArm1->SetRelativeLocationAndRotation ( FVector ( 0 , -90 , -60 ) , FRotator ( 0 , 0 , -90 ) );
+		DrillArm1->SetGenerateOverlapEvents ( true );
+		DrillArm1->SetCollisionProfileName ( TEXT ( "Drill" ) );
 		DrillArm1->SetVisibility ( false );
 	}
 
@@ -165,6 +172,9 @@ AToolboxBoss::AToolboxBoss()
 	{
 		DrillArm2->SetSkeletalMesh ( DrillArm2Asset.Object );
 		DrillArm2->SetupAttachment ( DrillCircle );
+		DrillArm2->SetRelativeLocationAndRotation ( FVector ( 0 , -90 , -60 ) , FRotator ( 0 , 0 , -90 ) );
+		DrillArm2->SetGenerateOverlapEvents ( true );
+		DrillArm2->SetCollisionProfileName ( TEXT ( "Drill" ) );
 		DrillArm2->SetVisibility ( false );
 	}
 	
@@ -243,7 +253,7 @@ void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* Ove
 void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
 	// 플레이어의 망치와 충돌했을 때 자물쇠 데미지
-	if ( OtherActor->IsA<AHSW_Hammer> ( ) )
+	if ( OtherActor )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Collision Hammer&Lock" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "Collision Hammer&Lock" ) );
@@ -269,8 +279,8 @@ void AToolboxBoss::EnterRagdollState ( )
 	if ( RightArmMesh )
 	{
 		RightArmMesh->SetSimulatePhysics ( true );
-		RightArmMesh->WakeAllRigidBodies ( );
-		RightArmMesh->bBlendPhysics = true;
+		//RightArmMesh->WakeAllRigidBodies ( );
+		//RightArmMesh->bBlendPhysics = true;
 	}
 }
 

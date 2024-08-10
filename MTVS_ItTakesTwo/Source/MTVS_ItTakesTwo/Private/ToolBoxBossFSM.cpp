@@ -14,7 +14,7 @@ UToolBoxBossFSM::UToolBoxBossFSM()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	AttackCoolDown = 3; // 예시로 3초 쿨다운 설정
+	AttackCoolDown = 5; // 예시로 5초 쿨다운 설정
 	AttackTimer = 0;
 	Attack1Duration = 12;
 }
@@ -163,7 +163,7 @@ void UToolBoxBossFSM::CoolDownState ( const float& DeltaTime )
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "CoolDown >> Idle" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "CoolDown >> Idle" ) );
 		ChangeState ( EBossState::Idle );
-		AttackCoolDown = 3; // 쿨다운 시간 리셋
+		AttackCoolDown = 5; // 쿨다운 시간 리셋
 	}
 }
 
