@@ -16,7 +16,9 @@ UToolBoxBossFSM::UToolBoxBossFSM()
 
 	AttackCoolDown = 5; // 예시로 5초 쿨다운 설정
 	AttackTimer = 0;
-	Attack1Duration = 12;
+	Attack1Duration = 12; // Attack1 : 팔 휘두르기 공격 시간
+	Attack2Duration = 20; // Attack2 : 전동드릴 바닥 뚫는 공격 시간
+	Attack3Duration = 13; // Attack3 : 전동드릴 회전 공격 시간
 }
 
 
@@ -60,11 +62,8 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	case EBossState::Paused:
 		PausedState ( DeltaTime );
 		break;
-	case EBossState::DestroyRightArm:
-		DestroyRightArmState ( DeltaTime );
-		break;
-	case EBossState::Attack2Drill:
-		Attack2DrillState ( DeltaTime );
+	case EBossState::Attack2:
+		Attack2State ( DeltaTime );
 		break;
 	case EBossState::Attack3:
 		Attack3State( DeltaTime );
@@ -74,6 +73,9 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		break;
 	case EBossState::Attack5:
 		Attack5State( DeltaTime );
+		break;
+	case EBossState::Die:
+		DieState ( DeltaTime );
 		break;
 	default:
 		break;
@@ -105,11 +107,8 @@ void UToolBoxBossFSM::ChangeState(EBossState NewState)
 	case EBossState::Paused:
 		me->SetAnimState ( ERightArmAnimState::Paused );
 		break;
-	case EBossState::DestroyRightArm:
-		me->SetAnimState ( ERightArmAnimState::DestroyRightArm );
-		break;
-	case EBossState::Attack2Drill:
-		me->SetAnimState ( ERightArmAnimState::Attack2Drill );
+	case EBossState::Attack2:
+		me->SetAnimState ( ERightArmAnimState::Attack2 );
 		break;
 	case EBossState::Attack3:
 		me->SetAnimState ( ERightArmAnimState::Attack3 );
@@ -119,6 +118,9 @@ void UToolBoxBossFSM::ChangeState(EBossState NewState)
 		break;
 	case EBossState::Attack5:
 		me->SetAnimState ( ERightArmAnimState::Attack5 );
+		break;
+	case EBossState::Die:
+		me->SetAnimState ( ERightArmAnimState::Die );
 		break;
 	default:
 		break;
@@ -143,13 +145,16 @@ void UToolBoxBossFSM::StartState ( const float& DeltaTime )
 
 void UToolBoxBossFSM::IdleState( const float& DeltaTime )
 {	
+	bIsAttack2 = false;
+	bIsAttack3 = false;
+
 	if ( me->LockHP > 5 ) // 자물쇠가 2개라면 공격1을 반복한다.
 	{
 		ChangeState ( EBossState::Attack1 );
 	}
 	else if ( me->LockHP <= 5 ) // 자물쇠가 1개라면 공격2(드릴) 상태로 전이한다.
 	{
-		ChangeState ( EBossState::Attack2Drill );
+		ChangeState ( EBossState::Attack2 );
 	}
 	
 }
@@ -173,8 +178,8 @@ void UToolBoxBossFSM::Attack1State ( const float& DeltaTime )
 
 	// Attack1 벽에 닿아 멈춘 후 4초 유지 ( 못 박을 수 있는 제한시간 )
 	AttackTimer += DeltaTime;
-	// 4초가 지나면 쿨다운 상태로 전이
-	if ( AttackTimer >= Attack1Duration )
+	
+	if ( AttackTimer >= Attack1Duration ) // 애니메이션 8초 + 4초가 지나면 쿨다운 상태로 전이
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack1State >> CoolDown" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "Attack1State >> CoolDown" ) );
@@ -190,7 +195,7 @@ void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
 	// 일시정지 상태에서 12초간 유지 ( 자물쇠 파괴할 수 있는 제한시간 )
 	AttackTimer += DeltaTime;
 
-	if( AttackTimer >= Attack1Duration ) // 제한시간이 초과했을 때
+	if ( AttackTimer <= Attack1Duration )
 	{
 		if ( me->LockHP <= 5 ) // 자물쇠가 1개 파괴된다면
 		{
@@ -199,52 +204,67 @@ void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
 
 			// 쿨다운 상태로 전이
 			ChangeState ( EBossState::CoolDown );
+
 		}
-		else if ( me->LockHP <= 0 ) // 현재 체력이 0이라면
+		else if ( me->LockHP == 0 ) // 자물쇠 2개가 파괴된다면
 		{
-			GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroyed Lock2 PausedState >> DestroyRightArmState" ) );
-			UE_LOG ( LogTemp , Warning , TEXT ( "Destroyed Lock2 >> DestroyRightArmState" ) );
+			GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroyed Lock2 PausedState >> DieState" ) );
+			UE_LOG ( LogTemp , Warning , TEXT ( "Destroyed Lock2 >> DieState" ) );
 
 			// 죽음 상태로 전이
-			ChangeState ( EBossState::DestroyRightArm );
+			ChangeState ( EBossState::Die );
 		}
+	}
+	else if( AttackTimer > Attack1Duration ) // 제한시간이 초과했을 때
+	{
+		// 쿨다운 상태로 전이
+		ChangeState ( EBossState::CoolDown );
+	}
+	AttackTimer = 0; // 공격시간 리셋
+}
 
+void UToolBoxBossFSM::Attack2State( const float& DeltaTime )
+{	
+	AttackTimer += DeltaTime;
+
+	if ( !bIsAttack2 )
+	{
+		me->Drill->SetVisibility(true);
+		me->DrillCircle->SetVisibility ( true );
+		bIsAttack2 = true;
+
+		if ( AttackTimer >= Attack2Duration ) // 바닥뚫기가 끝나면
+		{
+			GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack2State >> Attack3State" ) );
+			UE_LOG ( LogTemp , Warning , TEXT ( "Attack2State >> Attack3State" ) );
+
+			// 드릴 회전 공격으로 전이
+			ChangeState(EBossState::Attack3);
+		}
 		AttackTimer = 0; // 공격시간 리셋
 	}
-	
-
-	
-}
-
-void UToolBoxBossFSM::DestroyRightArmState ( const float& DeltaTime )
-{
-
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroy Right Arm State" ) );
-	UE_LOG ( LogTemp , Warning , TEXT ( "Destroy Right Arm State" ) );
-
-	if ( !player || !me ) { return; }
-
-	// Enter ragdoll state if not already in ragdoll
-	//if ( !bIsInRagdoll )
-	//{
-		me->EnterRagdollState ( );
-		//bIsInRagdoll = true;
-	//}
-}
-
-void UToolBoxBossFSM::Attack2DrillState( const float& DeltaTime )
-{
-	//if ( !bIsAttackDrill )
-	//{
-		//bIsAttackDrill = true;
-		me->Drill->SetVisibility(true);
-		
-	//}
 }
 
 void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
 {
-	
+	AttackTimer += DeltaTime;
+
+	if ( !bIsAttack3 )
+	{
+		me->DrillArm1->SetVisibility ( true );
+		me->DrillArm2->SetVisibility ( true );
+		bIsAttack3 = true;
+
+		if ( AttackTimer >= Attack3Duration ) // 드릴 회전 공격이 끝나면
+		{
+			GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack3State >> CoolDown" ) );
+			UE_LOG ( LogTemp , Warning , TEXT ( "Attack3State >> CoolDown" ) );
+
+			// 쿨다운 상태로 전이
+			ChangeState ( EBossState::CoolDown );
+		}
+		AttackTimer = 0; // 공격시간 리셋
+	}
 }
 
 void UToolBoxBossFSM::Attack4State( const float& DeltaTime )
@@ -257,3 +277,18 @@ void UToolBoxBossFSM::Attack5State( const float& DeltaTime )
 	
 }
 
+void UToolBoxBossFSM::DieState ( const float& DeltaTime )
+{
+
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroy Right Arm State" ) );
+	UE_LOG ( LogTemp , Warning , TEXT ( "Destroy Right Arm State" ) );
+
+	if ( !player || !me ) { return; }
+
+	// Enter ragdoll state if not already in ragdoll
+	//if ( !bIsInRagdoll )
+	//{
+	me->EnterRagdollState ( );
+	//bIsInRagdoll = true;
+//}
+}

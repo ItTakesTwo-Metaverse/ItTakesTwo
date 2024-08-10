@@ -17,6 +17,7 @@ void URightArmAnimInstance::NativeInitializeAnimation ( )
     bIsAttacking1 = false;
 	bIsPausing = false;
     bIsAttacking2 = false;
+    bIsAttacking3 = false;
 }
 
 void URightArmAnimInstance::NativeUpdateAnimation ( float DeltaSeconds )
@@ -26,21 +27,16 @@ void URightArmAnimInstance::NativeUpdateAnimation ( float DeltaSeconds )
     switch ( AnimState )
     {
     case ERightArmAnimState::Start:
-            bIsAttacking1 = false;
-            bIsPausing = false;
-            bIsAttacking2 = false;
         break;
 
     case ERightArmAnimState::Idle:
             bIsAttacking1 = false;
             bIsPausing = false;
             bIsAttacking2 = false;
+            bIsAttacking3 = false;
         break;
 
     case ERightArmAnimState::CoolDown:
-            bIsAttacking1 = false;
-            bIsPausing = false;
-            bIsAttacking2 = false;
         break;
  
     case ERightArmAnimState::Attack1:
@@ -51,20 +47,21 @@ void URightArmAnimInstance::NativeUpdateAnimation ( float DeltaSeconds )
             bIsPausing = true;
         break;
 
-    case ERightArmAnimState::DestroyRightArm:
-        break;
-
-    case ERightArmAnimState::Attack2Drill:
-        bIsAttacking2 = false;
+    case ERightArmAnimState::Attack2:
+            bIsAttacking2 = true;
         break;
 
     case ERightArmAnimState::Attack3:
+            bIsAttacking3 = true;
         break;
 
     case ERightArmAnimState::Attack4:
         break;
 
     case ERightArmAnimState::Attack5:
+        break;
+
+    case ERightArmAnimState::Die:
         break;
 
     default:

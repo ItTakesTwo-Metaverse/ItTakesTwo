@@ -15,11 +15,11 @@ enum class EBossState : uint8
 	CoolDown ,
 	Attack1,
 	Paused,
-	DestroyRightArm,
-	Attack2Drill ,
-	Attack3, 
+	Attack2 ,
+	Attack3 ,
 	Attack4, 
-	Attack5
+	Attack5,
+	Die
 };
 
 
@@ -53,13 +53,16 @@ public:
 
 
 	UPROPERTY(EditAnywhere)
-	float AttackRange = 3000.0f;
+	float AttackRange = 5000.0f;
 	float AttackCoolDown;
 	float AttackTimer;
 	float Attack1Duration;
+	float Attack2Duration;
+	float Attack3Duration;
 
 	bool bIsInRagdoll = false;
-	bool bIsAttackDrill = false;
+	bool bIsAttack2 = false;
+	bool bIsAttack3 = false;
 
 	// 상태변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -72,11 +75,11 @@ public:
 	void CoolDownState ( const float& DeltaTime );
 	void Attack1State( const float& DeltaTime );
 	void PausedState ( const float& DeltaTime );
-	void DestroyRightArmState ( const float& DeltaTime );
-	void Attack2DrillState( const float& DeltaTime );
+	void Attack2State( const float& DeltaTime );
 	void Attack3State( const float& DeltaTime );
 	void Attack4State( const float& DeltaTime );
 	void Attack5State( const float& DeltaTime );
+	void DieState ( const float& DeltaTime );
 	
 
 };

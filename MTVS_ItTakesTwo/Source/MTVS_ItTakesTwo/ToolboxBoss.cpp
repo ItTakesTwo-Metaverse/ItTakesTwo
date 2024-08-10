@@ -148,7 +148,7 @@ AToolboxBoss::AToolboxBoss()
 	{
 		DrillCircle->SetSkeletalMesh ( DrillCircleAsset.Object );
 		DrillCircle->SetupAttachment ( Drill );
-		DrillCircle->SetRelativeLocation ( FVector ( -5 , 380 , 0 ) );
+		DrillCircle->SetRelativeLocationAndRotation ( FVector ( -5 , 448 , -60 ), FRotator( 0, 0, 84 ) );
 		DrillCircle->SetGenerateOverlapEvents ( true );
 		DrillCircle->SetCollisionProfileName ( TEXT ( "Drill" ) );
 		DrillCircle->SetVisibility ( false );
@@ -160,7 +160,6 @@ AToolboxBoss::AToolboxBoss()
 	{
 		DrillArm1->SetSkeletalMesh ( DrillArm1Asset.Object );
 		DrillArm1->SetupAttachment ( DrillCircle );
-		DrillArm1->SetRelativeLocationAndRotation ( FVector ( 0 , -90 , -60 ) , FRotator ( 0 , 0 , -90 ) );
 		DrillArm1->SetGenerateOverlapEvents ( true );
 		DrillArm1->SetCollisionProfileName ( TEXT ( "Drill" ) );
 		DrillArm1->SetVisibility ( false );
@@ -172,7 +171,6 @@ AToolboxBoss::AToolboxBoss()
 	{
 		DrillArm2->SetSkeletalMesh ( DrillArm2Asset.Object );
 		DrillArm2->SetupAttachment ( DrillCircle );
-		DrillArm2->SetRelativeLocationAndRotation ( FVector ( 0 , -90 , -60 ) , FRotator ( 0 , 0 , -90 ) );
 		DrillArm2->SetGenerateOverlapEvents ( true );
 		DrillArm2->SetCollisionProfileName ( TEXT ( "Drill" ) );
 		DrillArm2->SetVisibility ( false );
@@ -183,9 +181,12 @@ AToolboxBoss::AToolboxBoss()
 	// 못 상호작용 박스 충돌
 	NailInteractionBox1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyNailInteractionBoxBeginOverlap );
 	// 자물쇠 충돌
-	Lock1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyLockBeginOverlap );
-	// 드릴, 나무판자 충돌 (드릴뚫기공격)
-	DrillCircle->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyDrillOverlap );
+	LockBody1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyLockBeginOverlap );
+	LockBody2->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyLockBeginOverlap );
+	// 드릴 충돌
+	DrillCircle->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyDrillCirleOverlap );
+	DrillArm1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyDrillOverlap );
+	DrillArm2->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyDrillOverlap );
 
 	// 오른팔 애니메이션 블루프린트 할당
 	ConstructorHelpers::FClassFinder<UAnimInstance> TempRightArmAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Anim/ABP_RightArm.ABP_RightArm'_C'"));
@@ -222,14 +223,12 @@ void AToolboxBoss::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
-	// 플레이어와 충돌했을 때 플레이어 파괴
+	// 플레이어와 충돌했을 때 플레이어 죽음
 	if ( OtherActor->IsA<ACharacter>() )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Destroy Player" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "Destroy Player" ) );
 		//OtherActor->Destroy();
-		
 	}
 }
 
@@ -252,17 +251,20 @@ void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* Ove
 
 void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
+	GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Collision Lock & Hammer" ) );
+	UE_LOG ( LogTemp , Warning , TEXT ( "Collision Lock & Hammer" ) );
+
 	// 플레이어의 망치와 충돌했을 때 자물쇠 데미지
 	if ( OtherActor )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Collision Hammer&Lock" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "Collision Hammer&Lock" ) );
 		LockHP -= damage;
+		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Lock Damage -1" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Lock Damage -1" ) );
 	}
 	
 }
 
-void AToolboxBoss::OnMyDrillOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
+void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {	
 	// 드릴공격 판자 뚫기
 	if ( OtherActor && OtherActor != this )
@@ -271,6 +273,17 @@ void AToolboxBoss::OnMyDrillOverlap ( UPrimitiveComponent* OverlappedComponent ,
 		{
 			OtherActor->Destroy ( );
 		}
+	}
+}
+
+void AToolboxBoss::OnMyDrillOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
+{
+	// 플레이어와 충돌했을 때 플레이어 죽음
+	if ( OtherActor->IsA<ACharacter> ( ) )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Destroy Player" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Destroy Player" ) );
+		//OtherActor->Destroy();
 	}
 }
 
