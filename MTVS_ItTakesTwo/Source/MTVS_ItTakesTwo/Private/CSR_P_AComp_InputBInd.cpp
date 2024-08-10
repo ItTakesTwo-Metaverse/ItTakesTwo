@@ -42,6 +42,8 @@ void UCSR_P_AComp_InputBInd::SetupInputComponent ( class UEnhancedInputComponent
 	InputKey->BindAction ( IA_CMove_ , ETriggerEvent::Triggered , this , &UCSR_P_AComp_InputBInd::InputMove );
 	InputKey->BindAction ( IA_CLook_ , ETriggerEvent::Triggered , this , &UCSR_P_AComp_InputBInd::InputLook );
 	InputKey->BindAction ( IA_CJump_ , ETriggerEvent::Started , this , &UCSR_P_AComp_InputBInd::InputJump );
+	InputKey->BindAction (	IA_CRun_ , ETriggerEvent::Started , this ,&UCSR_P_AComp_InputBInd::OnRunToggleButton );
+	InputKey->BindAction ( IA_CRun_ , ETriggerEvent::Completed , this , &UCSR_P_AComp_InputBInd::OffRunToggleButton );
 }
 
 void UCSR_P_AComp_InputBInd::InputMove ( const FInputActionValue& Value )
@@ -57,4 +59,14 @@ void UCSR_P_AComp_InputBInd::InputLook ( const FInputActionValue& Value )
 void UCSR_P_AComp_InputBInd::InputJump ( const FInputActionValue& Value )
 {
 	this->Character_->CharicJumpComp->PlayerJump( Value );
+}
+
+void UCSR_P_AComp_InputBInd::OnRunToggleButton ( const FInputActionValue& Value )
+{
+	this->Character_->CharicMovementComp->RunStart( Value );
+}
+
+void UCSR_P_AComp_InputBInd::OffRunToggleButton ( const FInputActionValue& Value )
+{
+	this->Character_->CharicMovementComp->RunEnd ( Value );
 }
