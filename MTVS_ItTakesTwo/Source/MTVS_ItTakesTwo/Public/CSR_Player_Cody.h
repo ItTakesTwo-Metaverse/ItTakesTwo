@@ -33,36 +33,14 @@ public:
 
 public:
 #pragma region
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ModifyAble" )
+	UPROPERTY ( EditAnywhere , BlueprintReadWrite , Category = "ModifyAble" )
 	class UCSR_CodyPile* CodyPileComp;
 
 	UPROPERTY(EditDefaultsOnly );
 	class UArrowComponent * ArrowComp;
 
-	UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
-	class UInputAction	*IA_CPile_;
-
-	void ChangeZoomIn ( );
-
-	void ChangeZoomOut( );
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ModifyAble" )
-	TSubclassOf<class UUserWidget> CrosshairUIFactory;
-
-	UPROPERTY ( )
-	class UUserWidget* CrosshairUI;
-
-	//못 발사
-	UPROPERTY ( EditDefaultsOnly, Category = "ModifyAble" )
-	class UInputAction* IA_CFire;
-
-    // 못 회수할 IA, 함수
-    UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
-    class UInputAction* IA_CBack;
-	
-	void ExecFIre( );
-
-	void ExecBack();
+	UPROPERTY ( EditDefaultsOnly )
+	class UCSR_C_AComp_InputBIndCody* KeyBindComponent;
 
 #pragma endregion PileMovement;
 };
