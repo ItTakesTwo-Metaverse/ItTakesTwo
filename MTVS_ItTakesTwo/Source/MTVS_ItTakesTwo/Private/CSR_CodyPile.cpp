@@ -7,6 +7,9 @@
 #include "CollisionQueryParams.h"
 #include "CSR_PileInventory.h"
 #include "HSW_Bullet.h"
+#include "Blueprint/UserWidget.h"
+#include "CSR_Player_Cody.h"
+#include "Components/ArrowComponent.h"
 
 // Sets default values for this component's properties
 UCSR_CodyPile::UCSR_CodyPile()
@@ -27,6 +30,11 @@ void UCSR_CodyPile::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+	this->CrosshairUI = CreateWidget ( this->GetWorld ( ) , this->CrosshairUIFactory );
+	if ( this->CrosshairUI ) {
+		this->CrosshairUI->AddToViewport ( );
+	}
+	this->CrosshairUI->SetVisibility ( ESlateVisibility::Hidden );
 }
 
 
@@ -36,8 +44,6 @@ void UCSR_CodyPile::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	// ...
 	if ( this->ExecToggle ) {
-		//FVector target = LayCasting ( );
-		//UE_LOG ( LogTemp , Warning , TEXT ( "%f %f %f" ) , target.X , target.Y , target.Z );
 		this->InZooming(DeltaTime );
 		this->CameraZoomInMoving( DeltaTime );
 	}
@@ -48,15 +54,28 @@ void UCSR_CodyPile::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 }
 
-void UCSR_CodyPile::InitComp (UCameraComponent *CameraComp, USpringArmComponent *SpringArmComp, float ArmSpringDistance )
+void UCSR_CodyPile::InitComp (UCameraComponent *CameraComp, USpringArmComponent *SpringArmComp, float ArmSpringDistance, ACSR_Player_Cody * charic )
 {
 	this->CameraComp_ = CameraComp;
 	this->SpringArmComp_ = SpringArmComp;
 	this->InitArmSpringDistance = ArmSpringDistance;
+	this->charic_ = charic;
 }
 
 void UCSR_CodyPile::ToggleButton ( bool ChangeToggle )
-{
+{	
+	if ( ChangeToggle == true ) {
+		this->CrosshairUI->SetVisibility ( ESlateVisibility::Visible );
+		// 왜 안되는지 모름
+		//this->CameraComp_->bUsePawnControlRotation = true;
+		//this->charic_->bUseControllerRotationYaw = true;
+	}
+	else {
+		this->CrosshairUI->SetVisibility ( ESlateVisibility::Hidden );
+		// 왜 안되는지 모름
+		//this->CameraComp_->bUsePawnControlRotation = false;
+		//this->charic_->bUseControllerRotationYaw = false;
+	}
 	this->ExecToggle = ChangeToggle;
 }
 
@@ -91,12 +110,13 @@ FVector UCSR_CodyPile::LayCasting ( )
 {
 	FHitResult OutHit;
 	FVector Start = this->CameraComp_->GetComponentLocation ( );
+	//UE_LOG(LogTemp, Warning, TEXT(" % f % f % f "), this->CameraComp_->GetForwardVector ( ).X , this->CameraComp_->GetForwardVector ( ).Y, this->CameraComp_->GetForwardVector ( ).Z);
 	FVector End = Start + this->CameraComp_->GetForwardVector ( ) * 100000.0f;
 	ECollisionChannel TraceChannel = ECC_Visibility;
 	FCollisionQueryParams Params;
 	bool bHit = GetWorld ( )->LineTraceSingleByChannel ( OutHit , Start , End , TraceChannel , Params );
 	if ( bHit != NULL ) {
-		//DrawDebugLine ( GetWorld ( ) , Start , OutHit.ImpactPoint , FColor::Red , false , 3 );
+		DrawDebugLine ( GetWorld ( ) , Start , OutHit.ImpactPoint , FColor::Red , false , 3 );
 		return (OutHit.Location);
 	}
 	return (FVector::ZeroVector);

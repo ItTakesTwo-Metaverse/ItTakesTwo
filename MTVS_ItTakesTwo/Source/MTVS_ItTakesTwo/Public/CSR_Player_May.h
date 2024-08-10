@@ -13,6 +13,8 @@ UCLASS()
 class MTVS_ITTAKESTWO_API ACSR_Player_May : public ACSR_P_Player
 {
 	GENERATED_BODY()
+public:
+	ACSR_Player_May ( );
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -24,10 +26,15 @@ public:
 	// PlayerController를 IMC_PlayerController와 맵핑.
 	void MakeEnhancedInputLocalSubSystem();
 #pragma region
+public:
+	UPROPERTY(EditDefaultsOnly )
+	class USceneComponent *HammerLocation;
 
-	UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
-	class UInputAction	*IA_CATTACK_;
+	UPROPERTY ( EditDefaultsOnly )
+	class UCSR_C_AComp_InputBIndMay* KeyBindComponent;
 
+	UPROPERTY(EditDefaultsOnly )
+	class UCSR_MayUseHammerObj *UseHammerComp;
 
 
 #pragma endregion
