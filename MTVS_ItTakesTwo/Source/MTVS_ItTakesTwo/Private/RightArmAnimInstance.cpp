@@ -14,8 +14,9 @@ URightArmAnimInstance::URightArmAnimInstance ( )
 void URightArmAnimInstance::NativeInitializeAnimation ( )
 {
 	Super::NativeInitializeAnimation ( );
-	bIsAttacking = false;
+    bIsAttacking1 = false;
 	bIsPausing = false;
+    bIsAttacking2 = false;
 }
 
 void URightArmAnimInstance::NativeUpdateAnimation ( float DeltaSeconds )
@@ -25,28 +26,25 @@ void URightArmAnimInstance::NativeUpdateAnimation ( float DeltaSeconds )
     switch ( AnimState )
     {
     case ERightArmAnimState::Start:
-        bIsAttacking = false;
-        bIsPausing = false;
-        //GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Start" ) );
-        //UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Start" ) );
+            bIsAttacking1 = false;
+            bIsPausing = false;
+            bIsAttacking2 = false;
         break;
 
     case ERightArmAnimState::Idle:
-        bIsAttacking = false;
-        bIsPausing = false;
-        //GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Idle" ) );
-        //UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Idle" ) );
+            bIsAttacking1 = false;
+            bIsPausing = false;
+            bIsAttacking2 = false;
         break;
 
     case ERightArmAnimState::CoolDown:
-        bIsAttacking = false;
-        bIsPausing = false;
+            bIsAttacking1 = false;
+            bIsPausing = false;
+            bIsAttacking2 = false;
         break;
  
     case ERightArmAnimState::Attack1:
-                //GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Magenta , TEXT ( "Right Arm Anim : Attack1" ) );
-                //UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Anim : Attack1" ) );
-                bIsAttacking = true;
+            bIsAttacking1 = true;
         break;
 
     case ERightArmAnimState::Paused:
@@ -56,7 +54,8 @@ void URightArmAnimInstance::NativeUpdateAnimation ( float DeltaSeconds )
     case ERightArmAnimState::DestroyRightArm:
         break;
 
-    case ERightArmAnimState::Attack2:
+    case ERightArmAnimState::Attack2Drill:
+        bIsAttacking2 = false;
         break;
 
     case ERightArmAnimState::Attack3:

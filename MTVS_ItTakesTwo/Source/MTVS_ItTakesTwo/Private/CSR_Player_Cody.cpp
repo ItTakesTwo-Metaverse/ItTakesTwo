@@ -12,25 +12,38 @@
 #include "Camera/CameraComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ArrowComponent.h"
+#include "CSR_P_AComp_InputBInd.h"
+#include "CSR_C_AComp_InputBIndCody.h"
+#include "CSR_CodyAnimation.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ACSR_Player_Cody::ACSR_Player_Cody ( )
 {
 	this->CodyPileComp = CreateDefaultSubobject< UCSR_CodyPile> ( TEXT ( "CodyPileComp" ) );
-	CodyPileComp->InitComp ( this->CameraComp , this->SpringArmComp, this->SpringArmComp->TargetArmLength );
+	if ( this->CodyPileComp == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_Player_Cody : this->CodyPileComp is null" ) );
+	}
+	this->CodyPileComp->InitComp ( this->CameraComp , this->SpringArmComp , this->SpringArmComp->TargetArmLength , this );
 
 	this->ArrowComp = CreateDefaultSubobject<UArrowComponent> ( TEXT ( "ArrowComp" ) );
+	if ( this->ArrowComp == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_Player_Cody : this->ArrowComp is null" ) );
+	}
 	this->ArrowComp->SetupAttachment ( RootComponent );
 	this->ArrowComp->SetRelativeLocation ( FVector ( 0 , 70.0f , 70.0f ) );
+	this->KeyBindComponent = CreateDefaultSubobject<UCSR_C_AComp_InputBIndCody> ( TEXT ( "KeyBindComponent" ) );
+	ConstructorHelpers::FClassFinder<UCSR_CodyAnimation> TempEnemyAnim ( TEXT ( "/Script/Engine.AnimBlueprint'/Game/CSR/Animation/animation/ABS_CodyAnimation.ABS_CodyAnimation_C'" ) );
+	if ( TempEnemyAnim.Succeeded ( ) ) {
+		GetMesh ( )->SetAnimInstanceClass ( TempEnemyAnim.Class );
+	}
+	this->AnimCody = Cast<UCSR_CodyAnimation> ( GetMesh ( )->GetAnimInstance ( ) );
+
+	this->GetCharacterMovement ( )->bOrientRotationToMovement = true;
 }
 
 void ACSR_Player_Cody::BeginPlay()
 {
 	Super::BeginPlay();
-	this->CrosshairUI = CreateWidget ( this->GetWorld ( ) , this->CrosshairUIFactory );
-	if ( this->CrosshairUI ) {
-		this->CrosshairUI->AddToViewport ( );
-	}
-	this->CrosshairUI->SetVisibility ( ESlateVisibility::Hidden );
 }
 
 // possess 과정 중에서 선 입력
@@ -49,43 +62,13 @@ void ACSR_Player_Cody::MakeEnhancedInputLocalSubSystem()
 
 	// EnhancedInput을 연결합니다.
 	UEnhancedInputLocalPlayerSubsystem* SubSys = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(Player_2->GetLocalPlayer());
-	if (SubSys == nullptr)
+	if ( SubSys == nullptr ) {
 		UCSR_FunctionLib::ExitGame(GetWorld(), FString("SubSyn is null"));
+	}
+
 	// EnhancedInput을 IMC_...를 맵핑합니다.
 	SubSys->AddMappingContext(this->IMC_PlayerController_, 0);
-
-}
-
-void ACSR_Player_Cody::ChangeZoomIn ( )
-{
-	this->CrosshairUI->SetVisibility ( ESlateVisibility::Visible );
-	this->CameraComp->bUsePawnControlRotation = true;
-	this->bUseControllerRotationYaw = true;
-	this->bUseControllerRotationPitch = true;
-	this->bUseControllerRotationRoll = true;
-	CodyPileComp->ToggleButton(true );
-}
-
-void ACSR_Player_Cody::ChangeZoomOut ( )
-{
-	this->CrosshairUI->SetVisibility ( ESlateVisibility::Hidden );
-	this->CameraComp->bUsePawnControlRotation = false;
-	this->bUseControllerRotationYaw = false;
-	this->bUseControllerRotationPitch = false;
-	this->bUseControllerRotationRoll = false;
-	CodyPileComp->ToggleButton ( false );
-}
-
-void ACSR_Player_Cody::ExecFIre ()
-{
-	UE_LOG(LogTemp, Warning, TEXT("ExecFIre" ) );
-	CodyPileComp->OnMyActionFire(this->ArrowComp->GetComponentLocation(), this->GetActorRotation());
-}
-
-void ACSR_Player_Cody::ExecBack ( )
-{
-	UE_LOG ( LogTemp , Warning , TEXT ( "ExecBack" ) );
-	CodyPileComp->OnMyActionBack();
+	
 }
 
 void ACSR_Player_Cody::Tick(float DeltaTime)
@@ -101,19 +84,10 @@ void ACSR_Player_Cody::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	if (InputKey == nullptr) {
 		UCSR_FunctionLib::ExitGame(GetWorld(), FString("ACSR_Player_Cody : InputKey is null"));
 	}
+
+	this->KeyBindComponent->SetupInputComponent ( InputKey );
 #pragma endregion EnhancedInput register
-	
-#pragma region
-	InputKey->BindAction( IA_CMove_ , ETriggerEvent::Triggered, this, &ACSR_P_Player::Player_Move);
-	InputKey->BindAction( IA_CLook_ , ETriggerEvent::Triggered , this , &ACSR_P_Player::Player_View );
-	InputKey->BindAction( IA_CJump_ , ETriggerEvent::Started	, this , &ACSR_P_Player::PlayerJump );
-	InputKey->BindAction ( IA_CPile_ , ETriggerEvent::Started , this , &ACSR_Player_Cody::ChangeZoomIn );
-	InputKey->BindAction ( IA_CPile_ , ETriggerEvent::Completed , this , &ACSR_Player_Cody::ChangeZoomOut );
-	InputKey->BindAction ( IA_CFire , ETriggerEvent::Started , this , &ACSR_Player_Cody::ExecFIre );
-	InputKey->BindAction ( IA_CBack , ETriggerEvent::Started , this , &ACSR_Player_Cody::ExecBack );
 
-
-#pragma endregion Input Function binding
 	Setting ( );
 }
 

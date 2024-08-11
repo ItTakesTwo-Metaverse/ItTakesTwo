@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "SCR_ItTakesTwoGameMode.h"
@@ -9,36 +9,37 @@
 
 void ASCR_ItTakesTwoGameMode::BeginPlay()
 {
-	// ÇÃ·¹ÀÌ¾î 0¹øÀÇ ÄÁÆ®·Ñ·¯¸¦ °¡Á®¿É´Ï´Ù.
+	// í”Œë ˆì´ì–´ 0ë²ˆì˜ ì»¨íŠ¸ë¡¤ëŸ¬ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
 	APlayerController *P1 = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (P1 == nullptr) {
 		UCSR_FunctionLib::ExitGame(GetWorld(), FString("ASCR_ItTakesTwoGameMode : P1 is Null"));
 		UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
 	}
-	// ÇÃ·¹ÀÌ¾î 1¹øÀÇ ÄÁÆ®·Ñ·¯¸¦ »ý¼ºÇÕ´Ï´Ù.
+	// í”Œë ˆì´ì–´ 1ë²ˆì˜ ì»¨íŠ¸ë¡¤ëŸ¬ë¥¼ ìƒì„±í•©ë‹ˆë‹¤.
 	APlayerController* P2 = UGameplayStatics::CreatePlayer(GetWorld(), 1, true);
 	if (P2 == nullptr) {
 		UCSR_FunctionLib::ExitGame(GetWorld(), FString("ASCR_ItTakesTwoGameMode : P2 is Null"));
 	}
 
-	// PlayerStart transform Á¤º¸¸¦ °¡Á®¿É´Ï´Ù.
+	// PlayerStart transform ì •ë³´ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
 	FTransform CodyTrans = UCSR_FunctionLib::FindStartTransForm(this, FString("Cody"));
 	FTransform MayTrans = UCSR_FunctionLib::FindStartTransForm(this, FString("May"));
 
 
-	// P1ÀÌ Á¶Á¾ÇÒ May Ä³¸¯ÅÍ¸¦ ½ºÆùÇÕ´Ï´Ù.
-	this->P1_May = GetWorld()->SpawnActor<ACSR_Player_May>(this->SpawnMay, MayTrans);
-	if (this->P1_May == nullptr) {
-		UCSR_FunctionLib::ExitGame(GetWorld(), FString("ASCR_ItTakesTwoGameMode : P1_May is Null"));
+	// P1ì´ ì¡°ì¢…í•  May ìºë¦­í„°ë¥¼ ìŠ¤í°í•©ë‹ˆë‹¤.
+	this->P1_May = GetWorld ( )->SpawnActor<ACSR_Player_May> ( this->SpawnMay , MayTrans );
+	if ( this->P1_May == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( GetWorld ( ) , FString ( "ASCR_ItTakesTwoGameMode : P1_May is Null" ) );
 	}
-	// P1À» ÄÁÆ®·Ñ·¯¿Í ¿¬°áÇÕ´Ï´Ù.
-	P1->Possess(this->P1_May);
+	// P1ì„ ì»¨íŠ¸ë¡¤ëŸ¬ì™€ ì—°ê²°í•©ë‹ˆë‹¤.
+	P1->Possess ( this->P1_May );
 
-	// P2°¡ Á¶Á¾ÇÒ Cody Ä³¸¯ÅÍ¸¦ ½ºÆùÇÕ´Ï´Ù.
-	this->P2_Cody = GetWorld()->SpawnActor<ACSR_Player_Cody>(this->SpawnCody, CodyTrans);
-	if (this->P2_Cody == nullptr) {
-		UCSR_FunctionLib::ExitGame(GetWorld(), FString("ASCR_ItTakesTwoGameMode : P2_Cody is Null"));
+	// P2ê°€ ì¡°ì¢…í•  Cody ìºë¦­í„°ë¥¼ ìŠ¤í°í•©ë‹ˆë‹¤.
+	this->P2_Cody = GetWorld ( )->SpawnActor<ACSR_Player_Cody> ( this->SpawnCody , CodyTrans );
+	if ( this->P2_Cody == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( GetWorld ( ) , FString ( "ASCR_ItTakesTwoGameMode : P2_Cody is Null" ) );
 	}
-	// P2À» ÄÁÆ®·Ñ·¯¿Í ¿¬°áÇÕ´Ï´Ù.
-	P2->Possess(this->P2_Cody);
+	// P2ì„ ì»¨íŠ¸ë¡¤ëŸ¬ì™€ ì—°ê²°í•©ë‹ˆë‹¤.
+	P2->Possess ( this->P2_Cody );
+
 }

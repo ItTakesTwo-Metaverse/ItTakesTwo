@@ -20,18 +20,21 @@ void UCSR_P_AComp_CharicStateMannage::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
 }
 
-bool UCSR_P_AComp_CharicStateMannage::CanChangeState ( int32 NewState )
+bool UCSR_P_AComp_CharicStateMannage::TotalControlState ( int32 NewState )
 {	
 	switch ( NewState )
 	{
 		case IDLE:
 			break;
 		case MOVE:
+			return (this->CanAddMove ());
+		case JUMPMOVE:
+			return (this->CanAddJumpMove());
 			break;
 		case RUN:
+			return (this->CanAddRun( ));
 			break;
 		case AIRMOVE:
 			break;
@@ -40,6 +43,7 @@ bool UCSR_P_AComp_CharicStateMannage::CanChangeState ( int32 NewState )
 		case AIRSIT:
 			break;
 		case JUMP:
+			return (this->CanAddJump ( ));
 			break;
 		case SCJUMP:
 			break;
@@ -48,6 +52,7 @@ bool UCSR_P_AComp_CharicStateMannage::CanChangeState ( int32 NewState )
 		case DAMAGED:
 			break;
 		case PRESS:
+			return (CanAddPress ( ));
 			break;
 		case DIE:
 			break;
@@ -55,9 +60,13 @@ bool UCSR_P_AComp_CharicStateMannage::CanChangeState ( int32 NewState )
 	return true;
 }
 
-void UCSR_P_AComp_CharicStateMannage::ChangeState ( int32 NewState )
+bool UCSR_P_AComp_CharicStateMannage::AddState ( int32 NewState )
 {
-	this->CurrentState |= NewState;
+	if ( this->TotalControlState ( NewState ) ) {
+		this->CurrentState |= NewState;
+		return (true);
+	}
+	return (false);
 }
 
 void UCSR_P_AComp_CharicStateMannage::RemoveState ( int32 DeleteState )
@@ -65,9 +74,43 @@ void UCSR_P_AComp_CharicStateMannage::RemoveState ( int32 DeleteState )
 	this->CurrentState &= ~DeleteState;
 }
 
-bool UCSR_P_AComp_CharicStateMannage::CanChangeMove ( )
+bool UCSR_P_AComp_CharicStateMannage::CanAddMove ( )
 {
-	if(this->CurrentState & (AIRMOVE | AIRSIT | JUMP | SCJUMP | DASH | DAMAGED | PRESS | DIE))
-		return false ;
+	if ( this->CurrentState & (AIRMOVE | AIRSIT | JUMP | SCJUMP | DASH | DAMAGED | PRESS | DIE) ) {
+		return false;
+	}
 	return true;
 }
+
+bool UCSR_P_AComp_CharicStateMannage::CanAddPress ( )
+{
+	if ( this->CurrentState & DIE ) {
+		return false;
+	}
+	return true;
+}
+
+bool UCSR_P_AComp_CharicStateMannage::CanAddJumpMove ( )
+{
+	if ( this->CurrentState & JUMP ) {
+		return true;
+	}
+	return false;
+}
+
+bool UCSR_P_AComp_CharicStateMannage::CanAddJump ( )
+{
+	if ( this->CurrentState & (AIRSIT | SCJUMP | DAMAGED | PRESS | DIE) ) {
+		return false;
+	}
+	return true;
+}
+
+bool UCSR_P_AComp_CharicStateMannage::CanAddRun ( )
+{
+	if ( this->CurrentState & (AIRSIT | SCJUMP | DAMAGED | PRESS | DIE | JUMP) ) {
+		return false;
+	}
+	return true;
+}
+

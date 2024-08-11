@@ -11,8 +11,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "HSW_Hammer.h"
 #include "HSW_Bullet.h"
-#include "CSR_Player_Cody.h"
-#include "CSR_Player_May.h"
+#include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 
 
 
@@ -28,7 +28,6 @@ AToolboxBoss::AToolboxBoss()
 	{
 		GetMesh()->SetSkeletalMesh(BossMeshAsset.Object);
 		GetMesh ( )->SetupAttachment ( RootComponent );
-		GetMesh ( )->SetRelativeLocation ( FVector ( 0 , 0 , 1000 ));
 		
 	}
 
@@ -56,70 +55,127 @@ AToolboxBoss::AToolboxBoss()
 
 	// 못 상호작용 박스1
 	NailInteractionBox1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("NailInterationBox1" ));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox1Asset(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox1Asset(TEXT("/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/target/Target1.Target1'" ) );
 	if ( NailInteractionBox1Asset.Succeeded ( ) )
 	{
 		NailInteractionBox1->SetStaticMesh( NailInteractionBox1Asset.Object);
-		NailInteractionBox1->SetupAttachment(RightArmMesh, TEXT("joint7" ) );
-		NailInteractionBox1->SetRelativeLocation(FVector(-690 ,-10, 10 )); 
-		NailInteractionBox1->SetRelativeScale3D(FVector(1,0.3,1));
+		NailInteractionBox1->SetupAttachment(RightArmMesh, TEXT("joint20" ) );
+		NailInteractionBox1->SetRelativeLocation(FVector( -2546 , -523 , 386 )); 
 		NailInteractionBox1->SetGenerateOverlapEvents ( true );
 		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
 
 	// 못 상호작용 박스2
 	NailInteractionBox2 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "NailInterationBox2" ) );
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/target/target2.target2'" ) );
 	if ( NailInteractionBox2Asset.Succeeded ( ) )
 	{
 		NailInteractionBox2->SetStaticMesh ( NailInteractionBox2Asset.Object );
 		NailInteractionBox2->SetupAttachment ( RightArmMesh , TEXT ( "joint5" ) );
-		NailInteractionBox2->SetRelativeLocationAndRotation ( FVector ( -20 , 10 , 45 ), FRotator(-5,0,90) );
-		NailInteractionBox2->SetRelativeScale3D ( FVector ( 1.5 , 0.3 , 1.5 ) );
+		NailInteractionBox2->SetRelativeLocationAndRotation ( FVector ( -1145 , -42 , -520 ), FRotator( -1 , 0 , -124 ) );
+		NailInteractionBox1->SetGenerateOverlapEvents ( true );
+		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
 
 	// 못 상호작용 박스3
 	NailInteractionBox3 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "NailInterationBox3" ) );
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox3Asset ( TEXT ( "/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox3Asset ( TEXT ( "/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/target/Target3.Target3'" ) );
 	if ( NailInteractionBox3Asset.Succeeded ( ) )
 	{
 		NailInteractionBox3->SetStaticMesh ( NailInteractionBox3Asset.Object );
 		NailInteractionBox3->SetupAttachment ( RightArmMesh , TEXT ( "joint4" ) ); 
-		NailInteractionBox3->SetRelativeLocationAndRotation ( FVector ( -210 , 0 , 90 ) , FRotator ( -15 , 0 , 90 ) );
-		NailInteractionBox3->SetRelativeScale3D ( FVector ( 1.5 , 0.3 , 1.5 ) );
+		NailInteractionBox3->SetRelativeLocationAndRotation ( FVector ( -1033 , 54 , -254 ) , FRotator ( -12 , -10 , -107 ) );
+		NailInteractionBox1->SetGenerateOverlapEvents ( true );
+		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
 
 	// 자물쇠1
-	Lock1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Lock1") );
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> Lock1Asset (TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	Lock1 = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Lock1") );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> Lock1Asset (TEXT("/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/lock/SM_Locker_002.SM_Locker_002'" ) );
 	if ( Lock1Asset.Succeeded ( ) )
 	{
-		Lock1->SetStaticMesh(Lock1Asset.Object);
+		Lock1->SetSkeletalMesh (Lock1Asset.Object);
 		Lock1->SetupAttachment(GetMesh());
-		Lock1->SetRelativeLocation(FVector(-300,560,-370));
-		Lock1->SetGenerateOverlapEvents ( true );
-		Lock1->SetCollisionProfileName ( TEXT ( "Lock" ) );
+		Lock1->SetRelativeLocation(FVector( -318 , 553 , -397 ));
+	}
+
+	LockBody1 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "LockBody1" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LockBody1Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/lock/SM_Locker_001.SM_Locker_001'" ) );
+	if ( LockBody1Asset.Succeeded ( ) )
+	{
+		LockBody1->SetSkeletalMesh ( LockBody1Asset.Object );
+		LockBody1->SetupAttachment ( Lock1 );
+		LockBody1->SetGenerateOverlapEvents ( true );
+		LockBody1->SetCollisionProfileName ( TEXT ( "Lock" ) );
 	}
 
 	// 자물쇠2
-	Lock2 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "Lock2" ) );
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> Lock2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'" ) );
+	Lock2 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "Lock2" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> Lock2Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/lock/SM_Locker_002.SM_Locker_002'" ) );
 	if ( Lock2Asset.Succeeded ( ) )
 	{
-		Lock2->SetStaticMesh ( Lock2Asset.Object );
+		Lock2->SetSkeletalMesh ( Lock2Asset.Object );
 		Lock2->SetupAttachment ( GetMesh ( ) );
-		Lock2->SetRelativeLocation ( FVector ( -430 , 560 , -370 ) );
-		Lock1->SetGenerateOverlapEvents ( true );
-		Lock1->SetCollisionProfileName ( TEXT ( "Lock" ) );
+		Lock2->SetRelativeLocation ( FVector ( -388 , 553 , -397 ) );
 	}
 
+	LockBody2 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "LockBody2" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LockBody2Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/lock/SM_Locker_001.SM_Locker_001'" ) );
+	if ( LockBody2Asset.Succeeded ( ) )
+	{
+		LockBody2->SetSkeletalMesh ( LockBody2Asset.Object );
+		LockBody2->SetupAttachment ( Lock2 );
+		LockBody2->SetGenerateOverlapEvents ( true );
+		LockBody2->SetCollisionProfileName ( TEXT ( "Lock" ) );
+	}
+
+	// 전동 드릴
+	Drill = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Drill" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> DrillAsset ( TEXT ( "//Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/drill/drill_DRILL.drill_DRILL'" ) );
+	if( DrillAsset .Succeeded())
+	{
+		Drill->SetStaticMesh ( DrillAsset.Object );
+		Drill->SetupAttachment( RightArmMesh , TEXT ( "joint8" ) );
+		Drill->SetRelativeLocation ( FVector ( 390 , -520 , 550 ) );
+		Drill->SetVisibility ( false );
+	}
+
+	DrillCircle = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "DrillCircle" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DrillCircleAsset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/drill/SKM_drill_circle.SKM_drill_circle'" ) );
+	if ( DrillCircleAsset.Succeeded ( ) )
+	{
+		DrillCircle->SetSkeletalMesh ( DrillCircleAsset.Object );
+		DrillCircle->SetupAttachment ( Drill );
+		DrillCircle->SetRelativeLocation ( FVector ( -18 , 380 , 0 ) );
+		DrillCircle->SetVisibility ( false );
+	}
+
+	DrillArm1 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "DrillArm1" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DrillArm1Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/drill/SKM_drill_v002_arm1.SKM_drill_v002_arm1'" ) );
+	if ( DrillArm1Asset.Succeeded ( ) )
+	{
+		DrillArm1->SetSkeletalMesh ( DrillArm1Asset.Object );
+		DrillArm1->SetupAttachment ( DrillCircle );
+		DrillArm1->SetVisibility ( false );
+	}
+
+	DrillArm2 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "DrillArm2" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DrillArm2Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/drill/SKM_drill_v002_arm2.SKM_drill_v002_arm2'" ) );
+	if ( DrillArm2Asset.Succeeded ( ) )
+	{
+		DrillArm2->SetSkeletalMesh ( DrillArm2Asset.Object );
+		DrillArm2->SetupAttachment ( DrillCircle );
+		DrillArm2->SetVisibility ( false );
+	}
+	
 	// 오른팔 충돌
 	RightArmMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
 	// 못 상호작용 박스 충돌
 	NailInteractionBox1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyNailInteractionBoxBeginOverlap );
 	// 자물쇠 충돌
 	Lock1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyLockBeginOverlap );
-	
+	// 드릴, 나무판자 충돌 (드릴뚫기공격)
+	DrillCircle->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyDrillOverlap );
 
 	// 오른팔 애니메이션 블루프린트 할당
 	ConstructorHelpers::FClassFinder<UAnimInstance> TempRightArmAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Anim/ABP_RightArm.ABP_RightArm'_C'"));
@@ -158,7 +214,7 @@ void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent
 {
 	
 	// 플레이어와 충돌했을 때 플레이어 파괴
-	if ( OtherActor->IsA<ACSR_Player_Cody>() && OtherActor->IsA<ACSR_Player_May> ( ) )
+	if ( OtherActor->IsA<ACharacter>() )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Destroy Player" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "Destroy Player" ) );
@@ -170,8 +226,7 @@ void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent
 void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
 	// 플레이어의 못이 보스의 오른팔 상호작용 박스에 충돌했을 때 보스 일시정지 상태로 전이
-
-	if ( OtherActor)
+	if ( OtherActor )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Bullet Collision NailInteractionBox" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "Bullet Collision NailInteractionBox" ) );
@@ -183,21 +238,6 @@ void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* Ove
 			fsm->ChangeState ( EBossState::Paused );
 		}
 	}
-
-
-
-	/*if ( OtherActor->ActorHasTag ( "Bullet" ) )
-	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Bullet Has Tag NailInteractionBox" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "Bullet Has Tag NailInteractionBox" ) );
-
-		if ( fsm->CurrentState == EBossState::Attack1 )
-		{
-			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Attck1 >> Paused" ) );
-			UE_LOG ( LogTemp , Warning , TEXT ( "Attck1 >> Paused" ) );
-			fsm->ChangeState(EBossState::Paused);
-		}
-	}*/
 }
 
 void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
@@ -207,36 +247,31 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Collision Hammer&Lock" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "Collision Hammer&Lock" ) );
-		fsm->OnMyTakeDamage();
+		LockHP -= damage;
 	}
 	
 }
 
+void AToolboxBoss::OnMyDrillOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
+{	
+	// 드릴공격 판자 뚫기
+	if ( OtherActor && OtherActor != this )
+	{
+		if ( OtherComponent && OtherComponent->ComponentHasTag ( TEXT ( "HoleMesh" ) ) )
+		{
+			OtherActor->Destroy ( );
+		}
+	}
+}
 
 void AToolboxBoss::EnterRagdollState ( )
 {	
-	/*USkeletalMeshComponent* BodyComp = GetMesh ( );
-	USkeletalMeshComponent* LeftArmComp = LeftArmMesh;
-	USkeletalMeshComponent* RightArmComp = RightArmMesh;*/
-	//if ( BodyComp && LeftArmComp && RightArmComp )
-	//{
-		GetMesh ( )->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
-		GetMesh ( )->SetSimulatePhysics(true);
-		GetMesh ( )->WakeAllRigidBodies ( );
-		GetMesh ( )->bBlendPhysics = true;
-		
-
-		/*LeftArmMesh->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
-		LeftArmMesh->SetSimulatePhysics ( true );
-		LeftArmMesh->WakeAllRigidBodies ( );
-		LeftArmMesh->bBlendPhysics = true;*/
-
+	if ( RightArmMesh )
+	{
 		RightArmMesh->SetSimulatePhysics ( true );
 		RightArmMesh->WakeAllRigidBodies ( );
 		RightArmMesh->bBlendPhysics = true;
-		
-
-	//}
+	}
 }
 
 void AToolboxBoss::SetAnimState ( ERightArmAnimState NewState )
