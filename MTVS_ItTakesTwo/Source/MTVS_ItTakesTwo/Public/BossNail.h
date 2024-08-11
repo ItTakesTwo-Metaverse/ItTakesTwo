@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,5 +22,22 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditDefaultsOnly )
+	class UBoxComponent* BoxComp;
+
+	UPROPERTY(EditDefaultsOnly )
+	class UStaticMeshComponent* MeshComp;
+
+	void SetActive ( bool bValue );
+
+	UPROPERTY(EditAnywhere )
+	float Speed = 1000.f;
+	FVector Dir;
+
+	bool bShoot;
+
+	void Shoot (float DeltaTime );
+
 
 };

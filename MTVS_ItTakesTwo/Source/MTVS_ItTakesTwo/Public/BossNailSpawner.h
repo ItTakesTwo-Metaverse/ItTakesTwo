@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,5 +22,23 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	UPROPERTY(EditAnywhere )
+	class USceneComponent* RootComp;
 
+	void PlayNailAttack ( );
+
+	float CurrentTime;
+	UPROPERTY(EditAnywhere )
+	float MakeTine = 1.0f;
+
+	void DropNail ( );
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ABossNail> NailFactory;
+
+	int32 NailMaxCount = 10;
+
+	APawn* Player1;
+	APawn* Player2;
 };
