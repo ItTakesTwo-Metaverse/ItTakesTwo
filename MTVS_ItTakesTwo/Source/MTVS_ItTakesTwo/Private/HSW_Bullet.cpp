@@ -279,8 +279,9 @@ void AHSW_Bullet::NailBasic ( )
 {
 	if ( this->IsAttachedTo ( Player ) )
 	{
-		this->DetachFromActor ( FDetachmentTransformRules::KeepWorldTransform );
+		this->DetachFromActor ( FDetachmentTransformRules::KeepRelativeTransform );
 	}
+	State = ENailState::BASIC;
 }
 
 // 마우스 좌클릭시 사용될 함수
@@ -302,5 +303,6 @@ void AHSW_Bullet::NailShoot ( FVector start , FVector end )
 void AHSW_Bullet::NailLoad ( FName socketName)
 {
 	AttachToActor ( Player , FAttachmentTransformRules::SnapToTargetIncludingScale, socketName );
+	State = ENailState::LOAD;
 
 }

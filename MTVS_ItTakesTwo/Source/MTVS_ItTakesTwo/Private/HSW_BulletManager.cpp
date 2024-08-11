@@ -81,15 +81,19 @@ void AHSW_BulletManager::NailPush ( )
 	AHSW_Bullet* nail = Magazine_Out.Pop ( );
 	if ( nail != nullptr )
 	{
-		nail->SetState ( ENailState::RETURNING );
 		Magazine.Push ( nail );
 
 		// Nail이 들어갈 소켓 이름을 가져온다.
-		FString SocketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , Magazine.Num ( ));
-		FName SocketName ( *SocketNameString );
+		FString socketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , Magazine.Num ( ));
+		FString DebugMsg = FString::Printf ( TEXT ( "%d" ) , Magazine.Num() );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , DebugMsg);
+		FName socketName ( *socketNameString );
 
 		// 해당 소켓이름에 맞는 곳에 attach 한다.
-		nail->AttachToActor ( this , FAttachmentTransformRules::KeepWorldTransform, SocketName );
+		nail->AttachToActor ( this , FAttachmentTransformRules::KeepRelativeTransform, socketName );
+		FTransform t = this->MeshComp->GetSocketTransform ( socketName );
+		nail->SetActorLocation ( t.GetLocation ( ) );
+		nail->SetActorRotation ( t.GetRotation ( ) );
 
 	}
 }
