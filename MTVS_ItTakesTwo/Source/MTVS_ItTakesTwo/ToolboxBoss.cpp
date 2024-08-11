@@ -149,7 +149,7 @@ AToolboxBoss::AToolboxBoss()
 	if ( DrillCircleAsset.Succeeded ( ) )
 	{
 		DrillCircle->SetSkeletalMesh ( DrillCircleAsset.Object );
-		DrillCircle->SetupAttachment ( Drill );
+		DrillCircle->SetupAttachment ( Drill ); 
 		DrillCircle->SetRelativeLocationAndRotation ( FVector ( -5 , 448 , -60 ), FRotator( 0, 0, 84 ) );
 		DrillCircle->SetGenerateOverlapEvents ( true );
 		DrillCircle->SetCollisionProfileName ( TEXT ( "Drill" ) );
@@ -161,8 +161,8 @@ AToolboxBoss::AToolboxBoss()
 	if ( DrillArmsAsset.Succeeded ( ) )
 	{
 		DrillArms->SetSkeletalMesh ( DrillArmsAsset.Object );
-		DrillArms->SetupAttachment ( DrillCircle );
-		DrillArms->SetRelativeLocationAndRotation ( FVector ( 0 , -10 , 0 ) , FRotator ( -90 , -5 , 5 ) );
+		DrillArms->SetupAttachment ( DrillCircle ); 
+		DrillArms->SetRelativeLocationAndRotation ( FVector ( 0 , -2.5 , -2 ) , FRotator ( -82 , -90 , 90 ) );
 		DrillArms->SetGenerateOverlapEvents ( true );
 		DrillArms->SetCollisionProfileName ( TEXT ( "Drill" ) );
 		DrillArms->SetVisibility ( false );
@@ -186,6 +186,8 @@ AToolboxBoss::AToolboxBoss()
 	{
 		RightArmMesh->SetAnimInstanceClass( TempRightArmAnim.Class);
 	}
+
+	DrillCircleAnim = Cast<UDrillCircleAnimInstance> ( DrillCircle->GetAnimInstance ( ) );
 
 	// FSM 컴포넌트 추가
 	fsm = CreateDefaultSubobject<UToolBoxBossFSM> ( TEXT ( "FSM" ) );
@@ -257,6 +259,8 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 			{
 				Lock1->DestroyComponent ( );
 				LockBody1->DestroyComponent ( );
+
+				//LockBody2->SetCollisionEnabled() // 자물쇠 1개가 파괴되는 순간에만 LockBody2를 Block 처리 하고싶다.
 			}
 		}
 		else if ( Lock1HP == 0 && Lock2HP > 0)

@@ -2,9 +2,19 @@
 
 
 #include "DrillCircleAnimInstance.h"
+#include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
+#include "Animation/AnimInstance.h"
 
-void UDrillCircleAnimInstance::NativeInitializeAnimation ( )
+
+
+void UDrillCircleAnimInstance::PlayDrillCircle1Montage ( )
 {
-	Super::NativeInitializeAnimation ( );
+	Montage_Play ( DrillCircle1Montage );
+}
+
+void UDrillCircleAnimInstance::PlayDrillCircle2Montage ( )
+{
+	Montage_Play ( DrillCircle2Montage );
 }
 

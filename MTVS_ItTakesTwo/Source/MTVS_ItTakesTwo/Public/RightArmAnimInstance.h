@@ -6,9 +6,9 @@
 #include "Animation/AnimInstance.h"
 #include "RightArmAnimInstance.generated.h"
 
-UENUM(BlueprintType )
+UENUM(BlueprintType)
 enum class ERightArmAnimState : uint8
-{
+{  
 	Start ,
 	Idle ,
 	CoolDown ,

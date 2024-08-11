@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "RightArmAnimInstance.h"
+#include "DrillCircleAnimInstance.h"
 #include "ToolboxBoss.generated.h"
 
 UCLASS()
@@ -54,7 +55,7 @@ public:
 	UPROPERTY(EditDefaultsOnly )
 	class UStaticMeshComponent* Drill;
 	
-	UPROPERTY(EditDefaultsOnly )
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite )
 	class USkeletalMeshComponent* DrillCircle;
 	
 	UPROPERTY(EditDefaultsOnly )
@@ -91,5 +92,6 @@ public:
 	UPROPERTY()
     class URightArmAnimInstance* RightArmAnimInstance;
 
-
+	UPROPERTY()
+    class UDrillCircleAnimInstance* DrillCircleAnim;
 };

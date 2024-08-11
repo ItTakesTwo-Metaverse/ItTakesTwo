@@ -6,6 +6,7 @@
 #include "HSW_Player.h"
 #include "GameFramework/Character.h"
 #include "RightArmAnimInstance.h"
+#include "DrillCircleAnimInstance.h"
 
 // Sets default values for this component's properties
 UToolBoxBossFSM::UToolBoxBossFSM()
@@ -208,7 +209,7 @@ void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
 	{
 		if ( me->Lock1HP > 0 ) // 자물쇠1이 존재할 때
 		{
-			if ( me->Lock1HP == 0 ) // 자물쇠1이 파괴된다면 /////여기서부터 안들어옴
+			if ( me->Lock1HP <= 0 ) // 자물쇠1이 파괴된다면 /////여기서부터 안들어옴
 			{
 				GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroyed Lock1 PausedState >> CoolDown" ) );
 				UE_LOG ( LogTemp , Warning , TEXT ( "Destroyed Lock1 >> CoolDown" ) );
@@ -219,9 +220,9 @@ void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
 				return; // 상태를 바꿨으므로 함수 종료
 			}
 		}
-		else if ( me->Lock1HP == 0 && me->Lock2HP > 0 ) // 자물쇠1이 없고 자물쇠2만 있을 때
+		else if ( me->Lock1HP <= 0 && me->Lock2HP > 0 ) // 자물쇠1이 없고 자물쇠2만 있을 때
 		{
-			if ( me->Lock2HP == 0 ) // 자물쇠2가 파괴된다면
+			if ( me->Lock2HP <= 0 ) // 자물쇠2가 파괴된다면
 			{
 				ChangeState( EBossState::Die );
 				AttackTimer = 0; // 공격시간 리셋
@@ -245,6 +246,7 @@ void UToolBoxBossFSM::Attack2State( const float& DeltaTime )
 	{
 		me->Drill->SetVisibility(true);
 		me->DrillCircle->SetVisibility ( true );
+		//me->DrillCircleAnim->PlayDrillCircle1Montage();
 		bIsAttack2 = true;
 	}
 	if ( AttackTimer > Attack2Duration ) // 바닥뚫기가 끝나면
@@ -267,6 +269,7 @@ void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
 		me->Drill->SetVisibility ( true );
 		me->DrillCircle->SetVisibility ( true );
 		me->DrillArms->SetVisibility ( true );
+		//me->DrillCircleAnim->PlayDrillCircle2Montage ( );
 
 		bIsAttack3 = true;
 		

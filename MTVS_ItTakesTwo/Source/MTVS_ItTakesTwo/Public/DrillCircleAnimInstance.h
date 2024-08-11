@@ -14,7 +14,17 @@ class MTVS_ITTAKESTWO_API UDrillCircleAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 	
-public:
-	virtual void NativeInitializeAnimation ( ) override;
 
+public:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
+	class UAnimMontage* DrillCircle1Montage;
+
+	void PlayDrillCircle1Montage( );
+
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
+	class UAnimMontage* DrillCircle2Montage;
+
+	void PlayDrillCircle2Montage( );
 };
