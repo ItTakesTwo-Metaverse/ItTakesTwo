@@ -100,6 +100,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class AHSW_BulletManager* NailBag;
+	void SetNailBag ( AHSW_BulletManager* nailBag );
 
 	UPROPERTY (  )
 	class APawn* Player;
@@ -110,6 +111,7 @@ public:
 	void NailShoot ( FVector start , FVector end );
 	UFUNCTION(BlueprintCallable )
 	void NailLoad ( FName socketName );
-
+	UFUNCTION(BlueprintCallable )
+	void NailReturn( );
 	
 };

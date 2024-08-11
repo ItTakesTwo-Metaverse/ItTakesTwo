@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "HSW_BulletManager.h"
 
 // Sets default values
 AHSW_Bullet::AHSW_Bullet()
@@ -57,7 +58,7 @@ void AHSW_Bullet::BeginPlay()
 	StartPoint = Player->GetActorLocation ( );
 	EndPoint = StartPoint + FVector ( 100000 , 0 , 0 );
 
-
+	
 	//NailHomingTargetComponent = player->GetComponentByClass<USceneComponent> ( );
 }
 
@@ -189,9 +190,13 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	if ( Distance < NailDefaultDist )
 	{
 	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "End" ) );
+
+
+		GoToNailBag ( );
+		// Basic상태로 변경.
 		SetState(ENailState::BASIC);
 	}
-	// -> Basic상태로 변경.
+	
 }
 
 
@@ -261,8 +266,8 @@ void AHSW_Bullet::SetActive ( bool bValue )
 //리턴될때 소켓 hand_l의 위치를 받는다.
 void AHSW_Bullet::SetNailReturnDestination ()
 {
-	nailDestLocation = NailBag->MeshComp->GetSocketLocation(TEXT("hand_l" ));
-	nailDestRotation = NailBag->MeshComp->GetSocketRotation ( TEXT ( "hand_l" ) );
+//	nailDestLocation = NailBag->MeshComp->GetSocketLocation(TEXT("hand_l" ));
+//	nailDestRotation = NailBag->MeshComp->GetSocketRotation ( TEXT ( "hand_l" ) );
 }
 
 // NailPop 되면서 손위에 올려놓을 때 쓰는 함수
@@ -273,17 +278,27 @@ void AHSW_Bullet::NailReadytoShoot ( FVector v , FRotator r )
 
 void AHSW_Bullet::GoToNailBag ( )
 {
-	FVector v = NailBag->GetNailBagSocketLocation ( );
-	FRotator r = NailBag->GetNailBagSocketRotation ( );
-	SetActorLocationAndRotation ( FMath::Lerp ( this->GetActorLocation ( ) , v , 0.1 ) , FMath::Lerp ( this->GetActorRotation ( ) , r , 0.1 ) );
+	// Nail이 들어갈 소켓 이름을 가져온다.
+	FString socketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , NailBag->Magazine.Num ( )-1 );
+	FName socketName ( *socketNameString );
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , socketNameString );
+
+	// 해당 소켓이름에 맞는 곳에 attach 한다.
+	AttachToActor ( NailBag , FAttachmentTransformRules::SnapToTargetIncludingScale , socketName );
+	FTransform t = NailBag->MeshComp->GetSocketTransform ( socketName );
+	SetActorLocation ( t.GetLocation ( ) );
+	SetActorRotation ( t.GetRotation ( ) );
+}
+
+void AHSW_Bullet::SetNailBag ( AHSW_BulletManager* nailBag )
+{
+	NailBag = nailBag;
 }
 
 void AHSW_Bullet::NailBasic ( )
 {
-	if ( this->IsAttachedTo ( Player ) )
-	{
-		this->DetachFromActor ( FDetachmentTransformRules::KeepRelativeTransform );
-	}
+	this->DetachFromActor ( FDetachmentTransformRules::KeepRelativeTransform );
+	GoToNailBag ( );
 	SetState ( ENailState::BASIC );
 }
 
@@ -305,7 +320,12 @@ void AHSW_Bullet::NailShoot ( FVector start , FVector end )
 
 void AHSW_Bullet::NailLoad ( FName socketName )
 {
-	AttachToActor ( Player , FAttachmentTransformRules::SnapToTargetIncludingScale , socketName );
+	if ( IsAttachedTo ( NailBag ) )
+	{
+		DetachFromActor ( FDetachmentTransformRules::KeepRelativeTransform );
+		AttachToActor ( Player , FAttachmentTransformRules::SnapToTargetIncludingScale , socketName );
+	}
+
 
 
 // 	USkeletalMeshComponent* Mesh = Player->FindComponentByClass<USkeletalMeshComponent> ( );
@@ -315,4 +335,9 @@ void AHSW_Bullet::NailLoad ( FName socketName )
 // 	SetActorRotation ( Player->GetActorTransform().GetRotation ( ) );
 	SetState ( ENailState::LOAD );
 
+}
+
+void AHSW_Bullet::NailReturn ( )
+{
+	SetState ( ENailState::RETURNING );
 }

@@ -34,6 +34,7 @@ void AHSW_BulletManager::BeginPlay()
 
 		if ( nail )
 		{
+			nail->SetNailBag(this );
 		nail->AttachToActor ( this , FAttachmentTransformRules::SnapToTargetIncludingScale );
 		nail->SetActorLocation ( t.GetLocation ( ) );
 		nail->SetActorRotation ( t.GetRotation ( ) );
@@ -65,37 +66,39 @@ AHSW_Bullet* AHSW_BulletManager::NailPop ( FVector v , FRotator r )
 		return nullptr;
 	}
 	AHSW_Bullet* nail = Magazine.Pop ( );
-	nail->DetachFromActor ( FDetachmentTransformRules::KeepRelativeTransform );
 	Magazine_Out.Push ( nail );
 	return nail;
 }
 
-void AHSW_BulletManager::NailPush ( )
+AHSW_Bullet* AHSW_BulletManager::NailPush ( )
 {
 	if ( Magazine_Out.IsEmpty ( ) == true )
 	{
 		UE_LOG ( LogTemp , Warning , TEXT ( "NailPush : NailInven_Out is Empty" ) );
-		return;
+		return nullptr;
 	}
 
 	AHSW_Bullet* nail = Magazine_Out.Pop ( );
 	if ( nail != nullptr )
 	{
 		Magazine.Push ( nail );
+		return nail;
 
-		// Nail이 들어갈 소켓 이름을 가져온다.
-		FString socketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , Magazine.Num ( )-1);
-		//FString DebugMsg = FString::Printf ( TEXT ( "%d" ) , Magazine.Num() );
-		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , DebugMsg);
-		FName socketName ( *socketNameString );
 
-		// 해당 소켓이름에 맞는 곳에 attach 한다.
-		nail->AttachToActor ( this , FAttachmentTransformRules::KeepRelativeTransform, socketName );
-		FTransform t = this->MeshComp->GetSocketTransform ( socketName );
-		nail->SetActorLocation ( t.GetLocation ( ) );
-		nail->SetActorRotation ( t.GetRotation ( ) );
+		// 		// Nail이 들어갈 소켓 이름을 가져온다.
+		// 		FString socketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , Magazine.Num ( )-1);
+		// 		//FString DebugMsg = FString::Printf ( TEXT ( "%d" ) , Magazine.Num() );
+		// 		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , DebugMsg);
+		// 		FName socketName ( *socketNameString );
+		// 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , socketNameString );
+		// 		// 해당 소켓이름에 맞는 곳에 attach 한다.
+		// 		nail->AttachToActor ( this , FAttachmentTransformRules::KeepRelativeTransform, socketName );
+		// 		FTransform t = this->MeshComp->GetSocketTransform ( socketName );
+		// 		nail->SetActorLocation ( t.GetLocation ( ) );
+		// 		nail->SetActorRotation ( t.GetRotation ( ) );
 
 	}
+	else return nullptr;
 }
 
 FVector AHSW_BulletManager::GetNailBagSocketLocation ( )
