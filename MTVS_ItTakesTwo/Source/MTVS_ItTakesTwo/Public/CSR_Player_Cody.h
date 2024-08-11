@@ -42,5 +42,8 @@ public:
 	UPROPERTY ( EditDefaultsOnly )
 	class UCSR_C_AComp_InputBIndCody* KeyBindComponent;
 
+	UPROPERTY()
+	class UCSR_CodyAnimation *AnimCody;
+
 #pragma endregion PileMovement;
 };

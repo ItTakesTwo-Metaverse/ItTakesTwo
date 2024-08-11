@@ -14,6 +14,8 @@
 #include "Components/ArrowComponent.h"
 #include "CSR_P_AComp_InputBInd.h"
 #include "CSR_C_AComp_InputBIndCody.h"
+#include "CSR_CodyAnimation.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ACSR_Player_Cody::ACSR_Player_Cody ( )
 {
@@ -21,7 +23,7 @@ ACSR_Player_Cody::ACSR_Player_Cody ( )
 	if ( this->CodyPileComp == nullptr ) {
 		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_Player_Cody : this->CodyPileComp is null" ) );
 	}
-	this->CodyPileComp->InitComp ( this->CameraComp , this->SpringArmComp, this->SpringArmComp->TargetArmLength, this );
+	this->CodyPileComp->InitComp ( this->CameraComp , this->SpringArmComp , this->SpringArmComp->TargetArmLength , this );
 
 	this->ArrowComp = CreateDefaultSubobject<UArrowComponent> ( TEXT ( "ArrowComp" ) );
 	if ( this->ArrowComp == nullptr ) {
@@ -30,6 +32,13 @@ ACSR_Player_Cody::ACSR_Player_Cody ( )
 	this->ArrowComp->SetupAttachment ( RootComponent );
 	this->ArrowComp->SetRelativeLocation ( FVector ( 0 , 70.0f , 70.0f ) );
 	this->KeyBindComponent = CreateDefaultSubobject<UCSR_C_AComp_InputBIndCody> ( TEXT ( "KeyBindComponent" ) );
+	ConstructorHelpers::FClassFinder<UCSR_CodyAnimation> TempEnemyAnim ( TEXT ( "/Script/Engine.AnimBlueprint'/Game/CSR/Animation/animation/ABS_CodyAnimation.ABS_CodyAnimation_C'" ) );
+	if ( TempEnemyAnim.Succeeded ( ) ) {
+		GetMesh ( )->SetAnimInstanceClass ( TempEnemyAnim.Class );
+	}
+	this->AnimCody = Cast<UCSR_CodyAnimation> ( GetMesh ( )->GetAnimInstance ( ) );
+
+	this->GetCharacterMovement ( )->bOrientRotationToMovement = true;
 }
 
 void ACSR_Player_Cody::BeginPlay()
@@ -59,6 +68,7 @@ void ACSR_Player_Cody::MakeEnhancedInputLocalSubSystem()
 
 	// EnhancedInput을 IMC_...를 맵핑합니다.
 	SubSys->AddMappingContext(this->IMC_PlayerController_, 0);
+	
 }
 
 void ACSR_Player_Cody::Tick(float DeltaTime)
