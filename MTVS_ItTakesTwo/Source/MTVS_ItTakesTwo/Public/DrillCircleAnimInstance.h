@@ -27,4 +27,10 @@ public:
 	class UAnimMontage* DrillCircle2Montage;
 
 	void PlayDrillCircle2Montage( );
+
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
+	class UAnimMontage* DrillCircle2_Attack4_Montage;
+
+	void PlayDrillCircle2_Attack4_Montage( );
 };

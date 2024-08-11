@@ -103,4 +103,9 @@ public:
 
 	UPROPERTY()
     class UDrillCircleAnimInstance* DrillCircleAnim;
+
+	UPROPERTY ( )
+	class ACSR_P_Player* Player;
+	
+
 };

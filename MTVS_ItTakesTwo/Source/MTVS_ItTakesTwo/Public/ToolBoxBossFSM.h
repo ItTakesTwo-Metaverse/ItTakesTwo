@@ -49,8 +49,17 @@ public:
 	class AToolboxBoss* me;
 
 	UPROPERTY()
-	class ACharacter* player;
+	class ACharacter* player1;
 	
+	UPROPERTY()
+	class ACharacter* player2;
+
+	UPROPERTY( )
+	class UDrillCircleAnimInstance* DrillCircleAnim;
+	
+	UPROPERTY( )
+	class UDrillArmsAnimInstance* DrillArmsAnim;
+
 	UPROPERTY(EditAnywhere)
 	float AttackRange = 4050.0f;
 	float AttackCoolDown;
@@ -58,6 +67,7 @@ public:
 	float Attack1Duration;
 	float Attack2Duration;
 	float Attack3Duration;
+	float Attack4Duration;
 
 	bool DestroyedLock1 = false;
 
@@ -65,6 +75,7 @@ public:
 	bool bIsAttack1 = false;
 	bool bIsAttack2 = false;
 	bool bIsAttack3 = false;
+	bool bIsAttack4 = false;
 
 	// 상태변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -84,4 +95,18 @@ public:
 	void DieState ( const float& DeltaTime );
 	
 
+	FTimerHandle DrillOnTimerHandle;
+	FTimerHandle DrillOffTimerHandle;
+	FTimerHandle DrillArmOnTimerHandle;
+	FTimerHandle DrillArmOffTimerHandle;
+
+	FTimerHandle DrillOn4TimerHandle;
+	FTimerHandle DrillOff4TimerHandle;
+	FTimerHandle DrillArmOn4TimerHandle;
+	FTimerHandle DrillArmOff4TimerHandle;
+
+	void DrillOn ( );
+	void DrillOff ( );
+	void DrillArmOn ( );
+	void DrillArmOff ( );
 };

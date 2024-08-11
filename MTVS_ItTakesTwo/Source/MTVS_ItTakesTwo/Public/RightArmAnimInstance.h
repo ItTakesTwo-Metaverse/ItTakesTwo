@@ -54,11 +54,7 @@ public:
 	bool bIsAttacking2;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
 	bool bIsAttacking3;
-
-	UFUNCTION( )
-	void AnimNotify_DrillCircle1( UAnimNotify* Notify );
-
-	UFUNCTION( )
-	void AnimNotify_DrillCircle2( UAnimNotify* Notify );
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
+	bool bIsAttacking4;
 
 };

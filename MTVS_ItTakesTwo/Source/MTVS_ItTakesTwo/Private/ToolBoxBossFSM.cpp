@@ -3,10 +3,12 @@
 
 #include "ToolBoxBossFSM.h"
 #include "../ToolboxBoss.h"
-#include "HSW_Player.h"
 #include "GameFramework/Character.h"
 #include "RightArmAnimInstance.h"
 #include "DrillCircleAnimInstance.h"
+#include "CSR_P_Player.h"
+#include "Kismet/GameplayStatics.h"
+#include "DrillArmsAnimInstance.h"
 
 // Sets default values for this component's properties
 UToolBoxBossFSM::UToolBoxBossFSM()
@@ -20,6 +22,7 @@ UToolBoxBossFSM::UToolBoxBossFSM()
 	Attack1Duration = 20; // Attack1 : 팔 휘두르기 공격 시간 (애님8초+대기4) 12초 / 테스트용 20초
 	Attack2Duration = 20; // Attack2 : 전동드릴 바닥 뚫는 공격 시간
 	Attack3Duration = 13; // Attack3 : 전동드릴 회전 공격 시간
+	Attack4Duration = 16.5f; // Attack3 : 전동드릴 회전 공격 시간
 }
 
 
@@ -29,7 +32,13 @@ void UToolBoxBossFSM::BeginPlay()
 	Super::BeginPlay();
 
 	me = Cast<AToolboxBoss>(GetOwner());
-	player = Cast<ACharacter> ( GetWorld ( )->GetFirstPlayerController ( )->GetCharacter ( ) );
+	//player = Cast<ACharacter> ( GetWorld ( )->GetFirstPlayerController ( )->GetCharacter ( ) );
+	player1 = Cast<ACSR_P_Player>( UGameplayStatics::GetPlayerController(this->GetWorld(), 0 )->GetCharacter());
+	player2 = Cast<ACSR_P_Player> ( UGameplayStatics::GetPlayerController ( this->GetWorld ( ) , 1 )->GetCharacter ( ));
+
+	if ( me && me->DrillCircle ) DrillCircleAnim = Cast<UDrillCircleAnimInstance> ( me->DrillCircle->GetAnimInstance ( ) );
+	if ( me && me->DrillArms ) DrillArmsAnim = Cast<UDrillArmsAnimInstance> ( me->DrillArms->GetAnimInstance ( ) );
+
 
 	// 초기 상태를 Start로 설정
 	ChangeState(EBossState::Start );
@@ -128,12 +137,13 @@ void UToolBoxBossFSM::ChangeState(EBossState NewState)
 
 void UToolBoxBossFSM::StartState ( const float& DeltaTime )
 {
-	if ( !player || !me ) { return; }
+	if ( !player1 || !player2 || !me ) { return; }
 
-	FVector dir = player->GetActorLocation ( ) - me->GetActorLocation ( );
+	FVector dir1 = player1->GetActorLocation ( ) - me->GetActorLocation ( );
+	FVector dir2 = player2->GetActorLocation ( ) - me->GetActorLocation ( );
 
 	// 플레이어가 가까워지면 Attack1로 전이
-	if ( dir.Size ( ) < AttackRange )
+	if ( dir1.Size ( ) < AttackRange || dir2.Size ( ) < AttackRange )
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "StartState >> Attack1State" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "StartState >> Attack1State" ) );
@@ -158,7 +168,7 @@ void UToolBoxBossFSM::IdleState( const float& DeltaTime )
 		}
 		else if ( bIsAttack2 )
 		{
-			ChangeState ( EBossState::Attack3 );
+			ChangeState ( EBossState::Attack4 );
 		}
 	}
 	
@@ -179,7 +189,7 @@ void UToolBoxBossFSM::CoolDownState ( const float& DeltaTime )
 
 void UToolBoxBossFSM::Attack1State ( const float& DeltaTime )
 {
-	if ( !player || !me ) { return; }
+	if ( !player1 || !player2 || !me ) { return; }
 
 	// Attack1 벽에 닿아 멈춘 후 4초 유지 ( 못 박을 수 있는 제한시간 )
 	AttackTimer += DeltaTime;
@@ -236,9 +246,10 @@ void UToolBoxBossFSM::Attack2State( const float& DeltaTime )
 
 	if ( !bIsAttack2 )
 	{
-		me->Drill->SetVisibility(true);
-		me->DrillCircle->SetVisibility ( true );
-		//me->DrillCircleAnim->PlayDrillCircle1Montage();
+		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillOnTimerHandle , this , &UToolBoxBossFSM::DrillOn , 1.5f , false );
+		
+		if ( DrillCircleAnim ) DrillCircleAnim->PlayDrillCircle1Montage ( );
+
 		bIsAttack2 = true;
 	}
 	if ( AttackTimer > Attack2Duration ) // 바닥뚫기가 끝나면
@@ -258,37 +269,59 @@ void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
 
 	if ( !bIsAttack3 )
 	{	
-		me->Drill->SetVisibility ( true );
-		me->DrillCircle->SetVisibility ( true );
-		me->DrillArms->SetVisibility ( true );
-		//me->DrillCircleAnim->PlayDrillCircle2Montage ( );
+
+		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillArmOnTimerHandle , this , &UToolBoxBossFSM::DrillArmOn , 0.3f , false );
+
+		if ( DrillCircleAnim ) DrillCircleAnim->PlayDrillCircle2Montage ( );
+		if ( DrillArmsAnim ) DrillArmsAnim->PlayDrillArmsMontage ( );
+
+		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillOffTimerHandle , this , &UToolBoxBossFSM::DrillOff , 10.5f , false );
+		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillArmOffTimerHandle , this , &UToolBoxBossFSM::DrillArmOff , 9.46f , false );
 
 		bIsAttack3 = true;
-		
 	}
 	if ( AttackTimer > Attack3Duration ) // 드릴 회전 공격이 끝나면
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack3State >> Attack1State" ) );
 		UE_LOG ( LogTemp , Warning , TEXT ( "Attack3State >> Attack1State" ) );
-
-		AttackTimer = 0; // 공격시간 리셋
-
-		me->Drill->SetVisibility ( false );
-		me->DrillCircle->SetVisibility ( false );
-		me->DrillArms->SetVisibility ( false );
-
-		bIsAttack3 = false;
+;
 		bIsAttack1 = false;
 
 		// 공격1 상태로 전이
 		ChangeState ( EBossState::Attack1 );
-
+		AttackTimer = 0; // 공격시간 리셋
 	}
 }
 
 void UToolBoxBossFSM::Attack4State( const float& DeltaTime )
 {
-	
+	AttackTimer += DeltaTime;
+
+	if ( !bIsAttack4 )
+	{
+		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillOn4TimerHandle , this , &UToolBoxBossFSM::DrillOn , 1.5f , false );
+		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillArmOn4TimerHandle , this , &UToolBoxBossFSM::DrillArmOn , 3.8f , false );
+
+		if ( DrillCircleAnim ) DrillCircleAnim->PlayDrillCircle2_Attack4_Montage ( );
+		if ( DrillArmsAnim ) DrillArmsAnim->PlayDrillArms_Attack4_Montage ( );
+
+		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillArmOff4TimerHandle , this , &UToolBoxBossFSM::DrillArmOff , 13.f , false );
+		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillOff4TimerHandle , this , &UToolBoxBossFSM::DrillOff , 15.3f , false );
+
+		bIsAttack4 = true;
+	}
+	if ( AttackTimer > Attack4Duration ) // 드릴 회전 공격이 끝나면
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Attack4State >> Attack1State" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Attack4State >> Attack1State" ) );
+		;
+		bIsAttack4 = false;
+		bIsAttack1 = false;
+
+		// 공격1 상태로 전이
+		ChangeState ( EBossState::Attack1 );
+		AttackTimer = 0; // 공격시간 리셋
+	}
 }
 
 void UToolBoxBossFSM::Attack5State( const float& DeltaTime )
@@ -298,7 +331,7 @@ void UToolBoxBossFSM::Attack5State( const float& DeltaTime )
 
 void UToolBoxBossFSM::DieState ( const float& DeltaTime )
 {
-	if ( !player || !me ) { return; }
+	if ( !player1 || !player2 || !me ) { return; }
 
 	// Enter ragdoll state if not already in ragdoll
 	if ( !bIsInRagdoll )
@@ -307,3 +340,26 @@ void UToolBoxBossFSM::DieState ( const float& DeltaTime )
 	bIsInRagdoll = true;
 	}
 }
+
+void UToolBoxBossFSM::DrillOn ( )
+{
+	me->Drill->SetVisibility ( true );
+	me->DrillCircle->SetVisibility ( true );
+}
+
+void UToolBoxBossFSM::DrillOff ( )
+{
+	me->Drill->SetVisibility ( false );
+	me->DrillCircle->SetVisibility ( false );
+}
+
+void UToolBoxBossFSM::DrillArmOn ( )
+{
+	me->DrillArms->SetVisibility ( true );
+}
+
+void UToolBoxBossFSM::DrillArmOff ( )
+{
+	me->DrillArms->SetVisibility ( false );
+}
+
