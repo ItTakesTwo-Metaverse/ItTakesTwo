@@ -18,6 +18,7 @@ AHSW_Bullet::AHSW_Bullet()
 	SetRootComponent(BoxComp);
 	BoxComp->SetCollisionProfileName(TEXT("Bullet"));
 	BoxComp->SetEnableGravity ( false );
+	BoxComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 
 	//외형
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
@@ -211,8 +212,10 @@ void AHSW_Bullet::SetState ( ENailState NextState)
 		MovementComp->ProjectileGravityScale = 0;	
 		MovementComp->bShouldBounce = true;
 		MeshComp->SetVisibility ( true );
+		BoxComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 		break;
 	case ENailState::SHOOT:
+		BoxComp->SetCollisionEnabled ( ECollisionEnabled::QueryAndPhysics );
 		break;
 	case ENailState::EMBEDDED:
 		MovementComp->bShouldBounce = false;
@@ -281,7 +284,7 @@ void AHSW_Bullet::NailBasic ( )
 	{
 		this->DetachFromActor ( FDetachmentTransformRules::KeepRelativeTransform );
 	}
-	State = ENailState::BASIC;
+	SetState ( ENailState::BASIC );
 }
 
 // 마우스 좌클릭시 사용될 함수
@@ -300,9 +303,16 @@ void AHSW_Bullet::NailShoot ( FVector start , FVector end )
 	SetState ( ENailState::SHOOT );
 }
 
-void AHSW_Bullet::NailLoad ( FName socketName)
+void AHSW_Bullet::NailLoad ( FName socketName )
 {
-	AttachToActor ( Player , FAttachmentTransformRules::SnapToTargetIncludingScale, socketName );
-	State = ENailState::LOAD;
+	AttachToActor ( Player , FAttachmentTransformRules::SnapToTargetIncludingScale , socketName );
+
+
+// 	USkeletalMeshComponent* Mesh = Player->FindComponentByClass<USkeletalMeshComponent> ( );
+// 
+// 	FTransform t = Mesh->GetSocketTransform ( socketName );
+// 	SetActorLocation ( t.GetLocation ( ) );
+// 	SetActorRotation ( Player->GetActorTransform().GetRotation ( ) );
+	SetState ( ENailState::LOAD );
 
 }
