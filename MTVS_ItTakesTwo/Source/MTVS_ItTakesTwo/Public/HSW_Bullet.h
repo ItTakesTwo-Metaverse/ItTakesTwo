@@ -11,6 +11,7 @@ UENUM(BlueprintType)
 enum class ENailState: uint8
 {
 	BASIC		UMETA ( DisplayName = "기본" ) ,
+	LOAD		UMETA (DisplyaName ="장전" ),
 	SHOOT		UMETA ( DisplayName = "날라가기" ),
 	EMBEDDED	UMETA ( DisplayName = "박힘" ) ,
 	UNEMBEDDED	UMETA ( DisplayName = "박기실패" ) ,
@@ -58,6 +59,7 @@ public:
 
 
 	void TickBasic ( const float& DeltaTime );
+	void TickLoad ( const float& DeltaTime );
 	void TickShoot ( const float& DeltaTime );
 	void TickEmbedded ( const float& DeltaTime );
 	void TickUnembedded ( const float& DeltaTime );
@@ -65,6 +67,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void TickReturning ( const float& DeltaTime );
 	void TickGoToBag ( const float& DeltaTime );
+	
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly )
 	ENailState State = ENailState::BASIC;
@@ -98,6 +101,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class AHSW_BulletManager* NailBag;
 
-	void SetShootVector ( FVector start , FVector end );
+	UPROPERTY (  )
+	class APawn* Player;
+
+	UFUNCTION(BlueprintCallable )
+	void NailBasic( );
+	UFUNCTION(BlueprintCallable )
+	void NailShoot ( FVector start , FVector end );
+	UFUNCTION(BlueprintCallable )
+	void NailLoad ( FName socketName );
+
 	
 };

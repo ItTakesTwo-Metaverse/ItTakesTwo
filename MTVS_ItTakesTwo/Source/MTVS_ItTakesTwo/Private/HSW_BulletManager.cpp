@@ -47,7 +47,7 @@ void AHSW_BulletManager::BeginPlay()
 		
 	}
 
-	SocketIndex = 0;
+	SocketIndex = 2;
 }
 
 // Called every frame
@@ -65,12 +65,12 @@ AHSW_Bullet* AHSW_BulletManager::NailPop ( FVector v , FRotator r )
 		return nullptr;
 	}
 	AHSW_Bullet* nail = Magazine.Pop ( );
-	nail->NailReadytoShoot ( v , r );
+	nail->DetachFromActor ( FDetachmentTransformRules::KeepRelativeTransform );
 	Magazine_Out.Push ( nail );
 	return nail;
 }
 
-void AHSW_BulletManager::NailPush ( FVector v , FRotator r )
+void AHSW_BulletManager::NailPush ( )
 {
 	if ( Magazine_Out.IsEmpty ( ) == true )
 	{
@@ -79,11 +79,18 @@ void AHSW_BulletManager::NailPush ( FVector v , FRotator r )
 	}
 
 	AHSW_Bullet* nail = Magazine_Out.Pop ( );
-	SocketIndex = Magazine.Num();
 	if ( nail != nullptr )
 	{
 		nail->SetState ( ENailState::RETURNING );
 		Magazine.Push ( nail );
+
+		// Nail이 들어갈 소켓 이름을 가져온다.
+		FString SocketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , Magazine.Num ( ));
+		FName SocketName ( *SocketNameString );
+
+		// 해당 소켓이름에 맞는 곳에 attach 한다.
+		nail->AttachToActor ( this , FAttachmentTransformRules::KeepWorldTransform, SocketName );
+
 	}
 }
 

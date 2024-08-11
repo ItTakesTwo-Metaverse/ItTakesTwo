@@ -52,8 +52,8 @@ void AHSW_Bullet::BeginPlay()
 	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Bullet::OnMyWallHit );
 
 
-	auto* player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
-	StartPoint = player->GetActorLocation ( );
+	Player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
+	StartPoint = Player->GetActorLocation ( );
 	EndPoint = StartPoint + FVector ( 100000 , 0 , 0 );
 
 
@@ -70,13 +70,13 @@ void AHSW_Bullet::Tick(float DeltaTime)
 	switch ( State )
 	{
 	case ENailState::BASIC:			TickBasic ( DeltaTime );			break;
+	case ENailState::LOAD:			TickLoad ( DeltaTime );			break;
 	case ENailState::SHOOT:			TickShoot ( DeltaTime );			break;
 	case ENailState::EMBEDDED:		TickEmbedded ( DeltaTime );			break;
 	case ENailState::UNEMBEDDED:	TickUnembedded ( DeltaTime );		break;
 	case ENailState::RETURNING:		TickReturning ( DeltaTime );		break;
-	case ENailState::GOTOBAG:		TickReturning ( DeltaTime );		break;
+	case ENailState::GOTOBAG:		TickGoToBag ( DeltaTime );		break;
 	}
-
 }
 
 void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
@@ -116,6 +116,11 @@ void AHSW_Bullet::TickBasic ( const float& DeltaTime )
 	// 못이 벽에 박히지 못했다면
 	// -> Unembedded 상태로 변경.
 	//SetState ( ENailState::SHOOT );
+}
+
+void AHSW_Bullet::TickLoad ( const float& DeltaTime )
+{
+	//
 }
 
 void AHSW_Bullet::TickShoot ( const float& DeltaTime )
@@ -164,11 +169,11 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Return" ) );
 	//APlayerController* SecondPlayerController = UGameplayStatics::GetPlayerController ( GetWorld ( ) , 1 );
 	//auto* player = SecondPlayerController->GetPawn();
-	//Distance = (player->GetActorLocation() - this->GetActorLocation ( )).Size();
-	//SetActorLocation ( FMath::Lerp ( this->GetActorLocation ( ) , player->GetActorLocation ( ) , 0.1 ),);
-	SetNailReturnDestination ( );
-	Distance = (nailDestLocation - this->GetActorLocation()).Size ( );
-	SetActorLocationAndRotation ( FMath::Lerp ( this->GetActorLocation ( ) , nailDestLocation , 0.1 ) , FMath::Lerp ( this->GetActorRotation ( ) , nailDestRotation , 0.1 ) );
+	Distance = (Player->GetActorLocation() - this->GetActorLocation ( )).Size();
+	SetActorLocation ( FMath::Lerp ( this->GetActorLocation ( ) , Player->GetActorLocation ( ) , 0.1 ));
+	//SetNailReturnDestination ( );
+	//Distance = (nailDestLocation - this->GetActorLocation()).Size ( );
+	//SetActorLocationAndRotation ( FMath::Lerp ( this->GetActorLocation ( ) , nailDestLocation , 0.1 ) , FMath::Lerp ( this->GetActorRotation ( ) , nailDestRotation , 0.1 ) );
 	//UE_LOG ( LogTemp , Warning , TEXT ( "%f" ),dist );
 
 	//MovementComp->bIsHomingProjectile = true;
@@ -183,7 +188,7 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	if ( Distance < NailDefaultDist )
 	{
 	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "End" ) );
-		SetState(ENailState::GOTOBAG);
+		SetState(ENailState::BASIC);
 	}
 	// -> Basic상태로 변경.
 }
@@ -260,7 +265,6 @@ void AHSW_Bullet::SetNailReturnDestination ()
 // NailPop 되면서 손위에 올려놓을 때 쓰는 함수
 void AHSW_Bullet::NailReadytoShoot ( FVector v , FRotator r )
 {
-	SetActive ( true );
 	SetActorLocationAndRotation ( v , r );
 }
 
@@ -271,8 +275,32 @@ void AHSW_Bullet::GoToNailBag ( )
 	SetActorLocationAndRotation ( FMath::Lerp ( this->GetActorLocation ( ) , v , 0.1 ) , FMath::Lerp ( this->GetActorRotation ( ) , r , 0.1 ) );
 }
 
-void AHSW_Bullet::SetShootVector ( FVector start , FVector end )
+void AHSW_Bullet::NailBasic ( )
 {
+	if ( this->IsAttachedTo ( Player ) )
+	{
+		this->DetachFromActor ( FDetachmentTransformRules::KeepWorldTransform );
+	}
+}
+
+// 마우스 좌클릭시 사용될 함수
+void AHSW_Bullet::NailShoot ( FVector start , FVector end )
+{
+	//Nail이 오른손 소켓에서 detach됨. (if attach되어있다면, detach하고)
+	if ( this->IsAttachedTo ( Player ) )
+	{
+		this->DetachFromActor ( FDetachmentTransformRules::KeepWorldTransform );
+	}
+	//Nail의 StartPoint와 EndPoint를 설정해줌. ( Lay의 Start와 End가 들어올 것이다.)
 	StartPoint = start;
 	EndPoint = end;
+
+	//Nail이 Shoot 상태로 변경됨. (SetState 실행)
+	SetState ( ENailState::SHOOT );
+}
+
+void AHSW_Bullet::NailLoad ( FName socketName)
+{
+	AttachToActor ( Player , FAttachmentTransformRules::SnapToTargetIncludingScale, socketName );
+
 }

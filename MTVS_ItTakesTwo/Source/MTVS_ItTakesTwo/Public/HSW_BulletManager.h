@@ -39,7 +39,7 @@ public:
 	UFUNCTION(BlueprintCallable )
 	AHSW_Bullet* NailPop ( FVector v , FRotator r);
 	UFUNCTION(BlueprintCallable )
-	void NailPush ( FVector v , FRotator r );
+	void NailPush ( );
 
 	int32 SocketIndex;
 
