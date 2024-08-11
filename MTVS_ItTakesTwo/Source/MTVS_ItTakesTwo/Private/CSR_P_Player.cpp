@@ -96,6 +96,17 @@ void ACSR_P_Player::Landed ( const FHitResult& Hit )
 	this->CharicJumpComp->Landed();
 }
 
+void ACSR_P_Player::OnDamaged ( int32 Damage )
+{
+	if ( this->CurHp - Damage <= 0 ) {
+		this->CurHp = 0;
+	}
+	else {
+		this->CurHp = this->CurHp - Damage;
+		UE_LOG(LogTemp, Warning, TEXT("HP : %d" ), this->CurHp);
+	}
+}
+
 void ACSR_P_Player::SecondJumpToOtherComp ( )
 {
 	this->CharicMovementComp->InitSecondJump ();
