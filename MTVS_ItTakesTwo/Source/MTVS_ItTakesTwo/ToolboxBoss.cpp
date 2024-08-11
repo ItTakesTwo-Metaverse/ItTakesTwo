@@ -29,8 +29,7 @@ AToolboxBoss::AToolboxBoss()
 	if (BossMeshAsset.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(BossMeshAsset.Object);
-		GetMesh ( )->SetupAttachment ( RootComponent );
-		
+		GetMesh()->SetupAttachment ( RootComponent );
 	}
 
 	// 보스 왼팔
@@ -41,6 +40,8 @@ AToolboxBoss::AToolboxBoss()
 		LeftArmMesh->SetSkeletalMesh ( LeftArmMeshAsset.Object );
 		LeftArmMesh->SetupAttachment ( GetMesh ( ) , TEXT ( "LeftArmSocket" ) );
 		LeftArmMesh->SetRelativeLocationAndRotation ( FVector ( 210 , -850 , 0 ) , FRotator ( 0 , -90 , 0 ) );
+		LeftArmMesh->SetGenerateOverlapEvents ( true );
+		LeftArmMesh->SetCollisionProfileName ( TEXT ( "Boss" ) );
 	}
 
 	// 보스 오른팔
@@ -187,8 +188,6 @@ AToolboxBoss::AToolboxBoss()
 		RightArmMesh->SetAnimInstanceClass( TempRightArmAnim.Class);
 	}
 
-	DrillCircleAnim = Cast<UDrillCircleAnimInstance> ( DrillCircle->GetAnimInstance ( ) );
-
 	// FSM 컴포넌트 추가
 	fsm = CreateDefaultSubobject<UToolBoxBossFSM> ( TEXT ( "FSM" ) );
 }
@@ -197,7 +196,11 @@ AToolboxBoss::AToolboxBoss()
 void AToolboxBoss::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if ( DrillCircle )
+	{
+		DrillCircleAnim = Cast<UDrillCircleAnimInstance> ( DrillCircle->GetAnimInstance ( ) );
+	}
 }
 
 // Called every frame
@@ -230,15 +233,10 @@ void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent
 void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
 	// 플레이어의 못이 보스의 오른팔 상호작용 박스에 충돌했을 때 보스 일시정지 상태로 전이
-	if ( OtherActor )
+	if ( OtherActor->IsA<AHSW_Bullet>() )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Bullet Collision NailInteractionBox" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "Bullet Collision NailInteractionBox" ) );
-
 		if ( fsm->CurrentState == EBossState::Attack1 )
 		{
-			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Attck1 >> Paused" ) );
-			UE_LOG ( LogTemp , Warning , TEXT ( "Attck1 >> Paused" ) );
 			fsm->ChangeState ( EBossState::Paused );
 		}
 	}
@@ -246,34 +244,71 @@ void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* Ove
 
 void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
-	GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Collision Lock & Hammer" ) );
-	UE_LOG ( LogTemp , Warning , TEXT ( "Collision Lock & Hammer" ) );
-
 	// 플레이어의 망치와 충돌했을 때 자물쇠 데미지
-	if ( OtherActor )
+	if ( OtherActor->IsA<AHSW_Hammer>() )
 	{
 		if ( Lock1HP > 0 )
-		{
+		{	
 			Lock1HP -= damage;
-			if ( Lock1HP == 0 )
+			if ( Lock1HP <= 0 )
 			{
-				Lock1->DestroyComponent ( );
-				LockBody1->DestroyComponent ( );
+				Lock1->SetSimulatePhysics ( true );
+				Lock1->WakeAllRigidBodies ( );
+				Lock1->bBlendPhysics = true;
 
-				//LockBody2->SetCollisionEnabled() // 자물쇠 1개가 파괴되는 순간에만 LockBody2를 Block 처리 하고싶다.
+				LockBody1->SetSimulatePhysics ( true );
+				LockBody1->WakeAllRigidBodies ( );
+				LockBody1->bBlendPhysics = true;
+
+				GetWorld()->GetTimerManager().SetTimer(Lock1DestroyTimerHandle, this, &AToolboxBoss::DestroyLock1 , 3.0f , false );
 			}
 		}
-		else if ( Lock1HP == 0 && Lock2HP > 0)
+		else if ( Lock1HP <= 0 && Lock2HP > 0)
 		{
 			Lock2HP -= damage;
-			if ( Lock2HP == 0 )
+			if ( Lock2HP <= 0 )
 			{
-				Lock2->DestroyComponent ( );
-				LockBody2->DestroyComponent ( );
+				Lock2->SetSimulatePhysics ( true );
+				Lock2->WakeAllRigidBodies ( );
+				Lock2->bBlendPhysics = true;
+
+				LockBody2->SetSimulatePhysics ( true );
+				LockBody2->WakeAllRigidBodies ( );
+				LockBody2->bBlendPhysics = true;
+
+				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock2DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
 			}
 		}
 	}
 
+}
+
+void AToolboxBoss::DestroyLock1 ( )
+{
+	if ( Lock1 ) 
+	{
+		Lock1->DetachFromComponent( FDetachmentTransformRules::KeepWorldTransform); // 부착해제
+		Lock1->DestroyComponent( );
+	}
+	if ( LockBody1 ) 
+	{
+		LockBody1->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+		LockBody1->DestroyComponent ( );
+	}
+}
+
+void AToolboxBoss::DestroyLock2 ( )
+{
+	if ( Lock2 ) 
+	{
+		Lock2->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+		Lock2->DestroyComponent ( );
+	}
+	if ( LockBody2 )
+	{
+		LockBody2->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+		LockBody2->DestroyComponent ( );
+	}
 }
 
 void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
@@ -303,17 +338,35 @@ void AToolboxBoss::EnterRagdollState ( )
 {	
 	if ( RightArmMesh )
 	{
+		RightArmMesh->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform );
+		RightArmMesh->SetCollisionProfileName(TEXT("Ragdoll") );
 		RightArmMesh->SetSimulatePhysics ( true );
-		//RightArmMesh->WakeAllRigidBodies ( );
-		//RightArmMesh->bBlendPhysics = true;
+		RightArmMesh->WakeAllRigidBodies ( );
+		RightArmMesh->bBlendPhysics = true;
+
+		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Right Arm Ragdoll" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Ragdoll" ) );
 	}
 	if ( GetMesh ( ) )
 	{
-		GetMesh()->SetSimulatePhysics(true);
+		GetMesh ( )->SetCollisionProfileName ( TEXT ( "Ragdoll" ) );
+		GetMesh ( )->SetSimulatePhysics(true);
+		GetMesh ( )->WakeAllRigidBodies ( );
+		GetMesh ( )->bBlendPhysics = true;
+
+		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Boss Body Ragdoll" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Boss Body Ragdoll" ) );
 	}
 	if ( LeftArmMesh )
 	{
+		LeftArmMesh->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform );
+		LeftArmMesh->SetCollisionProfileName ( TEXT ( "Ragdoll" ) );
 		LeftArmMesh->SetSimulatePhysics ( true );
+		LeftArmMesh->WakeAllRigidBodies ( );
+		LeftArmMesh->bBlendPhysics = true;
+
+		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Left Arm Ragdoll" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Left Arm Ragdoll" ) );
 	}
 }
 

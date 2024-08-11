@@ -17,8 +17,7 @@ enum class ERightArmAnimState : uint8
 	Attack2 ,
 	Attack3 ,
 	Attack4 ,
-	Attack5 ,
-	Die
+	Attack5
 	
 };
 
@@ -38,6 +37,9 @@ public:
 	virtual void NativeInitializeAnimation () override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+	UPROPERTY( )
+	class AToolboxBoss* me;
+
 	UFUNCTION(BlueprintCallable)
 	void SetAnimState( ERightArmAnimState NewState);
 
@@ -52,4 +54,11 @@ public:
 	bool bIsAttacking2;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
 	bool bIsAttacking3;
+
+	UFUNCTION( )
+	void AnimNotify_DrillCircle1( UAnimNotify* Notify );
+
+	UFUNCTION( )
+	void AnimNotify_DrillCircle2( UAnimNotify* Notify );
+
 };

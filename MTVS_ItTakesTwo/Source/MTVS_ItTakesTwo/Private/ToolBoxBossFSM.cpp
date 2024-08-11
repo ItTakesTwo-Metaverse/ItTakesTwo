@@ -120,9 +120,6 @@ void UToolBoxBossFSM::ChangeState(EBossState NewState)
 	case EBossState::Attack5:
 		me->SetAnimState ( ERightArmAnimState::Attack5 );
 		break;
-	case EBossState::Die:
-		me->SetAnimState ( ERightArmAnimState::Die );
-		break;
 	default:
 		break;
 	}
@@ -207,27 +204,22 @@ void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
 
 	if ( AttackTimer <= Attack1Duration )
 	{
-		if ( me->Lock1HP > 0 ) // 자물쇠1이 존재할 때
+		if ( !DestroyedLock1 && me->Lock1HP <= 0 ) // 자물쇠1이 파괴된다면
 		{
-			if ( me->Lock1HP <= 0 ) // 자물쇠1이 파괴된다면 /////여기서부터 안들어옴
-			{
-				GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroyed Lock1 PausedState >> CoolDown" ) );
-				UE_LOG ( LogTemp , Warning , TEXT ( "Destroyed Lock1 >> CoolDown" ) );
+			GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Destroyed Lock1 PausedState >> CoolDown" ) );
+			UE_LOG ( LogTemp , Warning , TEXT ( "Destroyed Lock1 >> CoolDown" ) );
 
-				// 쿨다운 -> 공격2 상태로 전이
-				ChangeState ( EBossState::CoolDown );
-				AttackTimer = 0; // 공격시간 리셋
-				return; // 상태를 바꿨으므로 함수 종료
-			}
+			// 쿨다운 -> 공격2 상태로 전이
+			ChangeState ( EBossState::CoolDown );
+			AttackTimer = 0; // 공격시간 리셋
+			DestroyedLock1 = true;
+			return; // 상태를 바꿨으므로 함수 종료
 		}
-		else if ( me->Lock1HP <= 0 && me->Lock2HP > 0 ) // 자물쇠1이 없고 자물쇠2만 있을 때
+		else if ( DestroyedLock1 && me->Lock2HP <= 0 ) // 자물쇠2가 파괴된다면
 		{
-			if ( me->Lock2HP <= 0 ) // 자물쇠2가 파괴된다면
-			{
-				ChangeState( EBossState::Die );
-				AttackTimer = 0; // 공격시간 리셋
-				return; // 상태를 바꿨으므로 함수 종료
-			}
+			ChangeState( EBossState::Die );
+			AttackTimer = 0; // 공격시간 리셋
+			return; // 상태를 바꿨으므로 함수 종료
 		}
 	}
 	else if( AttackTimer > Attack1Duration ) // 제한시간이 초과했을 때
@@ -306,16 +298,12 @@ void UToolBoxBossFSM::Attack5State( const float& DeltaTime )
 
 void UToolBoxBossFSM::DieState ( const float& DeltaTime )
 {
-
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "Die State" ) );
-	UE_LOG ( LogTemp , Warning , TEXT ( "Die State" ) );
-
 	if ( !player || !me ) { return; }
 
 	// Enter ragdoll state if not already in ragdoll
-	//if ( !bIsInRagdoll )
-	//{
+	if ( !bIsInRagdoll )
+	{
 	me->EnterRagdollState ( );
-	//bIsInRagdoll = true;
-//}
+	bIsInRagdoll = true;
+	}
 }

@@ -59,6 +59,8 @@ public:
 	float Attack2Duration;
 	float Attack3Duration;
 
+	bool DestroyedLock1 = false;
+
 	bool bIsInRagdoll = false;
 	bool bIsAttack1 = false;
 	bool bIsAttack2 = false;

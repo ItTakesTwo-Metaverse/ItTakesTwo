@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Animation/AnimInstance.h"
+#include "../ToolboxBoss.h"
 
 URightArmAnimInstance::URightArmAnimInstance ( )
 	: AnimState ( ERightArmAnimState::Start )
@@ -14,6 +15,9 @@ URightArmAnimInstance::URightArmAnimInstance ( )
 void URightArmAnimInstance::NativeInitializeAnimation ( )
 {
 	Super::NativeInitializeAnimation ( );
+
+    me = Cast<AToolboxBoss>(TryGetPawnOwner());
+
 	bIsAttacking1 = false;
 	bIsPausing = false;
     bIsAttacking2 = false;
@@ -23,6 +27,7 @@ void URightArmAnimInstance::NativeInitializeAnimation ( )
 void URightArmAnimInstance::NativeUpdateAnimation ( float DeltaSeconds )
 {
 	Super::NativeUpdateAnimation ( DeltaSeconds );
+
 
     switch ( AnimState )
     {
@@ -67,16 +72,43 @@ void URightArmAnimInstance::NativeUpdateAnimation ( float DeltaSeconds )
     case ERightArmAnimState::Attack5:
         break;
 
-    case ERightArmAnimState::Die:
-        break;
-
     default:
         break;
     }
 }
 
+
+//void URightArmAnimInstance::NativeNotify ( UAnimNotify* Notify )
+//{
+//    Super::NativeNotify( NativeNotify(Notify) );
+//
+//    if(Notify && Notify->GetNotifyName().Equals("DrillCircle1" ) );
+//    {
+//        AnimNotify_PlayDrillCircle1(Notify);
+//    }
+//}
+
 void URightArmAnimInstance::SetAnimState ( ERightArmAnimState NewState )
 {
     AnimState = NewState;
+}
+
+void URightArmAnimInstance::AnimNotify_DrillCircle1 ( UAnimNotify* Notify )
+{
+    GEngine->AddOnScreenDebugMessage ( -1 , 2.f , FColor::Blue , TEXT ( "AnimNotify_DrillCircle1e" ) );
+    UE_LOG ( LogTemp , Warning , TEXT ( "AnimNotify_DrillCircle1" ) );
+
+    if ( me && me->DrillCircleAnim )
+    {
+        me->DrillCircleAnim->PlayDrillCircle1Montage();
+    }
+}
+
+void URightArmAnimInstance::AnimNotify_DrillCircle2 ( UAnimNotify* Notify )
+{
+    if ( me && me->DrillCircleAnim )
+    {
+        me->DrillCircleAnim->PlayDrillCircle2Montage ( );
+    }
 }
 
