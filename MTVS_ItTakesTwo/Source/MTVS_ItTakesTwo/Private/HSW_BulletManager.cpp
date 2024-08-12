@@ -35,9 +35,9 @@ void AHSW_BulletManager::BeginPlay()
 		if ( nail )
 		{
 			nail->SetNailBag(this );
-		nail->AttachToActor ( this , FAttachmentTransformRules::SnapToTargetIncludingScale );
-		nail->SetActorLocation ( t.GetLocation ( ) );
-		nail->SetActorRotation ( t.GetRotation ( ) );
+			nail->AttachToActor ( this , FAttachmentTransformRules::SnapToTargetIncludingScale );
+			nail->SetActorLocation ( t.GetLocation ( ) );
+			nail->SetActorRotation ( t.GetRotation ( ) );
 			Magazine.Add ( nail );
 		}
 		else 
@@ -77,14 +77,13 @@ AHSW_Bullet* AHSW_BulletManager::NailPush ( )
 		UE_LOG ( LogTemp , Warning , TEXT ( "NailPush : NailInven_Out is Empty" ) );
 		return nullptr;
 	}
-
 	AHSW_Bullet* nail = Magazine_Out.Pop ( );
-	if ( nail != nullptr )
+	if ( nail == nullptr )
 	{
-		Magazine.Push ( nail );
-		return nail;
-
-
+		return nullptr;
+	}
+	Magazine.Push ( nail );
+	return nail;
 		// 		// Nail이 들어갈 소켓 이름을 가져온다.
 		// 		FString socketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , Magazine.Num ( )-1);
 		// 		//FString DebugMsg = FString::Printf ( TEXT ( "%d" ) , Magazine.Num() );
@@ -97,8 +96,6 @@ AHSW_Bullet* AHSW_BulletManager::NailPush ( )
 		// 		nail->SetActorLocation ( t.GetLocation ( ) );
 		// 		nail->SetActorRotation ( t.GetRotation ( ) );
 
-	}
-	else return nullptr;
 }
 
 FVector AHSW_BulletManager::GetNailBagSocketLocation ( )
