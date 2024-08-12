@@ -44,6 +44,12 @@ public:
 	UFUNCTION()
 	void AnimNotify_HammerDetach();
 
+	UFUNCTION()
+	void AnimNotify_AttackStart();
+
+	UFUNCTION()
+	void AnimNotify_AttackEnd();
+
 	void PlayerAttackMontage();
 
 };
