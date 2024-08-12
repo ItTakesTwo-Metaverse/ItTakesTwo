@@ -36,12 +36,14 @@ void UCSR_MayUseHammerObj::BeginPlay()
 	
 	this->Hammer->AttachToComponent ( (Cast<ACSR_Player_May>(GetOwner ( ))->HammerLocation) , FAttachmentTransformRules::SnapToTargetNotIncludingScale  );
 	this->Hammer->SetActorRelativeRotation(FRotator(0.0f , 90.0f, 0.0f));
+
+	
 }
 
 // Called every frame
-void UCSR_MayUseHammerObj::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UCSR_MayUseHammerObj::TickComponent ( float DeltaTime , ELevelTick TickType , FActorComponentTickFunction* ThisTickFunction )
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	Super::TickComponent ( DeltaTime , TickType , ThisTickFunction );
 
 	// ...
 }
@@ -49,5 +51,16 @@ void UCSR_MayUseHammerObj::TickComponent(float DeltaTime, ELevelTick TickType, F
 void UCSR_MayUseHammerObj::Attack ( )
 {
 
+}
+
+void UCSR_MayUseHammerObj::DetachHammer ( )
+{
+	this->Hammer->DetachFromActor ( FDetachmentTransformRules::KeepWorldTransform );
+}
+
+void UCSR_MayUseHammerObj::AttachHammer ( )
+{
+	this->Hammer->AttachToComponent ( (Cast<ACSR_Player_May> ( GetOwner ( ) )->HammerLocation) , FAttachmentTransformRules::SnapToTargetNotIncludingScale );
+	this->Hammer->SetActorRelativeRotation ( FRotator ( 0.0f , 90.0f , 0.0f ) );
 }
 

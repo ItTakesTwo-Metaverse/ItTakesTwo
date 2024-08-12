@@ -45,5 +45,8 @@ public:
 	UPROPERTY()
 	class UCSR_CodyAnimation *AnimCody;
 
+	UPROPERTY(EditDefaultsOnly )
+	class USceneComponent *NailBagLocation;
+
 #pragma endregion PileMovement;
 };

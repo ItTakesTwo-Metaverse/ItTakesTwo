@@ -42,4 +42,6 @@ public:
 	class AHSW_Bullet *NailPop ( FVector v , FRotator r );
 
 	void NailPush (class AHSW_Bullet *Nail );
+
+
 };

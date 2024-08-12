@@ -21,6 +21,9 @@ public:
 	UPROPERTY ( EditDefaultsOnly )
 	class ACSR_Player_Cody *CodyCharacter_;
 
+	UPROPERTY(EditDefaultsOnly )
+	class AHSW_BulletManager* NailBag;
+
 	// 조준
 	UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
 	class UInputAction	*IA_CPile_;

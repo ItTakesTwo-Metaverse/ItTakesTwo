@@ -23,6 +23,9 @@ public:
 	UPROPERTY ( EditDefaultsOnly )
 	class ACSR_Player_May* MayCharacter_;
 
+	UPROPERTY(EditDefaultsOnly )
+	class AHSW_Hammer* Hammer;
+
 	UPROPERTY(EditDefaultsOnly, Category = "ModifyAble" )
 	class UInputAction	*IA_CATTACK_;
 

@@ -139,7 +139,8 @@ void AHSW_Hammer::MoveToNail ( float deltatime)
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "nullnull" ) );
+		bIsHanging = false;
+		bMoveToNail = false;
 	}
 }
 
@@ -160,11 +161,11 @@ void AHSW_Hammer::DetachHammerFromNail ( )
 	if ( bullet )
 	{
 		MeshComp->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-		auto* otherSceneComp = may->GetComponentByClass<USceneComponent> ( );
-		SetActorLocation ( otherSceneComp->GetComponentLocation ( ) );
+		//auto* otherSceneComp = may->GetComponentByClass<USceneComponent> ( );
+		//SetActorLocation ( otherSceneComp->GetComponentLocation ( ) );
 
-		FString testString = FString::Printf ( TEXT ( "%f, %f, %f" ) , otherSceneComp->GetComponentLocation ( ).X , otherSceneComp->GetComponentLocation ( ).Y , otherSceneComp->GetComponentLocation ( ).Z );
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , testString );
+// 		FString testString = FString::Printf ( TEXT ( "%f, %f, %f" ) , otherSceneComp->GetComponentLocation ( ).X , otherSceneComp->GetComponentLocation ( ).Y , otherSceneComp->GetComponentLocation ( ).Z );
+// 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , testString );
 		
 
 	}

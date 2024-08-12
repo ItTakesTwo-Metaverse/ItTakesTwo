@@ -10,6 +10,8 @@
 #include "Blueprint/UserWidget.h"
 #include "CSR_Player_Cody.h"
 #include "Components/ArrowComponent.h"
+#include "HSW_BulletManager.h"
+#include "CSR_FunctionLib.h"
 
 // Sets default values for this component's properties
 UCSR_CodyPile::UCSR_CodyPile()
@@ -20,6 +22,8 @@ UCSR_CodyPile::UCSR_CodyPile()
 
 	// ...
 	this->PileInven = CreateDefaultSubobject< UCSR_PileInventory> ( TEXT ( "PileInven" ) );
+
+
 	
 }
 
@@ -28,6 +32,16 @@ UCSR_CodyPile::UCSR_CodyPile()
 void UCSR_CodyPile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FActorSpawnParameters parms;
+	parms.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	this->NailBag = this->GetWorld ( )->SpawnActor<AHSW_BulletManager> ( this->NailBagFactory , parms );
+	if ( this->NailBag == nullptr ) 
+	{
+		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "UCSR_MayUseHammerObj : this->NailBag is null" ) );
+	}
+
+	this->NailBag->AttachToComponent ( (Cast<ACSR_Player_Cody> ( GetOwner ( ) )->NailBagLocation) , FAttachmentTransformRules::SnapToTargetNotIncludingScale );
 
 	// ...
 	this->CrosshairUI = CreateWidget ( this->GetWorld ( ) , this->CrosshairUIFactory );
