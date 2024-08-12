@@ -16,6 +16,8 @@
 #include "CSR_Player_May.h"
 #include "CSR_Player_Cody.h"
 #include "Wood.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraSystem.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 
 
 
@@ -234,7 +236,13 @@ void AToolboxBoss::OnMyBossBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	// 플레이어 데미지 처리
 	if ( OtherActor->IsA<ACSR_P_Player> ( ) )
 	{
-		Player->OnDamaged ( damage = 1 );
+		Player->OnDamaged (1);
+
+		UNiagaraSystem* NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ));
+		if ( NiagaraEffect )
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraEffect, OtherActor->GetActorLocation(),FRotator::ZeroRotator);
+		}
 	}
 
 }
