@@ -53,10 +53,11 @@ void AHSW_Bullet::BeginPlay()
 	
 	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Bullet::OnMyWallHit );
 
-
 	Player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
-	StartPoint = Player->GetActorLocation ( );
-	EndPoint = StartPoint + FVector ( 100000 , 0 , 0 );
+	//GetWorld ( )->GetTimerManager ( ).SetTimer ( TimerHandle , this , &AHSW_Bullet::LoadSecondPlayer , 0.2f , false );
+
+	//StartPoint = Player->GetActorLocation ( );
+	//EndPoint = StartPoint + FVector ( 100000 , 0 , 0 );
 
 	
 	//NailHomingTargetComponent = player->GetComponentByClass<USceneComponent> ( );
@@ -67,8 +68,8 @@ void AHSW_Bullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	const FString myState = UEnum::GetValueAsString ( State );
-	DrawDebugString ( GetWorld ( ) , this->GetActorLocation ( ) , myState , nullptr , FColor::Yellow , 0 , true , 1 );
+	//const FString myState = UEnum::GetValueAsString ( State );
+	//DrawDebugString ( GetWorld ( ) , this->GetActorLocation ( ) , myState , nullptr , FColor::Yellow , 0 , true , 1 );
 	switch ( State )
 	{
 	case ENailState::BASIC:			TickBasic ( DeltaTime );			break;
@@ -218,6 +219,7 @@ void AHSW_Bullet::SetState ( ENailState NextState)
 		MovementComp->bShouldBounce = true;
 		MeshComp->SetVisibility ( true );
 		BoxComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 		break;
 	case ENailState::SHOOT:
 		BoxComp->SetCollisionEnabled ( ECollisionEnabled::QueryAndPhysics );
@@ -340,4 +342,14 @@ void AHSW_Bullet::NailLoad ( FName socketName )
 void AHSW_Bullet::NailReturn ( )
 {
 	SetState ( ENailState::RETURNING );
+}
+
+void AHSW_Bullet::LoadSecondPlayer ( )
+{
+	APlayerController* SecondPlayerController = UGameplayStatics::GetPlayerController ( GetWorld ( ) , 1 );
+	Player = SecondPlayerController->GetPawn ( );
+	if ( Player == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT("Player nullptr !!!!!" ));
+	}
 }

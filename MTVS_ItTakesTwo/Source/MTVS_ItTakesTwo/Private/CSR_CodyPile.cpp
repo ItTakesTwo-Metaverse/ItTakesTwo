@@ -136,12 +136,11 @@ FVector UCSR_CodyPile::LayCasting ( )
 	return (FVector::ZeroVector);
 }
 
-void UCSR_CodyPile::OnMyActionFire (FVector startLocation , FRotator startRotation )
+void UCSR_CodyPile::OnMyActionFire (FVector startLocation , FRotator startRotation, AHSW_Bullet* nail )
 {
 	UE_LOG ( LogTemp , Warning , TEXT ( "OnMyActionFire" ) );
 	
-	AHSW_Bullet *Nail = this->PileInven->NailPop( startLocation, startRotation );
-	if ( Nail == nullptr ) {
+	if ( nail == nullptr ) {
 		UE_LOG ( LogTemp , Warning , TEXT ( "Nail is empty" ) );
 		return;
 	}
@@ -151,15 +150,25 @@ void UCSR_CodyPile::OnMyActionFire (FVector startLocation , FRotator startRotati
 		UE_LOG ( LogTemp , Warning , TEXT ( "No target" ) );
 		return;
 	}
-	Nail->StartPoint = startLocation;
-	Nail->EndPoint = target;
-	Nail->SetState ( ENailState::SHOOT );
+
+	nail->NailShoot ( startLocation , target );
 
 }
 
-void UCSR_CodyPile::OnMyActionBack ( )
+AHSW_Bullet* UCSR_CodyPile::OnMyActionBack ( )
 {
 	UE_LOG ( LogTemp , Warning , TEXT ( "OnMyActionBack" ) );
-	this->PileInven->NailPush(nullptr );
+	AHSW_Bullet* bullet = this->NailBag->NailPush ( );
+	if ( bullet == nullptr )
+	{
+		UE_LOG ( LogTemp , Error , TEXT ( "NailPush returned nullptr!" ) );
+		return nullptr;
+	}
+	else if ( NailBag== nullptr )
+	{
+		UE_LOG ( LogTemp , Error , TEXT ( "NailBag nullptr!" ) );
+		return nullptr;
+	}
+	return bullet;
 }
 

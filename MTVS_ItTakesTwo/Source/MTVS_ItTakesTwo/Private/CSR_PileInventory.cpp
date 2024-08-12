@@ -23,7 +23,7 @@ void UCSR_PileInventory::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	NailSponAuto ( );
+	//NailSponAuto ( );
 	
 }
 
