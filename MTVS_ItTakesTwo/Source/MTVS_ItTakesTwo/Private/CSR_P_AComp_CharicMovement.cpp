@@ -50,10 +50,10 @@ void UCSR_P_AComp_CharicMovement::TickComponent(float DeltaTime, ELevelTick Tick
 	switch ( this->MoveFlag )
 	{
 	case DONTMOVE:
-		UE_LOG ( LogTemp , Warning , TEXT ( "DONTMOVE!!!" ) );
+		//UE_LOG ( LogTemp , Warning , TEXT ( "DONTMOVE!!!" ) );
 		break;
 	case NORMALEMOVE:
-		UE_LOG ( LogTemp , Warning , TEXT ( "NORMALEMOVE" ) );
+		//UE_LOG ( LogTemp , Warning , TEXT ( "NORMALEMOVE" ) );
 		//UE_LOG ( LogTemp , Warning , TEXT ( "chose Di %f %f" ) , this->ChoosedDirection.X , this->ChoosedDirection.Y );
 		//UE_LOG ( LogTemp , Warning , TEXT ( "abc : %f" ) , this->AbsScale );
 		this->MoveFlag = DONTMOVE;
@@ -63,7 +63,7 @@ void UCSR_P_AComp_CharicMovement::TickComponent(float DeltaTime, ELevelTick Tick
 		this->AbsScale = 0.0f;
 		break;
 	case JUMPMOVEE:
-		UE_LOG ( LogTemp , Warning , TEXT ( "JUMPMOVEE" ) );
+		//UE_LOG ( LogTemp , Warning , TEXT ( "JUMPMOVEE" ) );
 		if ( this->SecondJump == true ) {
 			// 2단 점프 시 이동 키 입력되어 있으면 새로운 이동 방향을 입력받는다.
 			// 그게 아니면 원래 이동거리로 간다.

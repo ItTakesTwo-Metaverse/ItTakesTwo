@@ -13,6 +13,8 @@
 #include "HSW_Bullet.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "CSR_Player_May.h"
+#include "CSR_Player_Cody.h"
 
 
 
@@ -27,8 +29,7 @@ AToolboxBoss::AToolboxBoss()
 	if (BossMeshAsset.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(BossMeshAsset.Object);
-		GetMesh ( )->SetupAttachment ( RootComponent );
-		
+		GetMesh()->SetupAttachment ( RootComponent );
 	}
 
 	// 보스 왼팔
@@ -39,6 +40,8 @@ AToolboxBoss::AToolboxBoss()
 		LeftArmMesh->SetSkeletalMesh ( LeftArmMeshAsset.Object );
 		LeftArmMesh->SetupAttachment ( GetMesh ( ) , TEXT ( "LeftArmSocket" ) );
 		LeftArmMesh->SetRelativeLocationAndRotation ( FVector ( 210 , -850 , 0 ) , FRotator ( 0 , -90 , 0 ) );
+		LeftArmMesh->SetGenerateOverlapEvents ( true );
+		LeftArmMesh->SetCollisionProfileName ( TEXT ( "Boss" ) );
 	}
 
 	// 보스 오른팔
@@ -136,7 +139,9 @@ AToolboxBoss::AToolboxBoss()
 	{
 		Drill->SetStaticMesh ( DrillAsset.Object );
 		Drill->SetupAttachment( RightArmMesh , TEXT ( "joint8" ) );
-		Drill->SetRelativeLocation ( FVector ( 390 , -520 , 550 ) );
+		Drill->SetRelativeLocationAndRotation ( FVector ( 290 , -520 , 480 ), FRotator(6,0,0 ));
+		Drill->SetGenerateOverlapEvents ( true );
+		Drill->SetCollisionProfileName ( TEXT ( "Drill" ) );
 		Drill->SetVisibility ( false );
 	}
 
@@ -145,54 +150,58 @@ AToolboxBoss::AToolboxBoss()
 	if ( DrillCircleAsset.Succeeded ( ) )
 	{
 		DrillCircle->SetSkeletalMesh ( DrillCircleAsset.Object );
-		DrillCircle->SetupAttachment ( Drill );
-		DrillCircle->SetRelativeLocation ( FVector ( -18 , 380 , 0 ) );
+		DrillCircle->SetupAttachment ( Drill ); 
+		DrillCircle->SetRelativeLocationAndRotation ( FVector ( -5 , 448 , -60 ), FRotator( 0, 0, 84 ) );
+		DrillCircle->SetGenerateOverlapEvents ( true );
+		DrillCircle->SetCollisionProfileName ( TEXT ( "Drill" ) );
 		DrillCircle->SetVisibility ( false );
 	}
 
-	DrillArm1 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "DrillArm1" ) );
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DrillArm1Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/drill/SKM_drill_v002_arm1.SKM_drill_v002_arm1'" ) );
-	if ( DrillArm1Asset.Succeeded ( ) )
+	DrillArms = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "DrillArms" ) );
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DrillArmsAsset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/drill/SKM_DrillArms.SKM_DrillArms'" ) );
+	if ( DrillArmsAsset.Succeeded ( ) )
 	{
-		DrillArm1->SetSkeletalMesh ( DrillArm1Asset.Object );
-		DrillArm1->SetupAttachment ( DrillCircle );
-		DrillArm1->SetVisibility ( false );
+		DrillArms->SetSkeletalMesh ( DrillArmsAsset.Object );
+		DrillArms->SetupAttachment ( DrillCircle ); 
+		DrillArms->SetRelativeLocationAndRotation ( FVector ( 0 , -2.5 , -2 ) , FRotator ( -82 , -90 , 90 ) );
+		DrillArms->SetGenerateOverlapEvents ( true );
+		DrillArms->SetCollisionProfileName ( TEXT ( "Drill" ) );
+		DrillArms->SetVisibility ( false );
 	}
 
-	DrillArm2 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "DrillArm2" ) );
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DrillArm2Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/drill/SKM_drill_v002_arm2.SKM_drill_v002_arm2'" ) );
-	if ( DrillArm2Asset.Succeeded ( ) )
-	{
-		DrillArm2->SetSkeletalMesh ( DrillArm2Asset.Object );
-		DrillArm2->SetupAttachment ( DrillCircle );
-		DrillArm2->SetVisibility ( false );
-	}
 	
 	// 오른팔 충돌
 	RightArmMesh->OnComponentBeginOverlap.AddDynamic(this, &AToolboxBoss::OnMyBossBeginOverlap);
 	// 못 상호작용 박스 충돌
 	NailInteractionBox1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyNailInteractionBoxBeginOverlap );
 	// 자물쇠 충돌
-	Lock1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyLockBeginOverlap );
-	// 드릴, 나무판자 충돌 (드릴뚫기공격)
-	DrillCircle->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyDrillOverlap );
+	LockBody1->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyLockBeginOverlap );
+	LockBody2->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyLockBeginOverlap );
+	// 드릴 충돌
+	Drill->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyDrillOverlap );
+	DrillArms->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyDrillOverlap );
+	DrillCircle->OnComponentBeginOverlap.AddDynamic ( this , &AToolboxBoss::OnMyDrillCirleOverlap );
 
-	// 오른팔 애니메이션 블루프린트 할당
-	ConstructorHelpers::FClassFinder<UAnimInstance> TempRightArmAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Anim/ABP_RightArm.ABP_RightArm'_C'"));
-	if ( TempRightArmAnim.Succeeded ( ) )
-	{
-		RightArmMesh->SetAnimInstanceClass( TempRightArmAnim.Class);
-	}
+	//// 오른팔 애니메이션 블루프린트 할당
+	//ConstructorHelpers::FClassFinder<UAnimInstance> TempRightArmAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/LHM_Boss/Anim/ABP_RightArm.ABP_RightArm'_C'"));
+	//if ( TempRightArmAnim.Succeeded ( ) )
+	//{
+	//	RightArmMesh->SetAnimInstanceClass( TempRightArmAnim.Class);
+	//}
 
 	// FSM 컴포넌트 추가
 	fsm = CreateDefaultSubobject<UToolBoxBossFSM> ( TEXT ( "FSM" ) );
-}
 
+}
 // Called when the game starts or when spawned
 void AToolboxBoss::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if ( DrillCircle )
+	{
+		DrillCircleAnim = Cast<UDrillCircleAnimInstance> ( DrillCircle->GetAnimInstance ( ) );
+	}
 }
 
 // Called every frame
@@ -212,29 +221,24 @@ void AToolboxBoss::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AToolboxBoss::OnMyBossBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
-	// 플레이어와 충돌했을 때 플레이어 파괴
-	if ( OtherActor->IsA<ACharacter>() )
+	GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Collision BOSS & Player" ) );
+	UE_LOG ( LogTemp , Warning , TEXT ( "Collision BOSS & Player" ) );
+
+	// 플레이어 데미지 처리
+	if ( OtherActor->IsA<ACSR_P_Player>() )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Destroy Player" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "Destroy Player" ) );
-		//OtherActor->Destroy();
-		
+		Player->OnDamaged(damage = 1);
 	}
+	
 }
 
 void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
 	// 플레이어의 못이 보스의 오른팔 상호작용 박스에 충돌했을 때 보스 일시정지 상태로 전이
-	if ( OtherActor )
+	if ( OtherActor->IsA<AHSW_Bullet>() )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Bullet Collision NailInteractionBox" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "Bullet Collision NailInteractionBox" ) );
-
 		if ( fsm->CurrentState == EBossState::Attack1 )
 		{
-			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Attck1 >> Paused" ) );
-			UE_LOG ( LogTemp , Warning , TEXT ( "Attck1 >> Paused" ) );
 			fsm->ChangeState ( EBossState::Paused );
 		}
 	}
@@ -243,24 +247,90 @@ void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* Ove
 void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
 	// 플레이어의 망치와 충돌했을 때 자물쇠 데미지
-	if ( OtherActor->IsA<AHSW_Hammer> ( ) )
+	if ( OtherActor->IsA<AHSW_Hammer>() )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Collision Hammer&Lock" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "Collision Hammer&Lock" ) );
-		LockHP -= damage;
+		if ( Lock1HP > 0 )
+		{	
+			Lock1HP -= damage;
+			if ( Lock1HP <= 0 )
+			{
+				Lock1->SetSimulatePhysics ( true );
+				Lock1->WakeAllRigidBodies ( );
+				Lock1->bBlendPhysics = true;
+
+				LockBody1->SetSimulatePhysics ( true );
+				LockBody1->WakeAllRigidBodies ( );
+				LockBody1->bBlendPhysics = true;
+
+				GetWorld()->GetTimerManager().SetTimer(Lock1DestroyTimerHandle, this, &AToolboxBoss::DestroyLock1 , 3.0f , false );
+			}
+		}
+		else if ( Lock1HP <= 0 && Lock2HP > 0)
+		{
+			Lock2HP -= damage;
+			if ( Lock2HP <= 0 )
+			{
+				Lock2->SetSimulatePhysics ( true );
+				Lock2->WakeAllRigidBodies ( );
+				Lock2->bBlendPhysics = true;
+
+				LockBody2->SetSimulatePhysics ( true );
+				LockBody2->WakeAllRigidBodies ( );
+				LockBody2->bBlendPhysics = true;
+
+				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock2DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
+			}
+		}
 	}
-	
+
+}
+
+void AToolboxBoss::DestroyLock1 ( )
+{
+	if ( Lock1 ) 
+	{
+		Lock1->DetachFromComponent( FDetachmentTransformRules::KeepWorldTransform); // 부착해제
+		Lock1->DestroyComponent( );
+	}
+	if ( LockBody1 ) 
+	{
+		LockBody1->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+		LockBody1->DestroyComponent ( );
+	}
+}
+
+void AToolboxBoss::DestroyLock2 ( )
+{
+	if ( Lock2 ) 
+	{
+		Lock2->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+		Lock2->DestroyComponent ( );
+	}
+	if ( LockBody2 )
+	{
+		LockBody2->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+		LockBody2->DestroyComponent ( );
+	}
+}
+
+void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
+{
+	GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Drill & HoleMesh Overlap!!!!!!!" ) );
+	UE_LOG ( LogTemp , Warning , TEXT ( "Drill & HoleMesh Overlap!!!!!!!" ) );
+
+	// 드릴공격 판자 뚫기
+	if ( OtherActor->ActorHasTag(TEXT("HoleMesh") ) && OtherActor != this )
+	{
+		OtherActor->Destroy ( );
+	}
 }
 
 void AToolboxBoss::OnMyDrillOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
-{	
-	// 드릴공격 판자 뚫기
-	if ( OtherActor && OtherActor != this )
+{
+	// 플레이어 데미지 처리
+	if ( OtherActor == Player )
 	{
-		if ( OtherComponent && OtherComponent->ComponentHasTag ( TEXT ( "HoleMesh" ) ) )
-		{
-			OtherActor->Destroy ( );
-		}
+		Player->OnDamaged ( damage = 1 );
 	}
 }
 
@@ -268,9 +338,35 @@ void AToolboxBoss::EnterRagdollState ( )
 {	
 	if ( RightArmMesh )
 	{
+		RightArmMesh->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform );
+		RightArmMesh->SetCollisionProfileName(TEXT("Ragdoll") );
 		RightArmMesh->SetSimulatePhysics ( true );
 		RightArmMesh->WakeAllRigidBodies ( );
 		RightArmMesh->bBlendPhysics = true;
+
+		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Right Arm Ragdoll" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Ragdoll" ) );
+	}
+	if ( GetMesh ( ) )
+	{
+		GetMesh ( )->SetCollisionProfileName ( TEXT ( "Ragdoll" ) );
+		GetMesh ( )->SetSimulatePhysics(true);
+		GetMesh ( )->WakeAllRigidBodies ( );
+		GetMesh ( )->bBlendPhysics = true;
+
+		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Boss Body Ragdoll" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Boss Body Ragdoll" ) );
+	}
+	if ( LeftArmMesh )
+	{
+		LeftArmMesh->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform );
+		LeftArmMesh->SetCollisionProfileName ( TEXT ( "Ragdoll" ) );
+		LeftArmMesh->SetSimulatePhysics ( true );
+		LeftArmMesh->WakeAllRigidBodies ( );
+		LeftArmMesh->bBlendPhysics = true;
+
+		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Left Arm Ragdoll" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Left Arm Ragdoll" ) );
 	}
 }
 

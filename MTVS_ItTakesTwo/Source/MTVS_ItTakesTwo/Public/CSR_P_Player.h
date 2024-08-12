@@ -28,6 +28,12 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 #pragma region
+	UPROPERTY( EditAnywhere, Category = "ModifyAble" )
+	int32 MaxHp = 8;
+
+	UPROPERTY( EditAnywhere )
+	int32 CurHp = MaxHp;
+
 	// 플레이어 카메라 셋팅
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USpringArmComponent *SpringArmComp;
@@ -60,6 +66,8 @@ public:
 
 	virtual void Landed ( const FHitResult& Hit ) override;
 	
+	void OnDamaged(int32 Damage);
+
 #pragma endregion ComponentSetting
 
 #pragma region
