@@ -84,14 +84,14 @@ void ACSR_P_Player::Tick(float DeltaTime)
 		}
 	}
 	if ( (this->CharacterStateMannageComp->CurrentState & DIE) ) {
-		//this->CharacterStateMannageComp->RemoveState ( DIE );
-		//APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
-		//if ( CameraManager )
-		//{
-		//	CameraManager->StartCameraFade ( 1.0f , 0.0f , 1.0f , FLinearColor::Black , false , true );
-		//}
-		//SetActorLocation(this->SavePoint);
-		//this->CharacterStateMannageComp->AddState ( REBORN );
+// 		this->CharacterStateMannageComp->RemoveState ( DIE );
+// 		APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
+// 		if ( CameraManager )
+// 		{
+// 			CameraManager->StartCameraFade ( 1.0f , 0.0f , 1.0f , FLinearColor::Black , false , true );
+// 		}
+// 		SetActorLocation ( this->SavePoint );
+// 		this->CharacterStateMannageComp->AddState ( REBORN );
 	}
 	if ( (this->CharacterStateMannageComp->CurrentState & REBORN)) {
 		this->CurrentTIme = this->CurrentTIme + DeltaTime;
@@ -130,9 +130,12 @@ void ACSR_P_Player::fallingUnder ( )
 	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
 	if ( CameraManager )
 	{
-		CameraManager->StartCameraFade ( 0.0f , 1.0f , 2.0f , FLinearColor::Black , false , true );
+		CameraManager->StartCameraFade ( 0.0f , 1.0f , 1.0f , FLinearColor::Black , false , true );
 	}
-	this->CharacterStateMannageComp->AddState(DIE);
+	SetActorLocation ( this->SavePoint );
+	CameraManager->StartCameraFade ( 1.0f , 0.0f , 0.5f , FLinearColor::Black , false , true );
+	this->GetMesh ( )->SetVisibility ( true );
+	//this->CharacterStateMannageComp->AddState(DIE);
 }
 
 void ACSR_P_Player::OnDamaged ( int32 Damage )
