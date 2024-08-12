@@ -9,6 +9,7 @@
 #include "Camera/CameraComponent.h"
 #include "CSR_FunctionLib.h"
 #include "HSW_BulletManager.h"
+#include "HSW_Bullet.h"
 
 void UCSR_C_AComp_InputBIndCody::BeginPlay ( )
 {
@@ -17,6 +18,8 @@ void UCSR_C_AComp_InputBIndCody::BeginPlay ( )
 	if ( this->CodyCharacter_ == nullptr ) {
 		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "UCSR_C_AComp_InputBIndCody : this->CodyCharacter_ is null" ) );
 	}
+
+	NailBag = CodyCharacter_->CodyPileComp->NailBag;
 }
 
 void UCSR_C_AComp_InputBIndCody::SetupInputComponent ( class UEnhancedInputComponent* InputKey )
@@ -31,11 +34,18 @@ void UCSR_C_AComp_InputBIndCody::SetupInputComponent ( class UEnhancedInputCompo
 
 void UCSR_C_AComp_InputBIndCody::ChangeZoomIn ( )
 {
+	Nail = this->CodyCharacter_->CodyPileComp->NailBag->NailPop ( this->CodyCharacter_->ArrowComp->GetComponentLocation ( ) , this->CodyCharacter_->GetActorRotation ( ) );
+	if ( Nail == nullptr ) {
+		UE_LOG ( LogTemp , Warning , TEXT ( "Nail is empty" ) );
+		return;
+	}
 	UE_LOG(LogTemp, Warning, TEXT("1234" ) );
 	this->CodyCharacter_->CameraComp->bUsePawnControlRotation = true;
 	this->CodyCharacter_->bUseControllerRotationYaw = true;
 	this->CodyCharacter_->CodyPileComp->ToggleButton ( true );
-	this->CodyCharacter_->CodyPileComp->NailBag->NailPop ( this->CodyCharacter_->ArrowComp->GetComponentLocation ( ) , this->CodyCharacter_->GetActorRotation ( ) );
+
+	Nail->NailLoad ( FName("hanr_r") );
+	
 }
 
 void UCSR_C_AComp_InputBIndCody::ChangeZoomOut ( )
@@ -43,14 +53,28 @@ void UCSR_C_AComp_InputBIndCody::ChangeZoomOut ( )
 	this->CodyCharacter_->CameraComp->bUsePawnControlRotation = false;
 	this->CodyCharacter_->bUseControllerRotationYaw = false;
 	this->CodyCharacter_ ->CodyPileComp->ToggleButton ( false );
+
+	if ( Nail->State == ENailState::LOAD )
+	{
+		Nail = NailBag->NailPush ( );
+		Nail->NailBasic ( );
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Not Load" ) );
+	}
 }
 
 void UCSR_C_AComp_InputBIndCody::ExecFIre ( )
 {
-	this->CodyCharacter_->CodyPileComp->OnMyActionFire ( this->CodyCharacter_->ArrowComp->GetComponentLocation ( ) , this->CodyCharacter_->GetActorRotation ( ) );
+	this->CodyCharacter_->CodyPileComp->OnMyActionFire ( this->CodyCharacter_->ArrowComp->GetComponentLocation ( ) , this->CodyCharacter_->GetActorRotation ( ),Nail );
 }
 
 void UCSR_C_AComp_InputBIndCody::ExecBack ( )
 {
-	this->CodyCharacter_->CodyPileComp->OnMyActionBack ( );
+	Nail = this->CodyCharacter_->CodyPileComp->OnMyActionBack ( );
+	if ( Nail )
+	{
+		Nail->NailReturn ( );
+	}
 }
