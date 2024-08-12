@@ -11,6 +11,7 @@
 #include "CSR_MayUseHammerObj.h"
 #include "Components/SceneComponent.h"
 #include "CSR_MayAnimation.h"
+#include "HSW_Hammer.h"
 
 ACSR_Player_May::ACSR_Player_May ( )
 {
@@ -27,6 +28,7 @@ ACSR_Player_May::ACSR_Player_May ( )
 		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_Player_May : this->HammerLocation is null" ) );
 	}
 	this->HammerLocation->SetupAttachment(RootComponent);
+
 	this->HammerLocation->SetRelativeLocation(FVector(-100.0f, 0.0f, 100.0f));
 
 	ConstructorHelpers::FClassFinder<UCSR_MayAnimation> TempEnemyAnim ( TEXT ( "/Script/Engine.AnimBlueprint'/Game/CSR/Animation/animation/ABS_MayAnimation.ABS_MayAnimation'" ) );
@@ -39,6 +41,10 @@ void ACSR_Player_May::BeginPlay ( )
 {
 	Super::BeginPlay ( );
 	this->MakeEnhancedInputLocalSubSystem ( );
+	
+	FString testString = FString::Printf ( TEXT ( "%f, %f, %f" ) , HammerPlayerSocketLotation.X , HammerPlayerSocketLotation.Y , HammerPlayerSocketLotation.Z );
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , testString );
+
 }
 
 // PlayerController를 IMC_PlayerController와 맵핑.
@@ -65,6 +71,12 @@ void ACSR_Player_May::MakeEnhancedInputLocalSubSystem ( )
 void ACSR_Player_May::Tick ( float DeltaTime )
 {
 	Super::Tick ( DeltaTime );
+
+	if ( ((this->UseHammerComp->Hammer->bMoveToNail == false) && (this->UseHammerComp->Hammer->bIsHanging == true)) || (this->UseHammerComp->Hammer->bMoveToNail == true) )
+	{
+		HammerPlayerSocketLotation = this->UseHammerComp->Hammer->MeshComp->GetSocketLocation ( TEXT ( "PlayerAttachingPoint" ) );
+		SetActorLocation ( HammerPlayerSocketLotation );
+	}
 }
 
 void ACSR_Player_May::SetupPlayerInputComponent ( UInputComponent* PlayerInputComponent )

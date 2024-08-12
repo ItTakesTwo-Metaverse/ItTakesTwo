@@ -82,4 +82,11 @@ public:
 	void OnMyActionFire ( FVector startLocation, FRotator startRotation );
 
 	void OnMyActionBack ( );
+
+	//---------------------------------------------
+	UPROPERTY(EditAnywhere,BlueprintReadWrite )
+	TSubclassOf<class AHSW_BulletManager> NailBagFactory;
+
+	UPROPERTY(EditDefaultsOnly )
+	class AHSW_BulletManager* NailBag;
 };

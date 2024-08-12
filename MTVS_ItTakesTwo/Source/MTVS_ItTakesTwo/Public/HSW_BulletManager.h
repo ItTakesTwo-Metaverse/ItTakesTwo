@@ -23,10 +23,26 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite )
+	class UStaticMeshComponent* MeshComp;
+
+	UPROPERTY ( )
+	class AHSW_Bullet* Bullet;
 	UPROPERTY ( )
 	TArray<class AHSW_Bullet*> Magazine;
+	UPROPERTY ( )
+	TArray<class AHSW_Bullet*> Magazine_Out;
 
 	UPROPERTY(EditAnywhere )
 	TSubclassOf<class AHSW_Bullet> BulletFactory;
 
+	UFUNCTION(BlueprintCallable )
+	AHSW_Bullet* NailPop ( FVector v , FRotator r);
+	UFUNCTION(BlueprintCallable )
+	AHSW_Bullet* NailPush ( );
+
+	int32 SocketIndex;
+
+	FVector GetNailBagSocketLocation ( );
+	FRotator GetNailBagSocketRotation ( );
 };

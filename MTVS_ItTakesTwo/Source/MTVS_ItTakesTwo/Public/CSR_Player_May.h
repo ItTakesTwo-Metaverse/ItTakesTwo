@@ -39,5 +39,7 @@ public:
 	UPROPERTY()
 	class UCSR_MayAnimation *AnimMay;
 
+	FVector HammerPlayerSocketLotation;
+
 #pragma endregion
 };

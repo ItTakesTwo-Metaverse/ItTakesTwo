@@ -6,19 +6,18 @@
 #include "Animation/AnimInstance.h"
 #include "RightArmAnimInstance.generated.h"
 
-UENUM(BlueprintType )
+UENUM(BlueprintType)
 enum class ERightArmAnimState : uint8
-{
+{  
 	Start ,
 	Idle ,
 	CoolDown ,
 	Attack1 ,
 	Paused ,
-	DestroyRightArm,
-	Attack2Drill ,
+	Attack2 ,
 	Attack3 ,
 	Attack4 ,
-	Attack5 ,
+	Attack5
 	
 };
 
@@ -38,17 +37,24 @@ public:
 	virtual void NativeInitializeAnimation () override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+	UPROPERTY( )
+	class AToolboxBoss* me;
+
 	UFUNCTION(BlueprintCallable)
 	void SetAnimState( ERightArmAnimState NewState);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ERightArmAnimState AnimState;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
 	bool bIsAttacking1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
 	bool bIsPausing;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
 	bool bIsAttacking2;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
+	bool bIsAttacking3;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
+	bool bIsAttacking4;
 
 };

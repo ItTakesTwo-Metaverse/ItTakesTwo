@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "RightArmAnimInstance.h"
+#include "DrillCircleAnimInstance.h"
 #include "ToolboxBoss.generated.h"
 
 UCLASS()
@@ -54,18 +55,19 @@ public:
 	UPROPERTY(EditDefaultsOnly )
 	class UStaticMeshComponent* Drill;
 	
-	UPROPERTY(EditDefaultsOnly )
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite )
 	class USkeletalMeshComponent* DrillCircle;
 	
 	UPROPERTY(EditDefaultsOnly )
-	class USkeletalMeshComponent* DrillArm1;
-	
-	UPROPERTY(EditDefaultsOnly )
-	class USkeletalMeshComponent* DrillArm2;
+	class USkeletalMeshComponent* DrillArms;
 
 	UPROPERTY( EditDefaultsOnly )
-	float LockHP = 10;
+	float Lock1HP = 5;
+	float Lock2HP = 5;
 	float damage = 1;
+
+	FTimerHandle Lock1DestroyTimerHandle;
+	FTimerHandle Lock2DestroyTimerHandle;
 
 	// 보스 오른팔 충돌했을 때 플레이어 파괴
 	UFUNCTION()
@@ -78,9 +80,18 @@ public:
 	// 자물쇠 망치공격 당했을 때 자물쇠 데미지
 	UFUNCTION()
 	void OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
+
+	UFUNCTION( )
+	void DestroyLock1 ( );
 	
+	UFUNCTION( )
+	void DestroyLock2( );
+
 	 UFUNCTION()
-    void OnMyDrillOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+    void OnMyDrillCirleOverlap (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	 UFUNCTION()
+    void OnMyDrillOverlap (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void EnterRagdollState( );
 
@@ -89,5 +100,12 @@ public:
 
 	UPROPERTY()
     class URightArmAnimInstance* RightArmAnimInstance;
+
+	UPROPERTY()
+    class UDrillCircleAnimInstance* DrillCircleAnim;
+
+	UPROPERTY ( )
+	class ACSR_P_Player* Player;
+	
 
 };
