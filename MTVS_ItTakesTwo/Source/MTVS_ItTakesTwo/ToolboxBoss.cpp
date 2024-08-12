@@ -228,9 +228,6 @@ void AToolboxBoss::SetupPlayerInputComponent ( UInputComponent* PlayerInputCompo
 
 void AToolboxBoss::OnMyBossBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
-	GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Collision BOSS & Player" ) );
-	UE_LOG ( LogTemp , Warning , TEXT ( "Collision BOSS & Player" ) );
-
 	Player = Cast<ACSR_P_Player> ( OtherActor );
 
 	// 플레이어 데미지 처리
@@ -280,7 +277,7 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock1DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
 			}
 		}
-		else if ( Lock1HP <= 0 && Lock2HP > 0 )
+		else if ( fsm->bIsAttack2 ) //else if ( Lock1HP <= 0 && Lock2HP > 0 )
 		{
 			Lock2HP -= damage;
 			if ( Lock2HP <= 0 )
@@ -334,18 +331,37 @@ void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedCompon
 	{
 		OtherComponent->DestroyComponent();
 	}
+
+	Player = Cast<ACSR_P_Player> ( OtherActor );
+
+	// 플레이어 데미지 처리
+	if ( OtherActor->IsA<ACSR_P_Player> ( ) )
+	{
+		Player->OnDamaged ( 1 );
+
+		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "PlayerDrillCirle Damage -1" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "PlayerDrillCirle Damage -1" ) );
+
+		UNiagaraSystem* NiagaraEffect = LoadObject<UNiagaraSystem> ( nullptr , TEXT ( "/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ) );
+		if ( NiagaraEffect )
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation ( GetWorld ( ) , NiagaraEffect , OtherActor->GetActorLocation ( ) , FRotator::ZeroRotator );
+		}
+	}
 }
 
 void AToolboxBoss::OnMyDrillOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
-{	
-
-	GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Player Damage -1" ) );
-	UE_LOG ( LogTemp , Warning , TEXT ( "Player Damage -1" ) );
-
+{
 	// 플레이어 데미지 처리
-	if ( OtherActor == Player )
+	if ( OtherActor->IsA<ACSR_P_Player> ( ) )
 	{
-		Player->OnDamaged ( damage = 1 );
+		Player->OnDamaged ( 1 );
+
+		UNiagaraSystem* NiagaraEffect = LoadObject<UNiagaraSystem> ( nullptr , TEXT ( "/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ) );
+		if ( NiagaraEffect )
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation ( GetWorld ( ) , NiagaraEffect , OtherActor->GetActorLocation ( ) , FRotator::ZeroRotator );
+		}
 	}
 }
 
