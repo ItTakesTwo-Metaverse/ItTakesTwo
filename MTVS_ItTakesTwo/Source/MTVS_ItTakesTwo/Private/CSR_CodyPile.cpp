@@ -37,7 +37,7 @@ void UCSR_CodyPile::BeginPlay()
 	FActorSpawnParameters parms;
 	parms.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	this->NailBag = this->GetWorld ( )->SpawnActor<AHSW_BulletManager> ( this->NailBagFactory , parms );
-	if ( this->NailBag == nullptr ) 
+	if ( this->NailBag == nullptr )
 	{
 		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "UCSR_MayUseHammerObj : this->NailBag is null" ) );
 	}
@@ -124,8 +124,7 @@ void UCSR_CodyPile::CameraZoomOutMoving ( float DetaTime )
 FVector UCSR_CodyPile::LayCasting ( )
 {
 	FVector2D ViewportSize;
-	if ( GEngine && GEngine->GameViewport )
-	{
+	if ( GEngine && GEngine->GameViewport ) {
 		GEngine->GameViewport->GetViewportSize ( ViewportSize );
 	}
 
