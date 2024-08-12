@@ -251,6 +251,8 @@ void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* Ove
 	{
 		if ( fsm->CurrentState == EBossState::Attack1 )
 		{
+			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "OnMyNailInteractionBoxBeginOverlap" ) );
+			UE_LOG ( LogTemp , Warning , TEXT ( "OnMyNailInteractionBoxBeginOverlap" ) );
 			fsm->ChangeState ( EBossState::Paused );
 		}
 	}
@@ -267,11 +269,9 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 			if ( Lock1HP <= 0 )
 			{
 				Lock1->SetSimulatePhysics ( true );
-				Lock1->WakeAllRigidBodies ( );
 				Lock1->bBlendPhysics = true;
 
 				LockBody1->SetSimulatePhysics ( true );
-				LockBody1->WakeAllRigidBodies ( );
 				LockBody1->bBlendPhysics = true;
 
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock1DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
@@ -283,11 +283,9 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 			if ( Lock2HP <= 0 )
 			{
 				Lock2->SetSimulatePhysics ( true );
-				Lock2->WakeAllRigidBodies ( );
 				Lock2->bBlendPhysics = true;
 
 				LockBody2->SetSimulatePhysics ( true );
-				LockBody2->WakeAllRigidBodies ( );
 				LockBody2->bBlendPhysics = true;
 
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock2DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
@@ -339,30 +337,27 @@ void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedCompon
 	{
 		Player->OnDamaged ( 1 );
 
-		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "PlayerDrillCirle Damage -1" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "PlayerDrillCirle Damage -1" ) );
-
-		UNiagaraSystem* NiagaraEffect = LoadObject<UNiagaraSystem> ( nullptr , TEXT ( "/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ) );
-		if ( NiagaraEffect )
-		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation ( GetWorld ( ) , NiagaraEffect , OtherActor->GetActorLocation ( ) , FRotator::ZeroRotator );
-		}
+		//UNiagaraSystem* NiagaraEffect = LoadObject<UNiagaraSystem> ( nullptr , TEXT ( "/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ) );
+		//if ( NiagaraEffect )
+		//{
+		//	UNiagaraFunctionLibrary::SpawnSystemAtLocation ( GetWorld ( ) , NiagaraEffect , OtherActor->GetActorLocation ( ) , FRotator::ZeroRotator );
+		//}
 	}
 }
 
 void AToolboxBoss::OnMyDrillOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
 	// 플레이어 데미지 처리
-	if ( OtherActor->IsA<ACSR_P_Player> ( ) )
-	{
-		Player->OnDamaged ( 1 );
+	//if ( OtherActor->IsA<ACSR_P_Player> ( ) )
+	//{
+	//	Player->OnDamaged ( 1 );
 
-		UNiagaraSystem* NiagaraEffect = LoadObject<UNiagaraSystem> ( nullptr , TEXT ( "/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ) );
-		if ( NiagaraEffect )
-		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation ( GetWorld ( ) , NiagaraEffect , OtherActor->GetActorLocation ( ) , FRotator::ZeroRotator );
-		}
-	}
+	//	/*UNiagaraSystem* NiagaraEffect = LoadObject<UNiagaraSystem> ( nullptr , TEXT ( "/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ) );
+	//	if ( NiagaraEffect )
+	//	{
+	//		UNiagaraFunctionLibrary::SpawnSystemAtLocation ( GetWorld ( ) , NiagaraEffect , OtherActor->GetActorLocation ( ) , FRotator::ZeroRotator );
+	//	}*/
+	//}
 }
 
 void AToolboxBoss::EnterRagdollState ( )
@@ -372,32 +367,23 @@ void AToolboxBoss::EnterRagdollState ( )
 		RightArmMesh->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform );
 		RightArmMesh->SetCollisionProfileName ( TEXT ( "Ragdoll" ) );
 		RightArmMesh->SetSimulatePhysics ( true );
-		RightArmMesh->WakeAllRigidBodies ( );
+		//RightArmMesh->WakeAllRigidBodies ( );
 		RightArmMesh->bBlendPhysics = true;
-
-		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Right Arm Ragdoll" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "Right Arm Ragdoll" ) );
 	}
 	if ( LeftArmMesh )
 	{
 		LeftArmMesh->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform );
 		LeftArmMesh->SetCollisionProfileName ( TEXT ( "Ragdoll" ) );
 		LeftArmMesh->SetSimulatePhysics ( true );
-		LeftArmMesh->WakeAllRigidBodies ( );
+		//LeftArmMesh->WakeAllRigidBodies ( );
 		LeftArmMesh->bBlendPhysics = true;
-
-		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Left Arm Ragdoll" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "Left Arm Ragdoll" ) );
 	}
 	if ( GetMesh ( ) )
 	{
 		GetMesh ( )->SetCollisionProfileName ( TEXT ( "Ragdoll" ) );
 		GetMesh ( )->SetSimulatePhysics ( true );
-		GetMesh ( )->WakeAllRigidBodies ( );
+		//GetMesh ( )->WakeAllRigidBodies ( );
 		GetMesh ( )->bBlendPhysics = true;
-
-		GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Boss Body Ragdoll" ) );
-		UE_LOG ( LogTemp , Warning , TEXT ( "Boss Body Ragdoll" ) );
 	}
 }
 
