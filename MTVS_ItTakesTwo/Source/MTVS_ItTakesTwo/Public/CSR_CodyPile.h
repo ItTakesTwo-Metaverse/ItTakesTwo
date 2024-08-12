@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "HSW_Bullet.h"
 #include "CSR_CodyPile.generated.h"
 
 
@@ -79,9 +80,9 @@ public:
 
 	FVector LayCasting ( );
 
-	void OnMyActionFire ( FVector startLocation, FRotator startRotation );
+	void OnMyActionFire ( FVector startLocation, FRotator startRotation, AHSW_Bullet* nail );
 
-	void OnMyActionBack ( );
+	AHSW_Bullet* OnMyActionBack ();
 
 	//---------------------------------------------
 	UPROPERTY(EditAnywhere,BlueprintReadWrite )

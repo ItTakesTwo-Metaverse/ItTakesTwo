@@ -114,4 +114,7 @@ public:
 	UFUNCTION(BlueprintCallable )
 	void NailReturn( );
 	
+	void LoadSecondPlayer ( );
+
+	FTimerHandle TimerHandle;
 };

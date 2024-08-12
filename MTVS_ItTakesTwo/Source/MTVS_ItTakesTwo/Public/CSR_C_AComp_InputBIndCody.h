@@ -18,10 +18,10 @@ public:
 
 	virtual void SetupInputComponent ( class UEnhancedInputComponent* InputKey ) override;
 
-	UPROPERTY ( EditDefaultsOnly )
+	UPROPERTY (  )
 	class ACSR_Player_Cody *CodyCharacter_;
 
-	UPROPERTY(EditDefaultsOnly )
+	UPROPERTY( )
 	class AHSW_BulletManager* NailBag;
 
 	// 조준
@@ -43,4 +43,7 @@ public:
 	void ExecFIre( );
 
 	void ExecBack();
+
+	UPROPERTY ( EditDefaultsOnly)
+	AHSW_Bullet* Nail;
 };
