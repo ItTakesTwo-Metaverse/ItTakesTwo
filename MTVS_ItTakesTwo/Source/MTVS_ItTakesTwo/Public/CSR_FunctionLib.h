@@ -21,4 +21,6 @@ public:
 	static void ExitGame(UWorld *world, FString str);
 	// float 매개변수를 abs하여 더한값을 리턴한다.
 	static float SelectABSUpperFloat (const float& a ,const float& b );
+	// 문자열을 로그에 출력합니다.
+	static void PrintWindow(FString str);
 };

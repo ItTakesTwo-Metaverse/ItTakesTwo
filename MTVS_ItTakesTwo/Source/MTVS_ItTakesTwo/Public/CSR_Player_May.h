@@ -36,6 +36,8 @@ public:
 	UPROPERTY(EditDefaultsOnly )
 	class UCSR_MayUseHammerObj *UseHammerComp;
 
+	UPROPERTY()
+	class UCSR_MayAnimation *AnimMay;
 
 #pragma endregion
 };

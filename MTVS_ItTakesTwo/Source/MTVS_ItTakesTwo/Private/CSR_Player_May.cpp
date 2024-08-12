@@ -10,6 +10,7 @@
 #include "CSR_C_AComp_InputBIndMay.h"
 #include "CSR_MayUseHammerObj.h"
 #include "Components/SceneComponent.h"
+#include "CSR_MayAnimation.h"
 
 ACSR_Player_May::ACSR_Player_May ( )
 {
@@ -26,7 +27,12 @@ ACSR_Player_May::ACSR_Player_May ( )
 		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_Player_May : this->HammerLocation is null" ) );
 	}
 	this->HammerLocation->SetupAttachment(RootComponent);
-	this->HammerLocation->SetRelativeLocation(FVector(-100.0f, 0.0f, 0.0f));
+	this->HammerLocation->SetRelativeLocation(FVector(-100.0f, 0.0f, 100.0f));
+
+	ConstructorHelpers::FClassFinder<UCSR_MayAnimation> TempEnemyAnim ( TEXT ( "/Script/Engine.AnimBlueprint'/Game/CSR/Animation/animation/ABS_MayAnimation.ABS_MayAnimation'" ) );
+	if ( TempEnemyAnim.Succeeded ( ) ) {
+		GetMesh ( )->SetAnimInstanceClass ( TempEnemyAnim.Class );
+	}
 }
 
 void ACSR_Player_May::BeginPlay ( )
@@ -52,6 +58,7 @@ void ACSR_Player_May::MakeEnhancedInputLocalSubSystem ( )
 	}
 	// EnhancedInput을 IMC_...를 맵핑합니다.
 	SubSys->AddMappingContext ( this->IMC_PlayerController_ , 0 );
+	this->PlayerIndex = 0;
 }
 
 

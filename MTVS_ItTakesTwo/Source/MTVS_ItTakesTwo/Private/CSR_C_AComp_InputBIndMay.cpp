@@ -6,6 +6,7 @@
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
 #include "CSR_MayUseHammerObj.h"
 #include "CSR_FunctionLib.h"
+#include "CSR_MayAnimation.h"
 
 void UCSR_C_AComp_InputBIndMay::BeginPlay ( )
 {
@@ -26,5 +27,6 @@ void UCSR_C_AComp_InputBIndMay::SetupInputComponent ( class UEnhancedInputCompon
 
 void UCSR_C_AComp_InputBIndMay::OnAttackAction ( const FInputActionValue& Value )
 {
-	this->MayCharacter_->UseHammerComp->Attack();
+	UCSR_FunctionLib::PrintWindow(TEXT("heelo"));
+	this->MayCharacter_->AnimMay->PlayerAttackMontage( );
 }
