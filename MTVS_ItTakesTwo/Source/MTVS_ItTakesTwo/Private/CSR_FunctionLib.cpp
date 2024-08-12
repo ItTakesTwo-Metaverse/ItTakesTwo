@@ -51,3 +51,8 @@ float UCSR_FunctionLib::SelectABSUpperFloat ( const float& a , const float& b )
 	float TargetValue = ScaleValue_a + ScaleValue_b;
 	return (TargetValue);
 }
+
+void UCSR_FunctionLib::PrintWindow ( FString str )
+{
+	UE_LOG ( LogTemp , Error , TEXT("%s" ), *str);
+}

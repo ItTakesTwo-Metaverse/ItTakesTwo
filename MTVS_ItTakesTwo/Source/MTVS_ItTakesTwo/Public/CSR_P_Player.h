@@ -28,6 +28,12 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 #pragma region
+	UPROPERTY( EditAnywhere, Category = "ModifyAble" )
+	int32 MaxHp = 8;
+
+	UPROPERTY( EditAnywhere )
+	int32 CurHp = MaxHp;
+
 	// 플레이어 카메라 셋팅
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USpringArmComponent *SpringArmComp;
@@ -56,10 +62,28 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UCharacterMovementComponent *CharacterStateComp;
 
+	UPROPERTY(EditDefaultsOnly)
+	FVector SavePoint = FVector::ZeroVector;
+
+	UPROPERTY( EditDefaultsOnly , Category = "ModifyAble")
+	float CurrentTIme = 0;
+
+	UPROPERTY( EditDefaultsOnly , Category = "ModifyAble")
+	float DieTime = 3.0f;
+	
+	UPROPERTY( )
+	int32 PlayerIndex;
+	
+
 	void Setting( );
 
 	virtual void Landed ( const FHitResult& Hit ) override;
+
+	UFUNCTION(BlueprintCallable, Category = "MyCategory") 
+	void fallingUnder( );
 	
+	void OnDamaged(int32 Damage);
+
 #pragma endregion ComponentSetting
 
 #pragma region
@@ -71,4 +95,6 @@ public:
 #pragma endregion KeyBind
 	
 	void SecondJumpToOtherComp( );
+
+	//virtual void OnMyBoxBeginOverLap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
 };

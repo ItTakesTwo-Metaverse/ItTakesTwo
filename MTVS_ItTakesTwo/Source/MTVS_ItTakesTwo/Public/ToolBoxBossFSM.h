@@ -15,11 +15,11 @@ enum class EBossState : uint8
 	CoolDown ,
 	Attack1,
 	Paused,
-	DestroyRightArm,
-	Attack2Drill ,
-	Attack3, 
+	Attack2 ,
+	Attack3 ,
 	Attack4, 
-	Attack5
+	Attack5,
+	Die
 };
 
 
@@ -49,17 +49,33 @@ public:
 	class AToolboxBoss* me;
 
 	UPROPERTY()
-	class ACharacter* player;
+	class ACharacter* player1;
+	
+	UPROPERTY()
+	class ACharacter* player2;
 
+	UPROPERTY( )
+	class UDrillCircleAnimInstance* DrillCircleAnim;
+	
+	UPROPERTY( )
+	class UDrillArmsAnimInstance* DrillArmsAnim;
 
 	UPROPERTY(EditAnywhere)
-	float AttackRange = 3000.0f;
+	float AttackRange = 4050.0f;
 	float AttackCoolDown;
 	float AttackTimer;
 	float Attack1Duration;
+	float Attack2Duration;
+	float Attack3Duration;
+	float Attack4Duration;
+
+	bool DestroyedLock1 = false;
 
 	bool bIsInRagdoll = false;
-	bool bIsAttackDrill = false;
+	bool bIsAttack1 = false;
+	bool bIsAttack2 = false;
+	bool bIsAttack3 = false;
+	bool bIsAttack4 = false;
 
 	// 상태변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -72,11 +88,25 @@ public:
 	void CoolDownState ( const float& DeltaTime );
 	void Attack1State( const float& DeltaTime );
 	void PausedState ( const float& DeltaTime );
-	void DestroyRightArmState ( const float& DeltaTime );
-	void Attack2DrillState( const float& DeltaTime );
+	void Attack2State( const float& DeltaTime );
 	void Attack3State( const float& DeltaTime );
 	void Attack4State( const float& DeltaTime );
 	void Attack5State( const float& DeltaTime );
+	void DieState ( const float& DeltaTime );
 	
 
+	FTimerHandle DrillOnTimerHandle;
+	FTimerHandle DrillOffTimerHandle;
+	FTimerHandle DrillArmOnTimerHandle;
+	FTimerHandle DrillArmOffTimerHandle;
+
+	FTimerHandle DrillOn4TimerHandle;
+	FTimerHandle DrillOff4TimerHandle;
+	FTimerHandle DrillArmOn4TimerHandle;
+	FTimerHandle DrillArmOff4TimerHandle;
+
+	void DrillOn ( );
+	void DrillOff ( );
+	void DrillArmOn ( );
+	void DrillArmOff ( );
 };

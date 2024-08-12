@@ -10,6 +10,8 @@
 #include "Blueprint/UserWidget.h"
 #include "CSR_Player_Cody.h"
 #include "Components/ArrowComponent.h"
+#include "HSW_BulletManager.h"
+#include "CSR_FunctionLib.h"
 
 // Sets default values for this component's properties
 UCSR_CodyPile::UCSR_CodyPile()
@@ -20,6 +22,8 @@ UCSR_CodyPile::UCSR_CodyPile()
 
 	// ...
 	this->PileInven = CreateDefaultSubobject< UCSR_PileInventory> ( TEXT ( "PileInven" ) );
+
+
 	
 }
 
@@ -28,6 +32,16 @@ UCSR_CodyPile::UCSR_CodyPile()
 void UCSR_CodyPile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FActorSpawnParameters parms;
+	parms.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	this->NailBag = this->GetWorld ( )->SpawnActor<AHSW_BulletManager> ( this->NailBagFactory , parms );
+	if ( this->NailBag == nullptr ) 
+	{
+		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "UCSR_MayUseHammerObj : this->NailBag is null" ) );
+	}
+
+	this->NailBag->AttachToComponent ( (Cast<ACSR_Player_Cody> ( GetOwner ( ) )->NailBagLocation) , FAttachmentTransformRules::SnapToTargetNotIncludingScale );
 
 	// ...
 	this->CrosshairUI = CreateWidget ( this->GetWorld ( ) , this->CrosshairUIFactory );
@@ -122,12 +136,11 @@ FVector UCSR_CodyPile::LayCasting ( )
 	return (FVector::ZeroVector);
 }
 
-void UCSR_CodyPile::OnMyActionFire (FVector startLocation , FRotator startRotation )
+void UCSR_CodyPile::OnMyActionFire (FVector startLocation , FRotator startRotation, AHSW_Bullet* nail )
 {
 	UE_LOG ( LogTemp , Warning , TEXT ( "OnMyActionFire" ) );
 	
-	AHSW_Bullet *Nail = this->PileInven->NailPop( startLocation, startRotation );
-	if ( Nail == nullptr ) {
+	if ( nail == nullptr ) {
 		UE_LOG ( LogTemp , Warning , TEXT ( "Nail is empty" ) );
 		return;
 	}
@@ -137,15 +150,25 @@ void UCSR_CodyPile::OnMyActionFire (FVector startLocation , FRotator startRotati
 		UE_LOG ( LogTemp , Warning , TEXT ( "No target" ) );
 		return;
 	}
-	Nail->StartPoint = startLocation;
-	Nail->EndPoint = target;
-	Nail->SetState ( ENailState::SHOOT );
+
+	nail->NailShoot ( startLocation , target );
 
 }
 
-void UCSR_CodyPile::OnMyActionBack ( )
+AHSW_Bullet* UCSR_CodyPile::OnMyActionBack ( )
 {
 	UE_LOG ( LogTemp , Warning , TEXT ( "OnMyActionBack" ) );
-	this->PileInven->NailPush(nullptr );
+	AHSW_Bullet* bullet = this->NailBag->NailPush ( );
+	if ( bullet == nullptr )
+	{
+		UE_LOG ( LogTemp , Error , TEXT ( "NailPush returned nullptr!" ) );
+		return nullptr;
+	}
+	else if ( NailBag== nullptr )
+	{
+		UE_LOG ( LogTemp , Error , TEXT ( "NailBag nullptr!" ) );
+		return nullptr;
+	}
+	return bullet;
 }
 
