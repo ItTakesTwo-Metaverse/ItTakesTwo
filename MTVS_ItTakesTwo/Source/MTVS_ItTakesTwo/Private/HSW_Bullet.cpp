@@ -68,8 +68,8 @@ void AHSW_Bullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	const FString myState = UEnum::GetValueAsString ( State );
-	DrawDebugString ( GetWorld ( ) , this->GetActorLocation ( ) , myState , nullptr , FColor::Yellow , 0 , true , 1 );
+	//const FString myState = UEnum::GetValueAsString ( State );
+	//DrawDebugString ( GetWorld ( ) , this->GetActorLocation ( ) , myState , nullptr , FColor::Yellow , 0 , true , 1 );
 	switch ( State )
 	{
 	case ENailState::BASIC:			TickBasic ( DeltaTime );			break;
