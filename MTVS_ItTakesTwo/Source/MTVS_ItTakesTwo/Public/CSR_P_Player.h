@@ -62,9 +62,25 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UCharacterMovementComponent *CharacterStateComp;
 
+	UPROPERTY(EditDefaultsOnly)
+	FVector SavePoint = FVector::ZeroVector;
+
+	UPROPERTY( EditDefaultsOnly , Category = "ModifyAble")
+	float CurrentTIme = 0;
+
+	UPROPERTY( EditDefaultsOnly , Category = "ModifyAble")
+	float DieTime = 3.0f;
+	
+	UPROPERTY( )
+	int32 PlayerIndex;
+	
+
 	void Setting( );
 
 	virtual void Landed ( const FHitResult& Hit ) override;
+
+	UFUNCTION(BlueprintCallable, Category = "MyCategory") 
+	void fallingUnder( );
 	
 	void OnDamaged(int32 Damage);
 
@@ -79,4 +95,6 @@ public:
 #pragma endregion KeyBind
 	
 	void SecondJumpToOtherComp( );
+
+	//virtual void OnMyBoxBeginOverLap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
 };
