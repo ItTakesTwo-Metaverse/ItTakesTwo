@@ -71,6 +71,9 @@ public:
 	UPROPERTY( EditDefaultsOnly , Category = "ModifyAble")
 	float DieTime = 3.0f;
 	
+	UPROPERTY ( EditDefaultsOnly , Category = "ModifyAble" )
+	float INVItime = 1.0f;
+
 	UPROPERTY( )
 	int32 PlayerIndex;
 	

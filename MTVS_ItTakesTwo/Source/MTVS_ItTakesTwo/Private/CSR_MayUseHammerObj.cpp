@@ -6,6 +6,7 @@
 #include "Engine/EngineBaseTypes.h"
 #include "CSR_FunctionLib.h"
 #include "CSR_Player_May.h"
+#include "CSR_P_AComp_CharicStateMannage.h"
 
 // Sets default values for this component's properties
 UCSR_MayUseHammerObj::UCSR_MayUseHammerObj()
@@ -24,6 +25,7 @@ void UCSR_MayUseHammerObj::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+	this->MayPlayer = Cast<ACSR_Player_May>(this->GetOwner());
 	FActorSpawnParameters parms;
 	parms.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	if ( this->GetWorld ( ) == nullptr ) {
@@ -46,6 +48,13 @@ void UCSR_MayUseHammerObj::TickComponent ( float DeltaTime , ELevelTick TickType
 	Super::TickComponent ( DeltaTime , TickType , ThisTickFunction );
 
 	// ...
+	if ( MayPlayer->CharacterStateMannageComp->CurrentState & DIE )
+	{
+		this->Hammer->MeshComp->SetVisibility(false);
+	}
+	if ( MayPlayer->CharacterStateMannageComp->CurrentState & INVI ) {
+		this->Hammer->MeshComp->SetVisibility(true);
+	}
 }
 
 void UCSR_MayUseHammerObj::Attack ( )

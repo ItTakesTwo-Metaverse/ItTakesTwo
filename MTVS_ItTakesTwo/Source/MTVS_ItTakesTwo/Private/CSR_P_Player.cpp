@@ -76,16 +76,22 @@ void ACSR_P_Player::BeginPlay()
 void ACSR_P_Player::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if ( (this->CharacterStateMannageComp->CurrentState & DIE) ) {
-		SetActorLocation(this->SavePoint);
-		this->GetCapsuleComponent ( )->SetCollisionEnabled ( ECollisionEnabled::QueryAndPhysics);
-		this->CharacterStateMannageComp->RemoveState ( DIE );
-		APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
-		if ( CameraManager )
-		{
-			CameraManager->StartCameraFade ( 1.0f , 0.0f , 1.0f , FLinearColor::Black , false , true );
+	if ( this->CharacterStateMannageComp->CurrentState & INVI ) {
+		this->CurrentTIme = this->CurrentTIme + DeltaTime;
+		if ( this->CurrentTIme > INVItime ) {
+			this->CharacterStateMannageComp->RemoveState(INVI);
+			this->CurrentTIme = 0.0f;
 		}
-		this->CharacterStateMannageComp->AddState ( REBORN );
+	}
+	if ( (this->CharacterStateMannageComp->CurrentState & DIE) ) {
+		//this->CharacterStateMannageComp->RemoveState ( DIE );
+		//APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
+		//if ( CameraManager )
+		//{
+		//	CameraManager->StartCameraFade ( 1.0f , 0.0f , 1.0f , FLinearColor::Black , false , true );
+		//}
+		//SetActorLocation(this->SavePoint);
+		//this->CharacterStateMannageComp->AddState ( REBORN );
 	}
 	if ( (this->CharacterStateMannageComp->CurrentState & REBORN)) {
 		this->CurrentTIme = this->CurrentTIme + DeltaTime;
@@ -120,24 +126,29 @@ void ACSR_P_Player::Landed ( const FHitResult& Hit )
 
 void ACSR_P_Player::fallingUnder ( )
 {
+	this->GetMesh()->SetVisibility(false);
 	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
 	if ( CameraManager )
 	{
 		CameraManager->StartCameraFade ( 0.0f , 1.0f , 2.0f , FLinearColor::Black , false , true );
 	}
 	this->CharacterStateMannageComp->AddState(DIE);
-	this->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	this->GetMesh()->SetVisibility(false);
 }
 
 void ACSR_P_Player::OnDamaged ( int32 Damage )
 {
-	if ( this->CurHp - Damage <= 0 ) {
-		this->CurHp = 0;
-	}
-	else {
-		this->CurHp = this->CurHp - Damage;
-		UE_LOG(LogTemp, Warning, TEXT("HP : %d" ), this->CurHp);
+	if ( this->CharacterStateMannageComp->AddState ( DAMAGED ) )
+	{
+		if ( this->CurHp - Damage <= 0 ) {
+			this->CurHp = 0;
+			this->CharacterStateMannageComp->AddState ( DIE );
+		}
+		else {
+			this->CurHp = this->CurHp - Damage;
+			this->CharacterStateMannageComp->RemoveState ( DAMAGED );
+			this->CharacterStateMannageComp->AddState(INVI);
+			UE_LOG ( LogTemp , Warning , TEXT ( "HP : %d" ) , this->CurHp );
+		}
 	}
 }
 
