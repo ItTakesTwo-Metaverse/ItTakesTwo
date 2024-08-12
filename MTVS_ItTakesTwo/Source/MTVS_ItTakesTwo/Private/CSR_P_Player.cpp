@@ -128,6 +128,7 @@ void ACSR_P_Player::fallingUnder ( )
 	this->CharacterStateMannageComp->AddState(DIE);
 	this->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	this->GetMesh()->SetVisibility(false);
+}
 
 void ACSR_P_Player::OnDamaged ( int32 Damage )
 {
