@@ -36,7 +36,7 @@ void UCSR_CodyPile::BeginPlay()
 	FActorSpawnParameters parms;
 	parms.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	this->NailBag = this->GetWorld ( )->SpawnActor<AHSW_BulletManager> ( this->NailBagFactory , parms );
-	if ( this->NailBag == nullptr ) 
+	if ( this->NailBag == nullptr )
 	{
 		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "UCSR_MayUseHammerObj : this->NailBag is null" ) );
 	}
@@ -123,9 +123,10 @@ void UCSR_CodyPile::CameraZoomOutMoving ( float DetaTime )
 FVector UCSR_CodyPile::LayCasting ( )
 {
 	FHitResult OutHit;
-	FVector Start = this->CameraComp_->GetComponentLocation ( );
+	//FVector Start = this->CameraComp_->GetComponentLocation ( );
+	FVector Start = this->charic_->ArrowComp->GetComponentLocation ( );
 	//UE_LOG(LogTemp, Warning, TEXT(" % f % f % f "), this->CameraComp_->GetForwardVector ( ).X , this->CameraComp_->GetForwardVector ( ).Y, this->CameraComp_->GetForwardVector ( ).Z);
-	FVector End = Start + this->CameraComp_->GetForwardVector ( ) * 100000.0f;
+	FVector End = Start + this->charic_->ArrowComp->GetForwardVector ( ) * 100000.0f;
 	ECollisionChannel TraceChannel = ECC_Visibility;
 	FCollisionQueryParams Params;
 	bool bHit = GetWorld ( )->LineTraceSingleByChannel ( OutHit , Start , End , TraceChannel , Params );
