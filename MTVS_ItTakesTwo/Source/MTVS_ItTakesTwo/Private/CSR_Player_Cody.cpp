@@ -16,6 +16,8 @@
 #include "CSR_C_AComp_InputBIndCody.h"
 #include "CSR_CodyAnimation.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "CSR_P_AComp_CharicStateMannage.h"
+#include "Animation/AnimInstance.h"
 
 ACSR_Player_Cody::ACSR_Player_Cody ( )
 {
@@ -36,7 +38,13 @@ ACSR_Player_Cody::ACSR_Player_Cody ( )
 	if ( TempEnemyAnim.Succeeded ( ) ) {
 		GetMesh ( )->SetAnimInstanceClass ( TempEnemyAnim.Class );
 	}
-	this->AnimCody = Cast<UCSR_CodyAnimation> ( GetMesh ( )->GetAnimInstance ( ) );
+
+	this->NailBagLocation = CreateDefaultSubobject<USceneComponent> ( TEXT ( "NailBahLocation" ) );
+	if ( this->NailBagLocation == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_Player_May : this->NailBagLocation is null" ) );
+	}
+	this->NailBagLocation->SetupAttachment ( RootComponent );
+	this->NailBagLocation->SetRelativeLocationAndRotation ( FVector ( -50.0f , 0.0f , 20.0f ) , FRotator (  -20.0f , 90.0f, 0.0f ) );
 
 	this->GetCharacterMovement ( )->bOrientRotationToMovement = true;
 }
@@ -68,6 +76,7 @@ void ACSR_Player_Cody::MakeEnhancedInputLocalSubSystem()
 
 	// EnhancedInput을 IMC_...를 맵핑합니다.
 	SubSys->AddMappingContext(this->IMC_PlayerController_, 0);
+	this->PlayerIndex = 1;
 	
 }
 
@@ -89,5 +98,14 @@ void ACSR_Player_Cody::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 #pragma endregion EnhancedInput register
 
 	Setting ( );
+	UAnimInstance *anim = GetMesh ( )->GetAnimInstance ( );
+	if ( anim == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( GetWorld ( ) , FString ( "ACSR_Player_Cody : anim is null" ) );
+	}
+	this->AnimCody = Cast<UCSR_CodyAnimation> ( anim );
+	if ( this->AnimCody == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( GetWorld ( ) , FString ( "ACSR_Player_Cody : AnimCody is null" ) );
+	}
+
 }
 

@@ -24,8 +24,8 @@ public:
 
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	//bool IsCrouched;
-
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	int32 CurrentType = 0;
 	//// anim 몽타주를 플레이하고 싶다.
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	//class UAnimMontage *FireMontage;

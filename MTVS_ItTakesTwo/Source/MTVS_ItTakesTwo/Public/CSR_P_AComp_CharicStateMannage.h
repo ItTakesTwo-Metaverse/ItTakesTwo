@@ -4,21 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "CSR_BaseAnimation.h"
 #include "CSR_P_AComp_CharicStateMannage.generated.h"
 
-const int32 IDLE        = 0x0000; //0000 0000 0000 0000
-const int32 MOVE        = 0x0001; //0000 0000 0000 0001
-const int32 JUMPMOVE    = 0x0002; //0000 0000 0000 0010
-const int32 RUN         = 0x0004; //0000 0000 0000 0100 
-const int32 AIRMOVE     = 0x0008; //0000 0000 0000 1000 
-const int32 SIT         = 0x0010; //0000 0000 0001 0000 
-const int32 AIRSIT      = 0x0020; //0000 0000 0010 0000     
-const int32 JUMP        = 0x0040; //0000 0000 0100 0000 
-const int32 SCJUMP      = 0x0080; //0000 0000 1000 0000 
-const int32 DASH        = 0x0100; //0000 0001 0000 0000 
-const int32 DAMAGED     = 0x0200; //0000 0010 0000 0000 
-const int32 PRESS       = 0x0400; //0000 0100 0000 0000 
-const int32 DIE         = 0x0800; //0000 1000 0000 0000  
+const int32 IDLE        = 0x2000; //0000 0000 0000 0000
+const int32 DIE         = 0x0001; //0000 0000 0000 0001
+const int32 REBORN      = 0x0002; //0000 0000 0000 0001
+const int32 PRESS       = 0x0004; //0000 0000 0000 0010
+const int32 DAMAGED     = 0x0008; //0000 0000 0000 0100 
+const int32 DASH        = 0x0010; //0000 0000 0000 1000 
+const int32 SCJUMP      = 0x0020; //0000 0000 0001 0000 
+const int32 JUMP        = 0x0040; //0000 0000 0010 0000     
+const int32 AIRSIT      = 0x0080; //0000 0000 0100 0000 
+const int32 SIT         = 0x0100; //0000 0000 1000 0000 
+const int32 AIRMOVE     = 0x0200; //0000 0001 0000 0000 
+const int32 RUN         = 0x0400; //0000 0010 0000 0000 
+const int32 JUMPMOVE    = 0x0800; //0000 0100 0000 0000 
+const int32 MOVE        = 0x1000; //0000 1000 0000 0000  
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MTVS_ITTAKESTWO_API UCSR_P_AComp_CharicStateMannage : public UActorComponent
@@ -34,6 +36,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+    // 애니메이션 동작하는 부분
+    class UCSR_BaseAnimation *Anim;
+
     // 현재 상태를 저장
     int32 CurrentState = IDLE;
 
@@ -46,9 +51,15 @@ public:
     // 현재 상태에 지정한 상태 제거
     void RemoveState( int32 DeleteState );
 
+    void SpendStateToAnim( );
+
+    //void SetAnims ( class UCSR_BaseAnimation* NewAnim);
+
     bool CanAddMove( );
     bool CanAddPress ( );
     bool CanAddJumpMove ( );
     bool CanAddJump( );
     bool CanAddRun( );
+    bool CanAddDie ();
+    bool CanReBorn ( );
 };

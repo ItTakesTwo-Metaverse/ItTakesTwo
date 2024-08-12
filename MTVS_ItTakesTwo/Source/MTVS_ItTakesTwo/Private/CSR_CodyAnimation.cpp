@@ -7,11 +7,19 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/MovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "CSR_P_AComp_CharicStateMannage.h"
+#include "CSR_P_Player.h"
 
 void UCSR_CodyAnimation::NativeInitializeAnimation ( )
 {
 	Super::NativeInitializeAnimation ( );
 	this->Player = Cast<ACSR_Player_Cody> ( TryGetPawnOwner ( ) );
+	if ( this->Player == nullptr ) {
+		UCSR_FunctionLib::ExitGame(this->GetWorld(), FString("UCSR_CodyAnimation : this->Player is null" ));
+		return ;
+	}
+	this->Player->AnimCody = this;
+	this->Player->CharacterStateMannageComp->Anim = this;
 }
 
 void UCSR_CodyAnimation::NativeUpdateAnimation ( float DeltaSeconds )

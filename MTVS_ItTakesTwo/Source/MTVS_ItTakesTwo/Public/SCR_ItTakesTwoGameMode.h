@@ -14,6 +14,9 @@ class MTVS_ITTAKESTWO_API ASCR_ItTakesTwoGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 protected:
+	virtual void InitGame ( const FString& MapName , const FString& Options , FString& ErrorMessage );
+
+
 	virtual void BeginPlay() override;
 public:
 // 소환할 캐릭터들 블루프린트 등록.
