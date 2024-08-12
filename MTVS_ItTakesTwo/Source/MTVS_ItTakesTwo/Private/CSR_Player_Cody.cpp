@@ -38,6 +38,13 @@ ACSR_Player_Cody::ACSR_Player_Cody ( )
 	}
 	this->AnimCody = Cast<UCSR_CodyAnimation> ( GetMesh ( )->GetAnimInstance ( ) );
 
+	this->NailBagLocation = CreateDefaultSubobject<USceneComponent> ( TEXT ( "NailBahLocation" ) );
+	if ( this->NailBagLocation == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_Player_May : this->NailBagLocation is null" ) );
+	}
+	this->NailBagLocation->SetupAttachment ( RootComponent );
+	this->NailBagLocation->SetRelativeLocationAndRotation ( FVector ( -50.0f , 0.0f , 20.0f ) , FRotator (  -20.0f , 90.0f, 0.0f ) );
+
 	this->GetCharacterMovement ( )->bOrientRotationToMovement = true;
 }
 
