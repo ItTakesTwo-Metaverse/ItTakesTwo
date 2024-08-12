@@ -53,8 +53,8 @@ void AHSW_Bullet::BeginPlay()
 	
 	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Bullet::OnMyWallHit );
 
-	Player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
-	//GetWorld ( )->GetTimerManager ( ).SetTimer ( TimerHandle , this , &AHSW_Bullet::LoadSecondPlayer , 0.2f , false );
+	//Player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
+	GetWorld ( )->GetTimerManager ( ).SetTimer ( TimerHandle , this , &AHSW_Bullet::LoadSecondPlayer , 0.2f , false );
 
 	//StartPoint = Player->GetActorLocation ( );
 	//EndPoint = StartPoint + FVector ( 100000 , 0 , 0 );

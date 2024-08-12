@@ -12,6 +12,7 @@
 #include "Components/ArrowComponent.h"
 #include "HSW_BulletManager.h"
 #include "CSR_FunctionLib.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UCSR_CodyPile::UCSR_CodyPile()
@@ -122,19 +123,109 @@ void UCSR_CodyPile::CameraZoomOutMoving ( float DetaTime )
 
 FVector UCSR_CodyPile::LayCasting ( )
 {
-	FHitResult OutHit;
-	FVector Start = this->CameraComp_->GetComponentLocation ( );
-	//UE_LOG(LogTemp, Warning, TEXT(" % f % f % f "), this->CameraComp_->GetForwardVector ( ).X , this->CameraComp_->GetForwardVector ( ).Y, this->CameraComp_->GetForwardVector ( ).Z);
-	FVector End = Start + this->CameraComp_->GetForwardVector ( ) * 100000.0f;
-	ECollisionChannel TraceChannel = ECC_Visibility;
-	FCollisionQueryParams Params;
-	bool bHit = GetWorld ( )->LineTraceSingleByChannel ( OutHit , Start , End , TraceChannel , Params );
-	if ( bHit != NULL ) {
-		DrawDebugLine ( GetWorld ( ) , Start , OutHit.ImpactPoint , FColor::Red , false , 3 );
-		return (OutHit.Location);
+	FVector2D ViewportSize;
+	if ( GEngine && GEngine->GameViewport )
+	{
+		GEngine->GameViewport->GetViewportSize ( ViewportSize );
 	}
-	return (FVector::ZeroVector);
+
+	// 화면 가로 3/4, 세로 1/2 지점
+	FVector2D ScreenPosition ( ViewportSize.X * 0.75f , ViewportSize.Y * 0.5f );
+
+	FVector WorldLocation;
+	FVector WorldDirection;
+	
+	APlayerController* SecondPlayerController = UGameplayStatics::GetPlayerController ( GetWorld ( ) , 1 );
+	if ( SecondPlayerController->DeprojectScreenPositionToWorld ( ScreenPosition.X , ScreenPosition.Y , WorldLocation , WorldDirection ) )
+	{
+		// 레이캐스트를 위한 파라미터 설정
+		FHitResult HitResult;
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor ( this->GetOwner ( ) ); // 플레이어 자신을 무시
+
+		// 레이캐스트 실행
+		bool bHit = GetWorld ( )->LineTraceSingleByChannel (
+			HitResult ,
+			WorldLocation ,
+			WorldLocation + (WorldDirection * 100000.0f) , // 레이의 최대 거리 설정
+			ECC_Visibility ,
+			Params
+		);
+
+		// 디버그 라인 그리기 (선택 사항)
+		//DrawDebugLine ( GetWorld ( ) , WorldLocation , WorldLocation + (WorldDirection * 10000.0f) , FColor::Green , false , 1.0f , 0 , 1.0f );
+
+		if ( bHit )
+		{
+			// 레이가 충돌한 오브젝트의 위치를 반환
+			return HitResult.Location;
+		}
+		else
+		{
+			// 레이가 아무것도 맞추지 않은 경우
+			return FVector::ZeroVector;
+		}
+	}
+
+	// DeprojectScreenPositionToWorld가 실패한 경우
+	return FVector::ZeroVector;
 }
+
+//FVector UCSR_CodyPile::LayCasting ( )
+//{
+//	FHitResult OutHit;
+//	FVector2D ViewportSize;
+//	if ( GEngine && GEngine->GameViewport )
+//	{
+//		GEngine->GameViewport->GetViewportSize ( ViewportSize );
+//	}
+//	FVector2D ScreenPosition ( ViewportSize.X * 0.75f , ViewportSize.Y * 0.5f );
+//
+//	FVector WorldLocation;
+//	FVector WorldDirection;
+//
+//	if ( UGameplayStatics::GetPlayerController ( GetWorld ( ) , 0 )->DeprojectScreenPositionToWorld ( ScreenPosition.X , ScreenPosition.Y , WorldLocation , WorldDirection ) )
+//	{
+//		// 레이캐스트를 위한 파라미터 설정
+//		FHitResult HitResult;
+//		FCollisionQueryParams Params;
+//		Params.AddIgnoredActor ( this->GetOwner() ); // 플레이어 자신을 무시
+//
+//		// 레이캐스트를 실행합니다.
+//		bool bHit = GetWorld ( )->LineTraceSingleByChannel (
+//			HitResult ,
+//			WorldLocation ,
+//			WorldLocation + (WorldDirection * 10000.0f) , // 레이의 최대 거리
+//			ECC_Visibility ,
+//			Params
+//		);
+//
+//		// 디버그용으로 레이를 그려줍니다.
+//		DrawDebugLine ( GetWorld ( ) , WorldLocation , WorldLocation + (WorldDirection * 10000.0f) , FColor::Green , false , 1.0f , 0 , 1.0f );
+//
+//		if ( bHit )
+//		{
+//			// 레이가 어떤 오브젝트에 부딪혔을 때의 처리
+//			//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , FString::Printf ( TEXT ( "Hit: %s" ) , *HitResult.Actor->GetName ( ) ) );
+//			return (OutHit.Location);
+//		}
+//		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "No Hit" ) );
+//		return (FVector::ZeroVector);
+//}
+
+
+	//FVector Start = this->charic_->ArrowComp->GetComponentLocation ( );
+	//UE_LOG(LogTemp, Warning, TEXT(" % f % f % f "), this->CameraComp_->GetForwardVector ( ).X , this->CameraComp_->GetForwardVector ( ).Y, this->CameraComp_->GetForwardVector ( ).Z);
+	//FVector End = Start + this->CameraComp_->GetForwardVector ( ) * 100000.0f;
+	//ECollisionChannel TraceChannel = ECC_Visibility;
+	//FCollisionQueryParams Params;
+	//bool bHit = GetWorld ( )->LineTraceSingleByChannel ( OutHit , Start , End , TraceChannel , Params );
+	//if ( bHit != NULL ) {
+	//	DrawDebugLine ( GetWorld ( ) , Start , OutHit.ImpactPoint , FColor::Red , false , 3 );
+	//	return (OutHit.Location);
+	//}
+	//return (FVector::ZeroVector);
+//}
 
 void UCSR_CodyPile::OnMyActionFire (FVector startLocation , FRotator startRotation, AHSW_Bullet* nail )
 {
