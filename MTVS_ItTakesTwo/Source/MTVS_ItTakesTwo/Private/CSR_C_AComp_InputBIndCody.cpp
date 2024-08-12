@@ -8,6 +8,7 @@
 #include "Components/ArrowComponent.h"
 #include "Camera/CameraComponent.h"
 #include "CSR_FunctionLib.h"
+#include "HSW_BulletManager.h"
 
 void UCSR_C_AComp_InputBIndCody::BeginPlay ( )
 {
@@ -34,6 +35,7 @@ void UCSR_C_AComp_InputBIndCody::ChangeZoomIn ( )
 	this->CodyCharacter_->CameraComp->bUsePawnControlRotation = true;
 	this->CodyCharacter_->bUseControllerRotationYaw = true;
 	this->CodyCharacter_->CodyPileComp->ToggleButton ( true );
+	this->CodyCharacter_->CodyPileComp->NailBag->NailPop ( this->CodyCharacter_->ArrowComp->GetComponentLocation ( ) , this->CodyCharacter_->GetActorRotation ( ) );
 }
 
 void UCSR_C_AComp_InputBIndCody::ChangeZoomOut ( )
