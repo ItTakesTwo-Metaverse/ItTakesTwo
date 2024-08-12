@@ -18,6 +18,7 @@
 #include "CSR_P_AComp_CharicMovement.h"
 #include "CSR_P_AComp_InputBInd.h"
 #include "CSR_P_AComp_CharicJump.h"
+#include "Camera/PlayerCameraManager.h"
 
 // Sets default values
 ACSR_P_Player::ACSR_P_Player()
@@ -68,13 +69,32 @@ ACSR_P_Player::ACSR_P_Player()
 // Called when the game starts or when spawned
 void ACSR_P_Player::BeginPlay()
 {
-	Super::BeginPlay();
+	Super::BeginPlay(); 
 }
 
 // Called every frame
 void ACSR_P_Player::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if ( (this->CharacterStateMannageComp->CurrentState & DIE) ) {
+		SetActorLocation(this->SavePoint);
+		this->GetCapsuleComponent ( )->SetCollisionEnabled ( ECollisionEnabled::QueryAndPhysics);
+		this->CharacterStateMannageComp->RemoveState ( DIE );
+		APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
+		if ( CameraManager )
+		{
+			CameraManager->StartCameraFade ( 1.0f , 0.0f , 1.0f , FLinearColor::Black , false , true );
+		}
+		this->CharacterStateMannageComp->AddState ( REBORN );
+	}
+	if ( (this->CharacterStateMannageComp->CurrentState & REBORN)) {
+		this->CurrentTIme = this->CurrentTIme + DeltaTime;
+		if ( this->DieTime <= this->CurrentTIme ) {
+			this->CurrentTIme = 0.0f;
+			this->GetMesh ( )->SetVisibility ( true );
+			this->CharacterStateMannageComp->RemoveState ( REBORN );
+		}
+	}
 }
 
 //Called to bind functionality to input
@@ -87,6 +107,8 @@ void ACSR_P_Player::Setting ( )
 {
 	this->AddControllerPitchInput ( this->EarlyCameraArmRotateHeight );
 	this->SpringArmComp->TargetArmLength = EarlyCameraDistance;
+	this->SavePoint = GetActorLocation ( );
+	
 }
 
 void ACSR_P_Player::Landed ( const FHitResult& Hit )
@@ -95,6 +117,17 @@ void ACSR_P_Player::Landed ( const FHitResult& Hit )
 
 	this->CharicJumpComp->Landed();
 }
+
+void ACSR_P_Player::fallingUnder ( )
+{
+	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
+	if ( CameraManager )
+	{
+		CameraManager->StartCameraFade ( 0.0f , 1.0f , 2.0f , FLinearColor::Black , false , true );
+	}
+	this->CharacterStateMannageComp->AddState(DIE);
+	this->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	this->GetMesh()->SetVisibility(false);
 
 void ACSR_P_Player::OnDamaged ( int32 Damage )
 {
@@ -111,3 +144,5 @@ void ACSR_P_Player::SecondJumpToOtherComp ( )
 {
 	this->CharicMovementComp->InitSecondJump ();
 }
+
+//void AEnemyActor::OnMyBoxBeginOverLap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )

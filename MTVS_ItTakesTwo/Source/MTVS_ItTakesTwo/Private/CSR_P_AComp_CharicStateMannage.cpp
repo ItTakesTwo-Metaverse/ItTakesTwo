@@ -2,6 +2,9 @@
 
 
 #include "CSR_P_AComp_CharicStateMannage.h"
+#include "cmath"
+#include "CSR_BaseAnimation.h"
+#include "CSR_FunctionLib.h"
 
 
 // Sets default values for this component's properties
@@ -18,7 +21,6 @@ UCSR_P_AComp_CharicStateMannage::UCSR_P_AComp_CharicStateMannage()
 void UCSR_P_AComp_CharicStateMannage::BeginPlay()
 {
 	Super::BeginPlay();
-
 	// ...
 }
 
@@ -54,7 +56,11 @@ bool UCSR_P_AComp_CharicStateMannage::TotalControlState ( int32 NewState )
 		case PRESS:
 			return (CanAddPress ( ));
 			break;
+		case REBORN:
+			return (CanReBorn ( ));
+			break;
 		case DIE:
+			return (CanAddDie ( ));
 			break;
 	}
 	return true;
@@ -63,7 +69,9 @@ bool UCSR_P_AComp_CharicStateMannage::TotalControlState ( int32 NewState )
 bool UCSR_P_AComp_CharicStateMannage::AddState ( int32 NewState )
 {
 	if ( this->TotalControlState ( NewState ) ) {
-		this->CurrentState |= NewState;
+		this->CurrentState = this->CurrentState | NewState;
+		UE_LOG(LogTemp, Warning, TEXT("%d %d" ), this->CurrentState, NewState );
+		this->SpendStateToAnim ( );
 		return (true);
 	}
 	return (false);
@@ -72,11 +80,31 @@ bool UCSR_P_AComp_CharicStateMannage::AddState ( int32 NewState )
 void UCSR_P_AComp_CharicStateMannage::RemoveState ( int32 DeleteState )
 {
 	this->CurrentState &= ~DeleteState;
+	this->SpendStateToAnim ( );
 }
+
+void UCSR_P_AComp_CharicStateMannage::SpendStateToAnim ( )
+{
+	int flag = this->CurrentState;
+	int count = 0;
+	while ( (flag & 1) == 0 ) {
+		count = count + 1;
+		flag = flag >> 1;
+	}
+	this->Anim->CurrentType = (pow ( 2 , count ));
+}
+
+//void UCSR_P_AComp_CharicStateMannage::SetAnims ( class UCSR_BaseAnimation* NewAnim )
+//{
+//	this->Anim = NewAnim;
+//	if ( this->Anim == nullptr ) {
+//		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "UCSR_P_AComp_CharicStateMannage is this->Anim  NULL" ) );
+//	}
+//}
 
 bool UCSR_P_AComp_CharicStateMannage::CanAddMove ( )
 {
-	if ( this->CurrentState & (AIRMOVE | AIRSIT | JUMP | SCJUMP | DASH | DAMAGED | PRESS | DIE) ) {
+	if ( this->CurrentState & (AIRMOVE | AIRSIT | JUMP | SCJUMP | DASH | DAMAGED | PRESS | REBORN | DIE) ) {
 		return false;
 	}
 	return true;
@@ -84,7 +112,7 @@ bool UCSR_P_AComp_CharicStateMannage::CanAddMove ( )
 
 bool UCSR_P_AComp_CharicStateMannage::CanAddPress ( )
 {
-	if ( this->CurrentState & DIE ) {
+	if ( this->CurrentState & (DIE | REBORN )) {
 		return false;
 	}
 	return true;
@@ -112,5 +140,18 @@ bool UCSR_P_AComp_CharicStateMannage::CanAddRun ( )
 		return false;
 	}
 	return true;
+}
+
+bool UCSR_P_AComp_CharicStateMannage::CanAddDie ( )
+{
+	return (true);
+}
+
+bool UCSR_P_AComp_CharicStateMannage::CanReBorn ( )
+{
+	if ( this->CurrentState == DIE ) {
+		return (true);
+	}
+	return (true);
 }
 

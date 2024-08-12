@@ -7,8 +7,15 @@
 #include "CSR_Player_May.h"
 #include "Kismet/GameplayStatics.h"
 
+void ASCR_ItTakesTwoGameMode::InitGame ( const FString& MapName , const FString& Options , FString& ErrorMessage )
+{
+	Super::InitGame(MapName, Options, ErrorMessage	);
+}
+
 void ASCR_ItTakesTwoGameMode::BeginPlay()
 {
+	Super::BeginPlay ();
+
 	// 플레이어 0번의 컨트롤러를 가져옵니다.
 	APlayerController *P1 = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (P1 == nullptr) {

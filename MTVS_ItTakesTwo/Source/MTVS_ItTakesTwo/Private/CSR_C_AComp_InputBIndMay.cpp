@@ -6,7 +6,7 @@
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
 #include "CSR_MayUseHammerObj.h"
 #include "CSR_FunctionLib.h"
-#include "CSR_MayUseHammerObj.h"
+#include "CSR_MayAnimation.h"
 #include "HSW_Hammer.h"
 
 void UCSR_C_AComp_InputBIndMay::BeginPlay ( )
@@ -33,6 +33,7 @@ void UCSR_C_AComp_InputBIndMay::SetupInputComponent ( class UEnhancedInputCompon
 
 void UCSR_C_AComp_InputBIndMay::OnAttackAction ( const FInputActionValue& Value )
 {
+	
 	// Hammer가 Nail에 매달려있는 상태가 아니라면,
 	if ( this->Hammer->bIsHanging == false ) 
 	{
@@ -50,7 +51,8 @@ void UCSR_C_AComp_InputBIndMay::OnAttackAction ( const FInputActionValue& Value 
 		{
 			GEngine->AddOnScreenDebugMessage( -1 , 2.0f , FColor::Blue , TEXT ( "Hammer Attack" ));
 			// 망치 공격을 실행한다.
-			this->MayCharacter_->UseHammerComp->Attack ( );
+			this->MayCharacter_->AnimMay->PlayerAttackMontage ( );
+			/*this->MayCharacter_->UseHammerComp->Attack ( );*/
 		}
 
 	}
