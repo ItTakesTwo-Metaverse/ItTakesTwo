@@ -8,6 +8,7 @@
 #include "CSR_FunctionLib.h"
 #include "CSR_MayAnimation.h"
 #include "HSW_Hammer.h"
+#include "CSR_P_AComp_CharicStateMannage.h"
 
 void UCSR_C_AComp_InputBIndMay::BeginPlay ( )
 {
@@ -49,9 +50,11 @@ void UCSR_C_AComp_InputBIndMay::OnAttackAction ( const FInputActionValue& Value 
 		// Hammer가 Nail에 매달릴 수 없는 상태라면 (일반적인 상태)
 		else
 		{
-			GEngine->AddOnScreenDebugMessage( -1 , 2.0f , FColor::Blue , TEXT ( "Hammer Attack" ));
-			// 망치 공격을 실행한다.
-			this->MayCharacter_->AnimMay->PlayerAttackMontage ( );
+			if ( this->Character_->CharacterStateMannageComp->AddState ( ATTACK ) ) {
+				GEngine->AddOnScreenDebugMessage( -1 , 2.0f , FColor::Blue , TEXT ( "Hammer Attack" ));
+				// 망치 공격을 실행한다.
+				this->MayCharacter_->AnimMay->PlayerAttackMontage ( );
+			}
 			/*this->MayCharacter_->UseHammerComp->Attack ( );*/
 		}
 

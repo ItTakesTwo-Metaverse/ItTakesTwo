@@ -29,7 +29,7 @@ ACSR_Player_May::ACSR_Player_May ( )
 	}
 	this->HammerLocation->SetupAttachment(RootComponent);
 
-	this->HammerLocation->SetRelativeLocation(FVector(-100.0f, 0.0f, 100.0f));
+	this->HammerLocation->SetRelativeLocation(FVector(-70.0f, 0.0f, 0.0f));
 
 	ConstructorHelpers::FClassFinder<UCSR_MayAnimation> TempEnemyAnim ( TEXT ( "/Script/Engine.AnimBlueprint'/Game/CSR/Animation/animation/ABS_MayAnimation.ABS_MayAnimation'" ) );
 	if ( TempEnemyAnim.Succeeded ( ) ) {

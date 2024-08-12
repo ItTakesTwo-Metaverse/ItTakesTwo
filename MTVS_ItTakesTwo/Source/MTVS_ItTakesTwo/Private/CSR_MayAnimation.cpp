@@ -44,13 +44,28 @@ void UCSR_MayAnimation::NativeUpdateAnimation ( float DeltaSeconds )
 
 void UCSR_MayAnimation::AnimNotify_HammerAttach ( )
 {
-	this->Player->UseHammerComp->Hammer->AttachToActor(Player, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hammerL" ));
+	//this->Player->UseHammerComp->Hammer->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform );
+	//if (this->Player->GetMesh()->DoesSocketExist( FName ( "hammerL" ) ) == true)
+	//	UCSR_FunctionLib::PrintWindow(TEXT("heelo" ));
+	this->Player->UseHammerComp->Hammer->AttachToComponent (Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hammerL" ));
+	
+	//this->Player->UseHammerComp->Hammer->SetActorRelativeRotation ( FRotator ( 0.0f , 90.0f , 0.0f ) );
 }
 
 void UCSR_MayAnimation::AnimNotify_HammerDetach ( )
 {
 	this->Player->UseHammerComp->Hammer->AttachToComponent (Player->HammerLocation , FAttachmentTransformRules::SnapToTargetNotIncludingScale );
 	this->Player->UseHammerComp->Hammer->SetActorRelativeRotation ( FRotator ( 0.0f , 90.0f , 0.0f ) );
+}
+
+void UCSR_MayAnimation::AnimNotify_AttackStart ( )
+{
+	
+}
+
+void UCSR_MayAnimation::AnimNotify_AttackEnd ( )
+{
+	this->Player->CharacterStateMannageComp->RemoveState(ATTACK);
 }
 
 void UCSR_MayAnimation::PlayerAttackMontage ( )

@@ -38,8 +38,6 @@ bool UCSR_P_AComp_CharicStateMannage::TotalControlState ( int32 NewState )
 		case RUN:
 			return (this->CanAddRun( ));
 			break;
-		case AIRMOVE:
-			break;
 		case SIT:
 			break;
 		case AIRSIT:
@@ -51,13 +49,19 @@ bool UCSR_P_AComp_CharicStateMannage::TotalControlState ( int32 NewState )
 			break;
 		case DASH:
 			break;
+		case ATTACK:
+			return (CanAddAttack( ));
+			break;
 		case DAMAGED:
+			break;
+		case INVI:
+			return (CanAddIniv ());
 			break;
 		case PRESS:
 			return (CanAddPress ( ));
 			break;
 		case REBORN:
-			return (CanReBorn ( ));
+			return (CanAddReBorn ( ));
 			break;
 		case DIE:
 			return (CanAddDie ( ));
@@ -91,6 +95,9 @@ void UCSR_P_AComp_CharicStateMannage::SpendStateToAnim ( )
 		count = count + 1;
 		flag = flag >> 1;
 	}
+	if ( count == 0 ) {
+		this->Anim->CurrentType = 1;
+	}
 	this->Anim->CurrentType = (pow ( 2 , count ));
 }
 
@@ -104,7 +111,7 @@ void UCSR_P_AComp_CharicStateMannage::SpendStateToAnim ( )
 
 bool UCSR_P_AComp_CharicStateMannage::CanAddMove ( )
 {
-	if ( this->CurrentState & (AIRMOVE | AIRSIT | JUMP | SCJUMP | DASH | DAMAGED | PRESS | REBORN | DIE) ) {
+	if ( this->CurrentState & (JUMPMOVE | AIRSIT | JUMP | SCJUMP | DASH | SIT | ATTACK | DAMAGED | PRESS | REBORN | DIE) ) {
 		return false;
 	}
 	return true;
@@ -120,6 +127,9 @@ bool UCSR_P_AComp_CharicStateMannage::CanAddPress ( )
 
 bool UCSR_P_AComp_CharicStateMannage::CanAddJumpMove ( )
 {
+	if ( this->CurrentState & (DIE | REBORN | PRESS | ATTACK | AIRSIT | MOVE) ) {
+		return false;
+	}
 	if ( this->CurrentState & JUMP ) {
 		return true;
 	}
@@ -128,7 +138,7 @@ bool UCSR_P_AComp_CharicStateMannage::CanAddJumpMove ( )
 
 bool UCSR_P_AComp_CharicStateMannage::CanAddJump ( )
 {
-	if ( this->CurrentState & (AIRSIT | SCJUMP | DAMAGED | PRESS | DIE) ) {
+	if ( this->CurrentState & (AIRSIT | SCJUMP | DAMAGED | ATTACK | REBORN | PRESS | DIE) ) {
 		return false;
 	}
 	return true;
@@ -143,14 +153,31 @@ bool UCSR_P_AComp_CharicStateMannage::CanAddRun ( )
 }
 
 bool UCSR_P_AComp_CharicStateMannage::CanAddDie ( )
-{
+{	
+	this->CurrentState = DIE;
 	return (true);
 }
 
-bool UCSR_P_AComp_CharicStateMannage::CanReBorn ( )
+bool UCSR_P_AComp_CharicStateMannage::CanAddReBorn ( )
 {
-	if ( this->CurrentState == DIE ) {
+	if ( this->CurrentState & DIE ) {
 		return (true);
+	}
+	return (false);
+}
+
+bool UCSR_P_AComp_CharicStateMannage::CanAddIniv ( )
+{
+	if ( this->CurrentState & REBORN ) {
+		return (true);
+	}
+	return (false);
+}
+
+bool UCSR_P_AComp_CharicStateMannage::CanAddAttack ( )
+{
+	if ( this->CurrentState & (AIRSIT | SCJUMP | DAMAGED | ATTACK | REBORN | PRESS | DIE)) {
+		return (false);
 	}
 	return (true);
 }
