@@ -34,4 +34,9 @@ public:
 
 	void Attack( );
 		
+	void DetachHammer ( );
+	void AttachHammer ( );
+
+
+
 };

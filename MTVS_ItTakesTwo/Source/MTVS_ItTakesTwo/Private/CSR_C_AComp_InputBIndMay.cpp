@@ -6,6 +6,8 @@
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
 #include "CSR_MayUseHammerObj.h"
 #include "CSR_FunctionLib.h"
+#include "CSR_MayUseHammerObj.h"
+#include "HSW_Hammer.h"
 
 void UCSR_C_AComp_InputBIndMay::BeginPlay ( )
 {
@@ -13,6 +15,11 @@ void UCSR_C_AComp_InputBIndMay::BeginPlay ( )
 	this->MayCharacter_ = Cast< ACSR_Player_May> ( this->GetOwner ( ) );
 	if ( this->MayCharacter_ == nullptr ) {
 		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "UCSR_C_AComp_InputBIndMay : this->MayCharacter_ is null" ) );
+	}
+
+	this->Hammer = MayCharacter_->GetComponentByClass<UCSR_MayUseHammerObj> ( )->Hammer;
+	if( this->Hammer == nullptr ) {
+		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "UCSR_C_AComp_InputBIndMay : this->Hammer is null" ) );
 	}
 }
 
@@ -26,5 +33,33 @@ void UCSR_C_AComp_InputBIndMay::SetupInputComponent ( class UEnhancedInputCompon
 
 void UCSR_C_AComp_InputBIndMay::OnAttackAction ( const FInputActionValue& Value )
 {
-	this->MayCharacter_->UseHammerComp->Attack();
+	// Hammer가 Nail에 매달려있는 상태가 아니라면,
+	if ( this->Hammer->bIsHanging == false ) 
+	{
+		// Hammer가 Nail에 매달릴 수 있는 상태라면(가까이 있다면),
+		if ( (this->Hammer->bCanHanging == true))
+		{
+			//Hammer를 Player에게서 Detach 한다.
+			this->MayCharacter_->UseHammerComp->DetachHammer ( );
+			//Hammer를 Nail로 이동시킨다.
+			this->Hammer->ClickToMove ( );
+
+		}
+		// Hammer가 Nail에 매달릴 수 없는 상태라면 (일반적인 상태)
+		else
+		{
+			GEngine->AddOnScreenDebugMessage( -1 , 2.0f , FColor::Blue , TEXT ( "Hammer Attack" ));
+			// 망치 공격을 실행한다.
+			this->MayCharacter_->UseHammerComp->Attack ( );
+		}
+
+	}
+	// Hammer가 Nail에 매달려 있는 상태라면,
+	else if( this->Hammer->bCanHanging == true )
+	{
+		// 해머를 나사에서 Detach하고, bIsHanging변수를 false로 바꾼다.
+		this->Hammer->DetachHammerFromNail ( );
+		// 해머를 플레이어에게 Attach 시킨다.
+		this->MayCharacter_->UseHammerComp->AttachHammer ( );
+	}	
 }

@@ -36,6 +36,8 @@ public:
 	UPROPERTY(EditDefaultsOnly )
 	class UCSR_MayUseHammerObj *UseHammerComp;
 
+	FVector HammerPlayerSocketLotation;
+
 
 #pragma endregion
 };
