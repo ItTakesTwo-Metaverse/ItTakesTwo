@@ -68,6 +68,11 @@ void ACSR_Player_May::MakeEnhancedInputLocalSubSystem ( )
 }
 
 
+void ACSR_Player_May::ChangeCharacterColor_Implementation ( )
+{
+	
+}
+
 void ACSR_Player_May::Tick ( float DeltaTime )
 {
 	Super::Tick ( DeltaTime );
@@ -76,6 +81,10 @@ void ACSR_Player_May::Tick ( float DeltaTime )
 	{
 		HammerPlayerSocketLotation = this->UseHammerComp->Hammer->MeshComp->GetSocketLocation ( TEXT ( "PlayerAttachingPoint" ) );
 		SetActorLocation ( HammerPlayerSocketLotation );
+	}
+	if ( this->flag1 ) {
+		this->ChangeCharacterColor ( );
+		this->flag1 = false;
 	}
 }
 
