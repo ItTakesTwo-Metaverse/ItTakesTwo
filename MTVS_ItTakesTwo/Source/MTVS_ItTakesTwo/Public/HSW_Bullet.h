@@ -70,7 +70,7 @@ public:
 	
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly )
-	ENailState State = ENailState::BASIC;
+	ENailState State;
 
 	float NailDefaultDist = 100;
 
@@ -113,8 +113,22 @@ public:
 	void NailLoad ( FName socketName );
 	UFUNCTION(BlueprintCallable )
 	void NailReturn( );
+
+	void NailEmbedded ( );
 	
 	void LoadSecondPlayer ( );
 
 	FTimerHandle TimerHandle;
+
+	FTransform SocketTransform;
+
+	FName SocketName;
+
+	UPROPERTY( )
+	UPrimitiveComponent* TargetComp;
+
+	bool bIsLoading;
+	bool bIsShooting;
+	bool bBasic;
+	bool bIsReturning;
 };

@@ -28,17 +28,15 @@ void AHSW_BulletManager::BeginPlay()
 		FName SocketName ( *SocketNameString );
 
 		FTransform t = this->MeshComp->GetSocketTransform ( SocketName );
-		UE_LOG ( LogTemp , Log , TEXT ( "Socket Transform: %s" ) , *t.ToString ( ) );
+		//UE_LOG ( LogTemp , Log , TEXT ( "Socket Transform: %s" ) , *t.ToString ( ) );
 
-		auto* nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory , t,params );
+		auto* nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory ,params );
 
 		if ( nail )
 		{
-			nail->SetNailBag(this );
-			nail->AttachToActor ( this , FAttachmentTransformRules::SnapToTargetIncludingScale );
-			nail->SetActorLocation ( t.GetLocation ( ) );
-			nail->SetActorRotation ( t.GetRotation ( ) );
 			Magazine.Add ( nail );
+			nail->SetNailBag(this );
+			nail->NailBasic();
 		}
 		else 
 		{
