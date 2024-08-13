@@ -19,6 +19,9 @@
 #include "CSR_P_AComp_InputBInd.h"
 #include "CSR_P_AComp_CharicJump.h"
 #include "Camera/PlayerCameraManager.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraSystem.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
 
 // Sets default values
 ACSR_P_Player::ACSR_P_Player()
@@ -64,6 +67,18 @@ ACSR_P_Player::ACSR_P_Player()
 	if ( !(this->CharacterStateComp && this->CharacterStateMannageComp && this->CharicMovementComp && this->CameraMomveComp && this->CharicJumpComp) ) {
 		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_P_Player : component is null" ) );
 	}
+	//NiagaraEffect = CreateDefaultSubobject<UNiagaraComponent> ( TEXT ( "NiagaraEffect" ) );
+	//this->NiagaraEffect = LoadObject<UNiagaraSystem> ( nullptr , TEXT ( "/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ) );
+	//if ( this->NiagaraEffect == nullptr ) {
+	//	UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_P_Player : this->NiagaraEffect  is null" ) );
+	//}
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraEffectObj (TEXT ( "/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ) );
+	if ( NiagaraEffectObj.Succeeded ( ) ) {
+		this->NiagaraEffect = NiagaraEffectObj.Object;
+	}
+	else {
+		UE_LOG ( LogTemp , Warning , TEXT ( "damaged" ) );
+	}
 }
 
 // Called when the game starts or when spawned
@@ -84,14 +99,14 @@ void ACSR_P_Player::Tick(float DeltaTime)
 		}
 	}
 	if ( (this->CharacterStateMannageComp->CurrentState & DIE) ) {
-// 		this->CharacterStateMannageComp->RemoveState ( DIE );
-// 		APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
-// 		if ( CameraManager )
-// 		{
-// 			CameraManager->StartCameraFade ( 1.0f , 0.0f , 1.0f , FLinearColor::Black , false , true );
-// 		}
-// 		SetActorLocation ( this->SavePoint );
-// 		this->CharacterStateMannageComp->AddState ( REBORN );
+ 		this->CharacterStateMannageComp->RemoveState ( DIE );
+		APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
+		if ( CameraManager )
+		{
+			CameraManager->StartCameraFade ( 1.0f , 0.0f , 1.0f , FLinearColor::Black , false , true );
+		}
+		SetActorLocation ( this->SavePoint );
+ 		this->CharacterStateMannageComp->AddState ( REBORN );
 	}
 	if ( (this->CharacterStateMannageComp->CurrentState & REBORN)) {
 		this->CurrentTIme = this->CurrentTIme + DeltaTime;
@@ -130,27 +145,31 @@ void ACSR_P_Player::fallingUnder ( )
 	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
 	if ( CameraManager )
 	{
-		CameraManager->StartCameraFade ( 0.0f , 1.0f , 1.0f , FLinearColor::Black , false , true );
+		CameraManager->StartCameraFade ( 0.0f , 1.0f , 2.0f , FLinearColor::Black , false , true );
 	}
 	SetActorLocation ( this->SavePoint );
-	CameraManager->StartCameraFade ( 1.0f , 0.0f , 0.5f , FLinearColor::Black , false , true );
+	CameraManager->StartCameraFade ( 1.0f , 0.0f , 3.5f , FLinearColor::Black , false , true );
 	this->GetMesh ( )->SetVisibility ( true );
-	//this->CharacterStateMannageComp->AddState(DIE);
+	this->CharacterStateMannageComp->AddState(DIE);
 }
 
 void ACSR_P_Player::OnDamaged ( int32 Damage )
 {
 	if ( this->CharacterStateMannageComp->AddState ( DAMAGED ) )
 	{
-		if ( this->CurHp - Damage <= 0 ) {
-			this->CurHp = 0;
+		
+		UNiagaraComponent *a = UNiagaraFunctionLibrary::SpawnSystemAtLocation ( this->GetWorld ( ) , this->NiagaraEffect , this->GetActorLocation ( ) , FRotator::ZeroRotator );
+		if ( a == nullptr ) {
+			UCSR_FunctionLib::ExitGame(this->GetWorld(), TEXT("123" ));
+		}
+		a->SetAutoDestroy(true);
+		this->CurHp = FMath::Max(0, this->CurHp - Damage );
+		if (this->CurHp == 0 ) {
 			this->CharacterStateMannageComp->AddState ( DIE );
 		}
 		else {
-			this->CurHp = this->CurHp - Damage;
+			this->CharacterStateMannageComp->AddState ( INVI );
 			this->CharacterStateMannageComp->RemoveState ( DAMAGED );
-			this->CharacterStateMannageComp->AddState(INVI);
-			UE_LOG ( LogTemp , Warning , TEXT ( "HP : %d" ) , this->CurHp );
 		}
 	}
 }
