@@ -268,7 +268,7 @@ void UToolBoxBossFSM::Attack2State( const float& DeltaTime )
 }
 
 void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
-{
+{	
 	AttackTimer += DeltaTime;
 
 	if ( !bIsAttack3 )
@@ -280,10 +280,6 @@ void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
 
 		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillOffTimerHandle , this , &UToolBoxBossFSM::DrillOff , 10.5f , false );
 		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillArmOffTimerHandle , this , &UToolBoxBossFSM::DrillArmOff , 9.2f , false );
-
-		GetWorld()->GetTimerManager().SetTimer(WoodRotationTimerHandle, this, & UToolBoxBossFSM::Attack3WoodRotation , 1.f , false );
-	
-		
 
 		bIsAttack3 = true;
 	}
@@ -370,8 +366,4 @@ void UToolBoxBossFSM::DrillArmOff ( )
 	me->DrillArms->SetVisibility ( false );
 }
 
-void UToolBoxBossFSM::Attack3WoodRotation ( )
-{
-	//wood->SetRootComponent
-}
 
