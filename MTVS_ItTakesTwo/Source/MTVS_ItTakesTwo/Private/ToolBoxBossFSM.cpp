@@ -346,24 +346,24 @@ void UToolBoxBossFSM::DieState ( const float& DeltaTime )
 
 void UToolBoxBossFSM::DrillOn ( )
 {
-	me->Drill->SetVisibility ( true );
-	me->DrillCircle->SetVisibility ( true );
+	me->Drill->SetHiddenInGame ( false );
+	me->DrillCircle->SetHiddenInGame ( false );
 }
 
 void UToolBoxBossFSM::DrillOff ( )
 {
-	me->Drill->SetVisibility ( false );
-	me->DrillCircle->SetVisibility ( false );
+	me->Drill->SetHiddenInGame ( true );
+	me->DrillCircle->SetHiddenInGame ( true );
 }
 
 void UToolBoxBossFSM::DrillArmOn ( )
 {
-	me->DrillArms->SetVisibility ( true );
+	me->DrillArms->SetHiddenInGame ( false );
 }
 
 void UToolBoxBossFSM::DrillArmOff ( )
 {
-	me->DrillArms->SetVisibility ( false );
+	me->DrillArms->SetHiddenInGame ( true );
 }
 
 

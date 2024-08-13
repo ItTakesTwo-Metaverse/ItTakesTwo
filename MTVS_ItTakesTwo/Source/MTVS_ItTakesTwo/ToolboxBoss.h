@@ -62,13 +62,23 @@ public:
 	class USkeletalMeshComponent* DrillArms;
 
 	UPROPERTY( EditDefaultsOnly )
-	float Lock1HP = 5;
-	float Lock2HP = 5;
+	float Lock1MaxHP = 5;
+	float Lock1HP = Lock1MaxHP;
+	float Lock2MaxHP = 5;
+	float Lock2HP = Lock2MaxHP;
 	float damage = 1;
 
 	bool bCanDamage = true;
 	float CurrentTime = 0;
 
+	UPROPERTY(EditDefaultsOnly)
+	class UWidgetComponent* Lock1HPBarComp;
+	UPROPERTY(EditDefaultsOnly)
+	class UWidgetComponent* Lock2HPBarComp;
+	UPROPERTY()
+	class ULockHP* Lock1HPWidget;
+	UPROPERTY()
+	class ULockHP* Lock2HPWidget;
 
 	FTimerHandle Lock1DestroyTimerHandle;
 	FTimerHandle Lock2DestroyTimerHandle;

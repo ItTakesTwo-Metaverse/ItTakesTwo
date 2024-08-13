@@ -18,6 +18,8 @@
 #include "Wood.h"
 #include "../../../../Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraSystem.h"
 #include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
+#include "LockHP.h"
+#include "Components/WidgetComponent.h"
 
 
 
@@ -102,9 +104,9 @@ AToolboxBoss::AToolboxBoss ( )
 	if ( Lock1Asset.Succeeded ( ) )
 	{
 		Lock1->SetSkeletalMesh ( Lock1Asset.Object );
-		//Lock1->SetupAttachment ( GetMesh ( ) );
+		Lock1->SetupAttachment ( GetMesh ( ) );
 		Lock1->SetRelativeLocation ( FVector ( -318 , 553 , -468 ) );
-		Lock1->SetSimulatePhysics ( true );
+		//Lock1->SetSimulatePhysics ( true );
 		Lock1->bBlendPhysics = true;
 	}
 
@@ -118,15 +120,26 @@ AToolboxBoss::AToolboxBoss ( )
 		LockBody1->SetCollisionProfileName ( TEXT ( "Lock" ) );
 	}
 
+	Lock1HPBarComp = CreateDefaultSubobject<UWidgetComponent> ( TEXT ( "Lock1HPBarComp" ) );
+	Lock1HPBarComp->SetupAttachment(Lock1);
+	ConstructorHelpers::FClassFinder<ULockHP> TempHP1UI ( TEXT ( "'/Script/UMGEditor.WidgetBlueprint'/Game/LHM_Boss/BluePrints/WBP_LockHP.WBP_LockHP_C'" ) );
+
+	if ( TempHP1UI.Succeeded ( ) )
+	{
+		Lock1HPBarComp->SetWidgetClass ( TempHP1UI.Class ); 
+		Lock2HPBarComp->SetDrawSize ( FVector2D ( 100 , 20 ) );
+		Lock2HPBarComp->SetRelativeLocation ( FVector ( 0 , 0 , 100 ) );
+	}
+
 	// 자물쇠2
 	Lock2 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "Lock2" ) );
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> Lock2Asset ( TEXT ( "/Script/Engine.SkeletalMesh'/Game/LHM_Boss/BossMeshes/lock/SM_Locker_002.SM_Locker_002'" ) );
 	if ( Lock2Asset.Succeeded ( ) )
 	{
 		Lock2->SetSkeletalMesh ( Lock2Asset.Object );
-		//Lock2->SetupAttachment ( GetMesh ( ) );
+		Lock2->SetupAttachment ( GetMesh ( ) );
 		Lock2->SetRelativeLocation ( FVector ( -388 , 553 , -468 ) );
-		Lock2->SetSimulatePhysics ( true );
+		//Lock2->SetSimulatePhysics ( true );
 		Lock2->bBlendPhysics = true;
 	}
 
@@ -140,6 +153,17 @@ AToolboxBoss::AToolboxBoss ( )
 		LockBody2->SetCollisionProfileName ( TEXT ( "Lock" ) );
 	}
 
+	Lock2HPBarComp = CreateDefaultSubobject<UWidgetComponent> ( TEXT ( "Lock2HPBarComp" ) );
+	Lock2HPBarComp->SetupAttachment( Lock2 );
+	ConstructorHelpers::FClassFinder<ULockHP> TempHP2UI ( TEXT ( "'/Script/UMGEditor.WidgetBlueprint'/Game/LHM_Boss/BluePrints/WBP_LockHP.WBP_LockHP_C'" ) );
+
+	if ( TempHP2UI.Succeeded ( ) )
+	{
+		Lock2HPBarComp->SetWidgetClass ( TempHP2UI.Class );
+		Lock2HPBarComp->SetDrawSize ( FVector2D ( 100 , 20 ) );
+		Lock2HPBarComp->SetRelativeLocation ( FVector ( 0 , 0 , 100 ) );
+	}
+
 	// 전동 드릴
 	Drill = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "Drill" ) );
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> DrillAsset ( TEXT ( "//Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/drill/drill_DRILL.drill_DRILL'" ) );
@@ -150,7 +174,8 @@ AToolboxBoss::AToolboxBoss ( )
 		Drill->SetRelativeLocationAndRotation ( FVector ( 290 , -520 , 480 ) , FRotator ( 6 , 0 , 0 ) );
 		Drill->SetGenerateOverlapEvents ( true );
 		Drill->SetCollisionProfileName ( TEXT ( "Drill" ) );
-		Drill->SetVisibility ( false );
+		//Drill->SetVisibility ( false );
+		Drill->SetHiddenInGame ( true );
 	}
 
 	DrillCircle = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "DrillCircle" ) );
@@ -162,7 +187,8 @@ AToolboxBoss::AToolboxBoss ( )
 		DrillCircle->SetRelativeLocationAndRotation ( FVector ( -5 , 448 , -60 ) , FRotator ( 0 , 0 , 84 ) );
 		DrillCircle->SetGenerateOverlapEvents ( true );
 		DrillCircle->SetCollisionProfileName ( TEXT ( "Drill" ) );
-		DrillCircle->SetVisibility ( false );
+		//DrillCircle->SetVisibility ( false );
+		DrillCircle->SetHiddenInGame ( true );
 	}
 
 	DrillArms = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "DrillArms" ) );
@@ -174,7 +200,8 @@ AToolboxBoss::AToolboxBoss ( )
 		DrillArms->SetRelativeLocationAndRotation ( FVector ( 0 , -2.5 , -2 ) , FRotator ( -82 , -90 , 90 ) );
 		DrillArms->SetGenerateOverlapEvents ( true );
 		DrillArms->SetCollisionProfileName ( TEXT ( "Drill" ) );
-		DrillArms->SetVisibility ( false );
+		//DrillArms->SetVisibility ( false );
+		DrillArms->SetHiddenInGame ( true );
 	}
 
 
@@ -213,6 +240,14 @@ void AToolboxBoss::BeginPlay ( )
 
 	DrillCircle->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyDrillCirleOverlap );
 
+	Lock1HPWidget = Cast<ULockHP> ( Lock1HPBarComp->GetUserWidgetObject ( ) );
+	Lock2HPWidget = Cast<ULockHP> ( Lock2HPBarComp->GetUserWidgetObject ( ) );
+
+
+	// 체력 UI를 Full로 채우고싶다.
+	// 위젯이 올바르게 초기화되었는지 확인
+	if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
+	if ( Lock2HPWidget ) { Lock2HPWidget->SetHPBar ( Lock2HP , Lock2MaxHP ); }
 
 }
 
@@ -278,36 +313,47 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	// 플레이어의 망치와 충돌했을 때 자물쇠 데미지
 	if ( OtherActor->IsA<AHSW_Hammer> ( ) )
 	{	
-
 		if ( bCanDamage == true && Lock1HP > 0 )
 		{
 			//FString HPTEXT = FString::Printf(TEXT("%d" ), Lock1HP );
 			//GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Yellow , HPTEXT );
-			Lock1HP -= damage;
+			Lock1MaxHP -= damage;
+			Lock1HP = Lock1MaxHP;
+			//if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
 			bCanDamage = false;
 
-			//GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Yellow , HPTEXT );
 			if ( Lock1HP <= 0 )
-			{
-				//Lock1->SetSimulatePhysics ( true );
-				//Lock1->bBlendPhysics = true;
+			{	
+				Lock1->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+				Lock1->SetSimulatePhysics ( true );
+				Lock1->bBlendPhysics = true;
 
+				LockBody1->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 				LockBody1->SetSimulatePhysics ( true );
 				LockBody1->bBlendPhysics = true;
+
+				Lock1HPBarComp->DetachFromComponent( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock1DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
 			}
 		}
 		else if ( fsm->bIsAttack2 ) //else if ( Lock1HP <= 0 && Lock2HP > 0 )
 		{
-			Lock2HP -= damage;
+			Lock2MaxHP -= damage;
+			Lock2HP = Lock2MaxHP;
+			//if(Lock2HPWidget ) { Lock2HPWidget->SetHPBar ( Lock2HP , Lock2MaxHP ); }
+			
 			if ( Lock2HP <= 0 )
 			{
-				//Lock2->SetSimulatePhysics ( true );
-				//Lock2->bBlendPhysics = true;
+				Lock2->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+				Lock2->SetSimulatePhysics ( true );
+				Lock2->bBlendPhysics = true;
 
+				LockBody2->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 				LockBody2->SetSimulatePhysics ( true );
 				LockBody2->bBlendPhysics = true;
+
+				Lock2HPBarComp->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock2DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
 			}
@@ -318,30 +364,14 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 
 void AToolboxBoss::DestroyLock1 ( )
 {
-	if ( Lock1 )
-	{
-		//Lock1->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
-		Lock1->DestroyComponent ( );
-	}
-	if ( LockBody1 )
-	{
-		LockBody1->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
-		LockBody1->DestroyComponent ( );
-	}
+	if ( Lock1 ) { Lock1->DestroyComponent ( ); }
+	if ( LockBody1 ) { LockBody1->DestroyComponent ( ); }
 }
 
 void AToolboxBoss::DestroyLock2 ( )
 {
-	if ( Lock2 )
-	{
-		//Lock2->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
-		Lock2->DestroyComponent ( );
-	}
-	if ( LockBody2 )
-	{
-		LockBody2->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
-		LockBody2->DestroyComponent ( );
-	}
+	if ( Lock2 ) { Lock2->DestroyComponent ( ); }
+	if ( LockBody2 ) { LockBody2->DestroyComponent ( ); }
 }
 
 void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
