@@ -9,6 +9,8 @@
 #include "CSR_P_Player.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrillArmsAnimInstance.h"
+#include "Engine/StaticMeshActor.h"
+#include "Wood.h"
 
 // Sets default values for this component's properties
 UToolBoxBossFSM::UToolBoxBossFSM()
@@ -39,7 +41,9 @@ void UToolBoxBossFSM::BeginPlay()
 	if ( me && me->DrillCircle ) DrillCircleAnim = Cast<UDrillCircleAnimInstance> ( me->DrillCircle->GetAnimInstance ( ) );
 	if ( me && me->DrillArms ) DrillArmsAnim = Cast<UDrillArmsAnimInstance> ( me->DrillArms->GetAnimInstance ( ) );
 
+	wood = Cast<AWood>(GetOwner());
 
+	
 	// 초기 상태를 Start로 설정
 	ChangeState(EBossState::Start );
 }
@@ -269,14 +273,17 @@ void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
 
 	if ( !bIsAttack3 )
 	{	
-
 		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillArmOnTimerHandle , this , &UToolBoxBossFSM::DrillArmOn , 0.3f , false );
 
 		if ( DrillCircleAnim ) DrillCircleAnim->PlayDrillCircle2Montage ( );
 		if ( DrillArmsAnim ) DrillArmsAnim->PlayDrillArmsMontage ( );
 
 		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillOffTimerHandle , this , &UToolBoxBossFSM::DrillOff , 10.5f , false );
-		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillArmOffTimerHandle , this , &UToolBoxBossFSM::DrillArmOff , 9.46f , false );
+		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillArmOffTimerHandle , this , &UToolBoxBossFSM::DrillArmOff , 9.2f , false );
+
+		GetWorld()->GetTimerManager().SetTimer(WoodRotationTimerHandle, this, & UToolBoxBossFSM::Attack3WoodRotation , 1.f , false );
+	
+		
 
 		bIsAttack3 = true;
 	}
@@ -361,5 +368,10 @@ void UToolBoxBossFSM::DrillArmOn ( )
 void UToolBoxBossFSM::DrillArmOff ( )
 {
 	me->DrillArms->SetVisibility ( false );
+}
+
+void UToolBoxBossFSM::Attack3WoodRotation ( )
+{
+	//wood->SetRootComponent
 }
 

@@ -53,8 +53,8 @@ void AHSW_Bullet::BeginPlay()
 	
 	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Bullet::OnMyWallHit );
 
-	Player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
-	//GetWorld ( )->GetTimerManager ( ).SetTimer ( TimerHandle , this , &AHSW_Bullet::LoadSecondPlayer , 0.2f , false );
+	//Player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
+	GetWorld ( )->GetTimerManager ( ).SetTimer ( TimerHandle , this , &AHSW_Bullet::LoadSecondPlayer , 0.2f , false );
 
 	//StartPoint = Player->GetActorLocation ( );
 	//EndPoint = StartPoint + FVector ( 100000 , 0 , 0 );
@@ -68,8 +68,8 @@ void AHSW_Bullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	const FString myState = UEnum::GetValueAsString ( State );
-	DrawDebugString ( GetWorld ( ) , this->GetActorLocation ( ) , myState , nullptr , FColor::Yellow , 0 , true , 1 );
+	//const FString myState = UEnum::GetValueAsString ( State );
+	//DrawDebugString ( GetWorld ( ) , this->GetActorLocation ( ) , myState , nullptr , FColor::Yellow , 0 , true , 1 );
 	switch ( State )
 	{
 	case ENailState::BASIC:			TickBasic ( DeltaTime );			break;

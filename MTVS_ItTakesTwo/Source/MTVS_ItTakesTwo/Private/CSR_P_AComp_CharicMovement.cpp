@@ -131,7 +131,7 @@ void UCSR_P_AComp_CharicMovement::PlayerMoveSelect ( const FInputActionValue& Va
 	this->PadDirection.Y = 0.0f;
 	// 현재 캐릭터의 상태에 따라 다른 이동방식이 적용됩니다.
 
-	if ( this->Character_->CharacterStateMannageComp->AddState ( JUMPMOVE ))
+	if ( this->Character_->CharacterStateMannageComp->CurrentState  && this->Character_->CharacterStateMannageComp->AddState ( JUMPMOVE ))
 	{
 		this->MoveFlag = JUMPMOVEE;
 	}

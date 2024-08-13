@@ -77,5 +77,7 @@ void UCSR_P_AComp_CharicJump::PlayerJump ( const FInputActionValue& Value )
 void UCSR_P_AComp_CharicJump::Landed ( )
 {
 	this->SecondJumpPossible = true;
+	UE_LOG(LogTemp, Warning, TEXT("123" ));
 	this->Character_->CharacterStateMannageComp->RemoveState(JUMP);
+	this->Character_->CharacterStateMannageComp->RemoveState ( JUMPMOVE );
 }

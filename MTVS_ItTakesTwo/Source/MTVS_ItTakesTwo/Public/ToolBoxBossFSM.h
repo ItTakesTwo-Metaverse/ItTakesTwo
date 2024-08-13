@@ -60,6 +60,9 @@ public:
 	UPROPERTY( )
 	class UDrillArmsAnimInstance* DrillArmsAnim;
 
+	UPROPERTY( )
+	class AWood* wood;
+
 	UPROPERTY(EditAnywhere)
 	float AttackRange = 4050.0f;
 	float AttackCoolDown;
@@ -81,6 +84,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EBossState CurrentState;
 	
+	UFUNCTION(BlueprintCallable )
 	void ChangeState(EBossState NewState);
 
 	void StartState( const float& DeltaTime );
@@ -105,8 +109,12 @@ public:
 	FTimerHandle DrillArmOn4TimerHandle;
 	FTimerHandle DrillArmOff4TimerHandle;
 
+	FTimerHandle WoodRotationTimerHandle;
+
 	void DrillOn ( );
 	void DrillOff ( );
 	void DrillArmOn ( );
 	void DrillArmOff ( );
+
+	void Attack3WoodRotation ( );
 };

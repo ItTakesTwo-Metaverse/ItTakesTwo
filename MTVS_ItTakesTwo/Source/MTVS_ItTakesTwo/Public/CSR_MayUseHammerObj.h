@@ -31,7 +31,8 @@ public:
 	UPROPERTY (EditDefaultsOnly )
 	class AHSW_Hammer *Hammer;
 
-
+	UPROPERTY (EditDefaultsOnly )
+	class ACSR_Player_May *MayPlayer;
 	void Attack( );
 		
 	void DetachHammer ( );
