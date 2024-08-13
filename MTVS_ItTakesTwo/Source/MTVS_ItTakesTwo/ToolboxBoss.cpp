@@ -66,7 +66,8 @@ AToolboxBoss::AToolboxBoss ( )
 	{
 		NailInteractionBox1->SetStaticMesh ( NailInteractionBox1Asset.Object );
 		NailInteractionBox1->SetupAttachment ( RightArmMesh , TEXT ( "joint20" ) );
-		NailInteractionBox1->SetRelativeLocation ( FVector ( -2546 , -523 , 386 ) );
+		NailInteractionBox1->SetRelativeLocation ( FVector ( -3684 , -1578 , 578 ) );
+		NailInteractionBox1->SetRelativeScale3D(FVector(1.5,3,1.5));
 		NailInteractionBox1->SetGenerateOverlapEvents ( true );
 		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
@@ -103,6 +104,8 @@ AToolboxBoss::AToolboxBoss ( )
 		Lock1->SetSkeletalMesh ( Lock1Asset.Object );
 		Lock1->SetupAttachment ( GetMesh ( ) );
 		Lock1->SetRelativeLocation ( FVector ( -318 , 553 , -468 ) );
+		Lock1->SetSimulatePhysics ( true );
+		Lock1->bBlendPhysics = true;
 	}
 
 	LockBody1 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "LockBody1" ) );
@@ -123,6 +126,8 @@ AToolboxBoss::AToolboxBoss ( )
 		Lock2->SetSkeletalMesh ( Lock2Asset.Object );
 		Lock2->SetupAttachment ( GetMesh ( ) );
 		Lock2->SetRelativeLocation ( FVector ( -388 , 553 , -468 ) );
+		Lock2->SetSimulatePhysics ( true );
+		Lock2->bBlendPhysics = true;
 	}
 
 	LockBody2 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "LockBody2" ) );
@@ -216,6 +221,16 @@ void AToolboxBoss::Tick ( float DeltaTime )
 {
 	Super::Tick ( DeltaTime );
 
+	if ( bCanDamage == false )
+	{
+		CurrentTime = CurrentTime + DeltaTime;
+		if ( CurrentTime > 1 )
+		{
+			bCanDamage = true;
+			CurrentTime =0;
+		}
+	}
+
 }
 
 
@@ -262,20 +277,20 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 {
 	// 플레이어의 망치와 충돌했을 때 자물쇠 데미지
 	if ( OtherActor->IsA<AHSW_Hammer> ( ) )
-	{
+	{	
+
 		if ( bCanDamage == true && Lock1HP > 0 )
 		{
-			FString HPTEXT = FString::Printf(TEXT("%d" ), Lock1HP );
-			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , HPTEXT );
-
+			//FString HPTEXT = FString::Printf(TEXT("%d" ), Lock1HP );
+			//GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Yellow , HPTEXT );
 			Lock1HP -= damage;
 			bCanDamage = false;
 
-			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , HPTEXT );
+			//GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Yellow , HPTEXT );
 			if ( Lock1HP <= 0 )
 			{
-				Lock1->SetSimulatePhysics ( true );
-				Lock1->bBlendPhysics = true;
+				//Lock1->SetSimulatePhysics ( true );
+				//Lock1->bBlendPhysics = true;
 
 				LockBody1->SetSimulatePhysics ( true );
 				LockBody1->bBlendPhysics = true;
@@ -288,8 +303,8 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 			Lock2HP -= damage;
 			if ( Lock2HP <= 0 )
 			{
-				Lock2->SetSimulatePhysics ( true );
-				Lock2->bBlendPhysics = true;
+				//Lock2->SetSimulatePhysics ( true );
+				//Lock2->bBlendPhysics = true;
 
 				LockBody2->SetSimulatePhysics ( true );
 				LockBody2->bBlendPhysics = true;
