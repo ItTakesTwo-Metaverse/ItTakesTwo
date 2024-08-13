@@ -102,7 +102,7 @@ AToolboxBoss::AToolboxBoss ( )
 	{
 		Lock1->SetSkeletalMesh ( Lock1Asset.Object );
 		Lock1->SetupAttachment ( GetMesh ( ) );
-		Lock1->SetRelativeLocation ( FVector ( -318 , 553 , -397 ) );
+		Lock1->SetRelativeLocation ( FVector ( -318 , 553 , -468 ) );
 	}
 
 	LockBody1 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "LockBody1" ) );
@@ -122,7 +122,7 @@ AToolboxBoss::AToolboxBoss ( )
 	{
 		Lock2->SetSkeletalMesh ( Lock2Asset.Object );
 		Lock2->SetupAttachment ( GetMesh ( ) );
-		Lock2->SetRelativeLocation ( FVector ( -388 , 553 , -397 ) );
+		Lock2->SetRelativeLocation ( FVector ( -388 , 553 , -468 ) );
 	}
 
 	LockBody2 = CreateDefaultSubobject<USkeletalMeshComponent> ( TEXT ( "LockBody2" ) );
@@ -263,9 +263,15 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	// 플레이어의 망치와 충돌했을 때 자물쇠 데미지
 	if ( OtherActor->IsA<AHSW_Hammer> ( ) )
 	{
-		if ( Lock1HP > 0 )
+		if ( bCanDamage == true && Lock1HP > 0 )
 		{
+			FString HPTEXT = FString::Printf(TEXT("%d" ), Lock1HP );
+			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , HPTEXT );
+
 			Lock1HP -= damage;
+			bCanDamage = false;
+
+			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , HPTEXT );
 			if ( Lock1HP <= 0 )
 			{
 				Lock1->SetSimulatePhysics ( true );
