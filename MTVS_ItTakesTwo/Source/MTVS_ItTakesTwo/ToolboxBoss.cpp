@@ -235,11 +235,11 @@ void AToolboxBoss::OnMyBossBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	{
 		Player->OnDamaged (1);
 
-		UNiagaraSystem* NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ));
+		/*UNiagaraSystem* NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ));
 		if ( NiagaraEffect )
 		{
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraEffect, OtherActor->GetActorLocation(),FRotator::ZeroRotator);
-		}
+		}*/
 	}
 
 }
