@@ -53,6 +53,7 @@ bool UCSR_P_AComp_CharicStateMannage::TotalControlState ( int32 NewState )
 			return (CanAddAttack( ));
 			break;
 		case DAMAGED:
+			return (CanAddDamaged ( ));
 			break;
 		case INVI:
 			return (CanAddIniv ());
@@ -91,7 +92,7 @@ void UCSR_P_AComp_CharicStateMannage::SpendStateToAnim ( )
 {
 	int flag = this->CurrentState;
 	int count = 0;
-	while ( (flag & 1) == 0 ) {
+	while (flag != 0 && (flag & 1) == 0 ) {
 		count = count + 1;
 		flag = flag >> 1;
 	}
@@ -168,7 +169,7 @@ bool UCSR_P_AComp_CharicStateMannage::CanAddReBorn ( )
 
 bool UCSR_P_AComp_CharicStateMannage::CanAddIniv ( )
 {
-	if ( this->CurrentState & REBORN ) {
+	if ( this->CurrentState & (REBORN | DAMAGED )) {
 		return (true);
 	}
 	return (false);
@@ -177,6 +178,14 @@ bool UCSR_P_AComp_CharicStateMannage::CanAddIniv ( )
 bool UCSR_P_AComp_CharicStateMannage::CanAddAttack ( )
 {
 	if ( this->CurrentState & (AIRSIT | SCJUMP | DAMAGED | ATTACK | REBORN | PRESS | DIE)) {
+		return (false);
+	}
+	return (true);
+}
+
+bool UCSR_P_AComp_CharicStateMannage::CanAddDamaged ( )
+{
+	if ( this->CurrentState & (DIE | PRESS | REBORN | INVI) ) {
 		return (false);
 	}
 	return (true);
