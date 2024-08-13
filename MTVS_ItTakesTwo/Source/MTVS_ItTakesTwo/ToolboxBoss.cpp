@@ -102,7 +102,7 @@ AToolboxBoss::AToolboxBoss ( )
 	if ( Lock1Asset.Succeeded ( ) )
 	{
 		Lock1->SetSkeletalMesh ( Lock1Asset.Object );
-		Lock1->SetupAttachment ( GetMesh ( ) );
+		//Lock1->SetupAttachment ( GetMesh ( ) );
 		Lock1->SetRelativeLocation ( FVector ( -318 , 553 , -468 ) );
 		Lock1->SetSimulatePhysics ( true );
 		Lock1->bBlendPhysics = true;
@@ -124,7 +124,7 @@ AToolboxBoss::AToolboxBoss ( )
 	if ( Lock2Asset.Succeeded ( ) )
 	{
 		Lock2->SetSkeletalMesh ( Lock2Asset.Object );
-		Lock2->SetupAttachment ( GetMesh ( ) );
+		//Lock2->SetupAttachment ( GetMesh ( ) );
 		Lock2->SetRelativeLocation ( FVector ( -388 , 553 , -468 ) );
 		Lock2->SetSimulatePhysics ( true );
 		Lock2->bBlendPhysics = true;
@@ -320,7 +320,7 @@ void AToolboxBoss::DestroyLock1 ( )
 {
 	if ( Lock1 )
 	{
-		Lock1->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+		//Lock1->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 		Lock1->DestroyComponent ( );
 	}
 	if ( LockBody1 )
@@ -334,7 +334,7 @@ void AToolboxBoss::DestroyLock2 ( )
 {
 	if ( Lock2 )
 	{
-		Lock2->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+		//Lock2->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 		Lock2->DestroyComponent ( );
 	}
 	if ( LockBody2 )
