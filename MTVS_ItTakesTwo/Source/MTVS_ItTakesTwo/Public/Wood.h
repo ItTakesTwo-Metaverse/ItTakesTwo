@@ -40,4 +40,18 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* WoodCircle4;
+
+
+	UPROPERTY ( )
+	class UNiagaraSystem* WoodEffect;
+
+	UFUNCTION( )
+	void OnMyWoodCircle1Effect( );
+	UFUNCTION( )
+	void OnMyWoodCircle2Effect( );
+	UFUNCTION( )
+	void OnMyWoodCircle3Effect( );
+	UFUNCTION( )
+	void OnMyWoodCircle4Effect( );
+
 };

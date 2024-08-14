@@ -2,6 +2,9 @@
 
 
 #include "Wood.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraSystem.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
 
 // Sets default values
 AWood::AWood()
@@ -62,6 +65,13 @@ AWood::AWood()
 		WoodCircle4->SetGenerateOverlapEvents ( true );
 		WoodCircle4->SetCollisionProfileName ( TEXT ( "Wood" ) );
 	}
+
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> WoodEffectObj ( TEXT ( "/Script/Niagara.NiagaraSystem'/Game/PSH/FX_SmokePuffs.FX_SmokePuffs'" ) );
+	if ( WoodEffectObj.Succeeded ( ) ) 
+	{
+		WoodEffect = WoodEffectObj.Object;
+	}
+
 }
 
 // Called when the game starts or when spawned
@@ -76,5 +86,41 @@ void AWood::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AWood::OnMyWoodCircle1Effect ( )
+{
+	if ( WoodEffect )
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation ( GetWorld ( ) , WoodEffect , WoodCircle1->GetComponentLocation ( ) , FRotator::ZeroRotator );
+		UE_LOG(LogTemp, Warning, TEXT("Wood Circle 1111 Effect!!!!!@!@!@!@" ));
+	}
+}
+
+void AWood::OnMyWoodCircle2Effect ( )
+{
+	if ( WoodEffect )
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation ( GetWorld ( ) , WoodEffect , WoodCircle2->GetComponentLocation ( ) , FRotator::ZeroRotator );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Wood Circle 2222 Effect!!!!!@!@!@!@" ) );
+	}
+}
+
+void AWood::OnMyWoodCircle3Effect ( )
+{
+	if ( WoodEffect )
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation ( GetWorld ( ) , WoodEffect , WoodCircle3->GetComponentLocation ( ) , FRotator::ZeroRotator );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Wood Circle 3333 Effect!!!!!@!@!@!@" ) );
+	}
+}
+
+void AWood::OnMyWoodCircle4Effect ( )
+{
+	if ( WoodEffect )
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation ( GetWorld ( ) , WoodEffect , WoodCircle4->GetComponentLocation ( ) , FRotator::ZeroRotator );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Wood Circle 4444 Effect!!!!!@!@!@!@" ) );
+	}
 }
 

@@ -22,6 +22,7 @@
 #include "Components/WidgetComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Components/SphereComponent.h"
+#include "Particles/ParticleSystem.h"
 
 
 
@@ -158,12 +159,16 @@ AToolboxBoss::AToolboxBoss ( )
 	Lock2HPBarComp = CreateDefaultSubobject<UWidgetComponent> ( TEXT ( "Lock2HPBarComp" ) );
 	Lock2HPBarComp->SetupAttachment( Lock2 );
 	ConstructorHelpers::FClassFinder<ULockHP> TempHP2UI ( TEXT ( "'/Script/UMGEditor.WidgetBlueprint'/Game/LHM_Boss/BluePrints/WBP_LockHP.WBP_LockHP_C'" ) );
-
 	if ( TempHP2UI.Succeeded ( ) )
 	{
 		Lock2HPBarComp->SetWidgetClass ( TempHP2UI.Class );
 		Lock2HPBarComp->SetDrawSize ( FVector2D ( 100 , 20 ) );
 		Lock2HPBarComp->SetRelativeLocation ( FVector ( 0 , 0 , 100 ) );
+	}
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem> LockEffectObj ( TEXT ( "/Script/Engine.ParticleSystem'/Game/JBY/effect/P_Lock_Sparks.P_Lock_Sparks'" ) );
+	if ( LockEffectObj.Succeeded ( ) ) {
+		LockEffect = LockEffectObj.Object;
 	}
 
 	// 전동 드릴
@@ -201,7 +206,7 @@ AToolboxBoss::AToolboxBoss ( )
 		DrillArms->SetupAttachment ( DrillCircle );
 		DrillArms->SetRelativeLocationAndRotation ( FVector ( 0 , -2.5 , -2 ) , FRotator ( -82 , -90 , 90 ) );
 		DrillArms->SetGenerateOverlapEvents ( true );
-		DrillArms->SetCollisionProfileName ( TEXT ( "Drill" ) );
+		DrillArms->SetCollisionProfileName ( TEXT ( "Boss" ) );
 		//DrillArms->SetVisibility ( false );
 		DrillArms->SetHiddenInGame ( true );
 	}
@@ -216,7 +221,7 @@ AToolboxBoss::AToolboxBoss ( )
 
 	// FSM 컴포넌트 추가
 	fsm = CreateDefaultSubobject<UToolBoxBossFSM> ( TEXT ( "FSM" ) );
-
+	
 
 }
 // Called when the game starts or when spawned
@@ -238,15 +243,15 @@ void AToolboxBoss::BeginPlay ( )
 	LockBody2->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyLockBeginOverlap );
 	// 드릴 충돌
 	Drill->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyDrillOverlap );
-	DrillArms->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyDrillOverlap );
+	DrillArms->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyBossBeginOverlap );
 
 	DrillCircle->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyDrillCirleOverlap );
 
 	Lock1HPWidget = Cast<ULockHP> ( Lock1HPBarComp->GetUserWidgetObject ( ) );
 	Lock2HPWidget = Cast<ULockHP> ( Lock2HPBarComp->GetUserWidgetObject ( ) );
 
-	Lock1HP = Lock1MaxHP;
-	Lock2HP = Lock2MaxHP;
+	//Lock1HP = Lock1MaxHP;
+	//Lock2HP = Lock2MaxHP;
 	// 체력 UI를 Full로 채우고싶다.
 	// 위젯이 올바르게 초기화되었는지 확인
 	if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
@@ -287,12 +292,6 @@ void AToolboxBoss::OnMyBossBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	if ( OtherActor->IsA<ACSR_P_Player> ( ) )
 	{
 		Player->OnDamaged (1);
-
-		/*UNiagaraSystem* NiagaraEffect = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ));
-		if ( NiagaraEffect )
-		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraEffect, OtherActor->GetActorLocation(),FRotator::ZeroRotator);
-		}*/
 	}
 
 }
@@ -332,12 +331,17 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	{	
 		if ( bCanDamage == true && Lock1HP > 0 )
 		{
-			//FString HPTEXT = FString::Printf(TEXT("%d" ), Lock1HP );
-			//GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Yellow , HPTEXT );
+
+			if ( LockEffect )
+			{
+				UGameplayStatics::SpawnEmitterAtLocation ( GetWorld ( ) , LockEffect , LockBody1->GetComponentLocation() , FRotator::ZeroRotator );
+			}
+
 			Lock1MaxHP -= damage;
-			//Lock1HP = Lock1MaxHP;
-			//if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
+			Lock1HP = Lock1MaxHP;
+			
 			bCanDamage = false;
+			UE_LOG ( LogTemp , Warning , TEXT ( "%f" ), Lock1HP );
 
 			if ( Lock1HP <= 0 )
 			{	
@@ -357,8 +361,7 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 		else if ( fsm->bIsAttack2 ) //else if ( Lock1HP <= 0 && Lock2HP > 0 )
 		{
 			Lock2MaxHP -= damage;
-			//Lock2HP = Lock2MaxHP;
-			//if(Lock2HPWidget ) { Lock2HPWidget->SetHPBar ( Lock2HP , Lock2MaxHP ); }
+			Lock2HP = Lock2MaxHP;
 			
 			if ( Lock2HP <= 0 )
 			{
@@ -393,23 +396,52 @@ void AToolboxBoss::DestroyLock2 ( )
 
 void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
-	if ( OtherActor->IsA<AWood> ( ) )
+	if(!OtherActor || !OtherComponent ) return;
+
+	wood = Cast<AWood> ( OtherActor );
+	if ( wood )
 	{
-		OtherComponent->DestroyComponent();
+		/*if ( OtherActor->IsA<AWood> ( ) )
+		{
+			if ( OtherComponent->ComponentHasTag ( FName ( "HoleMesh1" ) ) ) wood->OnMyWoodCircle1Effect ( );
+			if ( OtherComponent->ComponentHasTag ( FName ( "HoleMesh2" ) ) ) wood->OnMyWoodCircle2Effect ( );
+			if ( OtherComponent->ComponentHasTag ( FName ( "HoleMesh3" ) ) ) wood->OnMyWoodCircle3Effect ( );
+			if ( OtherComponent->ComponentHasTag ( FName ( "HoleMesh4" ) ) ) wood->OnMyWoodCircle4Effect ( );
+			
+			OtherComponent->DestroyComponent();
+		}*/
+
+		if ( OtherActor->IsA<AWood> ( ) )
+		{
+			if ( OtherComponent->ComponentHasTag ( FName ( "HoleMesh1" ) ) )
+			{
+				wood->OnMyWoodCircle1Effect ( );
+				OtherComponent->DestroyComponent();
+			}
+			if ( OtherComponent->ComponentHasTag ( FName ( "HoleMesh2" ) ) )
+			{
+				wood->OnMyWoodCircle2Effect ( );
+				OtherComponent->DestroyComponent ( );
+			}
+			if ( OtherComponent->ComponentHasTag ( FName ( "HoleMesh3" ) ) )
+			{
+				wood->OnMyWoodCircle3Effect ( );
+				OtherComponent->DestroyComponent ( );
+			}
+			if ( OtherComponent->ComponentHasTag ( FName ( "HoleMesh4" ) ) )
+			{
+				wood->OnMyWoodCircle4Effect ( );
+				OtherComponent->DestroyComponent ( );
+			}
+
+			//OtherComponent->DestroyComponent();
+		}
 	}
-
 	Player = Cast<ACSR_P_Player> ( OtherActor );
-
 	// 플레이어 데미지 처리
 	if ( OtherActor->IsA<ACSR_P_Player> ( ) )
 	{
 		Player->OnDamaged ( 1 );
-
-		//UNiagaraSystem* NiagaraEffect = LoadObject<UNiagaraSystem> ( nullptr , TEXT ( "/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ) );
-		//if ( NiagaraEffect )
-		//{
-		//	UNiagaraFunctionLibrary::SpawnSystemAtLocation ( GetWorld ( ) , NiagaraEffect , OtherActor->GetActorLocation ( ) , FRotator::ZeroRotator );
-		//}
 	}
 }
 
@@ -454,6 +486,11 @@ void AToolboxBoss::EnterRagdollState ( )
 		GetMesh ( )->bBlendPhysics = true;
 	}
 }
+
+//void AToolboxBoss::ResetEffectTrigger ( )
+//{
+//	bEffectTriggered = false; // 이펙트 플래그 초기화
+//}
 
 void AToolboxBoss::SetAnimState ( ERightArmAnimState NewState )
 {

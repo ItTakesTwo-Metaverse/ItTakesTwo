@@ -108,7 +108,7 @@ public:
 
 	 UFUNCTION()
     void OnMyDrillOverlap (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
+	 UFUNCTION()
 	void EnterRagdollState( );
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -122,6 +122,11 @@ public:
 
 	UPROPERTY ( )
 	class ACSR_P_Player* Player;
-	
+
+	UPROPERTY ( )
+	class AWood	* wood;
+
+	UPROPERTY ( )
+	class UParticleSystem* LockEffect;
 
 };
