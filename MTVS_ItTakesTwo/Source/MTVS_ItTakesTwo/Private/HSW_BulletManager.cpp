@@ -28,17 +28,15 @@ void AHSW_BulletManager::BeginPlay()
 		FName SocketName ( *SocketNameString );
 
 		FTransform t = this->MeshComp->GetSocketTransform ( SocketName );
-		UE_LOG ( LogTemp , Log , TEXT ( "Socket Transform: %s" ) , *t.ToString ( ) );
+		//UE_LOG ( LogTemp , Log , TEXT ( "Socket Transform: %s" ) , *t.ToString ( ) );
 
-		auto* nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory , t,params );
+		Nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory ,params );
 
-		if ( nail )
+		if ( Nail )
 		{
-			nail->SetNailBag(this );
-			nail->AttachToActor ( this , FAttachmentTransformRules::SnapToTargetIncludingScale );
-			nail->SetActorLocation ( t.GetLocation ( ) );
-			nail->SetActorRotation ( t.GetRotation ( ) );
-			Magazine.Add ( nail );
+			Magazine.Add ( Nail );
+			Nail->SetNailBag(this );
+			Nail->NailBasic();
 		}
 		else 
 		{
@@ -58,6 +56,7 @@ void AHSW_BulletManager::Tick(float DeltaTime)
 
 }
 
+//못통에서 못을 꺼낸다.
 AHSW_Bullet* AHSW_BulletManager::NailPop ( FVector v , FRotator r )
 {
 	if ( Magazine.IsEmpty ( ) == true )
@@ -65,9 +64,10 @@ AHSW_Bullet* AHSW_BulletManager::NailPop ( FVector v , FRotator r )
 		UE_LOG( LogTemp , Warning , TEXT ( "NailPush : NailInven_Out is Empty" ) );
 		return nullptr;
 	}
-	AHSW_Bullet* nail = Magazine.Pop ( );
-	Magazine_Out.Push ( nail );
-	return nail;
+	Nail = Magazine.Pop ( );
+	Magazine_Out.Push ( Nail );
+	//GrabbedNail = nail;
+	return Nail;
 }
 
 AHSW_Bullet* AHSW_BulletManager::NailPush ( )
@@ -77,13 +77,13 @@ AHSW_Bullet* AHSW_BulletManager::NailPush ( )
 		UE_LOG ( LogTemp , Warning , TEXT ( "NailPush : NailInven_Out is Empty" ) );
 		return nullptr;
 	}
-	AHSW_Bullet* nail = Magazine_Out.Pop ( );
-	if ( nail == nullptr )
+	Nail = Magazine_Out.Pop ( );
+	if ( Nail == nullptr )
 	{
 		return nullptr;
 	}
-	Magazine.Push ( nail );
-	return nail;
+	Magazine.Push ( Nail );
+	return Nail;
 		// 		// Nail이 들어갈 소켓 이름을 가져온다.
 		// 		FString socketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , Magazine.Num ( )-1);
 		// 		//FString DebugMsg = FString::Printf ( TEXT ( "%d" ) , Magazine.Num() );
@@ -111,3 +111,9 @@ FRotator AHSW_BulletManager::GetNailBagSocketRotation ( )
 	FName SocketName ( *SocketNameString );
 	return MeshComp->GetSocketRotation ( SocketName );
 }
+
+void AHSW_BulletManager::NailArrive ( AHSW_Bullet* nail )
+{
+	Nail = nail;
+}
+
