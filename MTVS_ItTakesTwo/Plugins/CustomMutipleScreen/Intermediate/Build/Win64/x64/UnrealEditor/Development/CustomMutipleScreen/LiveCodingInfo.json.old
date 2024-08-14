@@ -1,0 +1,8 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.CustomMutipleScreen.cpp.obj": [
+			"CustomMutipleScreen.cpp.obj"
+		]
+	}
+}
