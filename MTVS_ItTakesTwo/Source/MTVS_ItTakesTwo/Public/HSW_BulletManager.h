@@ -29,6 +29,8 @@ public:
 	UPROPERTY ( )
 	class AHSW_Bullet* Bullet;
 	UPROPERTY ( )
+	class AHSW_Bullet* GrabbedNail;
+	UPROPERTY ( )
 	TArray<class AHSW_Bullet*> Magazine;
 	UPROPERTY ( )
 	TArray<class AHSW_Bullet*> Magazine_Out;

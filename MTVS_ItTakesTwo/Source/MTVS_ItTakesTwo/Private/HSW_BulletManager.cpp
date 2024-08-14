@@ -56,6 +56,7 @@ void AHSW_BulletManager::Tick(float DeltaTime)
 
 }
 
+//못통에서 못을 꺼낸다.
 AHSW_Bullet* AHSW_BulletManager::NailPop ( FVector v , FRotator r )
 {
 	if ( Magazine.IsEmpty ( ) == true )
@@ -65,6 +66,7 @@ AHSW_Bullet* AHSW_BulletManager::NailPop ( FVector v , FRotator r )
 	}
 	AHSW_Bullet* nail = Magazine.Pop ( );
 	Magazine_Out.Push ( nail );
+	//GrabbedNail = nail;
 	return nail;
 }
 

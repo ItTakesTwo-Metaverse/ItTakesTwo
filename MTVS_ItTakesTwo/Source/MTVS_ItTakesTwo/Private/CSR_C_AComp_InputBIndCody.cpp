@@ -61,7 +61,7 @@ void UCSR_C_AComp_InputBIndCody::ChangeZoomOut ( )
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Not Load" ) );
+		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Not Load" ),  );
 	}
 }
 
@@ -75,6 +75,6 @@ void UCSR_C_AComp_InputBIndCody::ExecBack ( )
 	Nail = this->CodyCharacter_->CodyPileComp->OnMyActionBack ( );
 	if ( Nail )
 	{
-		Nail->NailReturn ( );
+		Nail->SetbIsReturning (true);
 	}
 }

@@ -131,4 +131,10 @@ public:
 	bool bIsShooting;
 	bool bBasic;
 	bool bIsReturning;
+
+	float CurrentTime = 0.f;
+	UPROPERTY(EditDefaultsOnly )
+	float BackTime = 3.f;
+
+	void SetbIsReturning ( bool value );
 };
