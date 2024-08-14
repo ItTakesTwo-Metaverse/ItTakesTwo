@@ -65,37 +65,37 @@ AToolboxBoss::AToolboxBoss ( )
 
 	// 못 상호작용 박스1
 	NailInteractionBox1 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "NailInterationBox1" ) );
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox1Asset ( TEXT ( "/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/target/Target1.Target1'" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox1Asset ( TEXT ( "/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/target/target_Cylinder.target_Cylinder'" ) );
 	if ( NailInteractionBox1Asset.Succeeded ( ) )
 	{
 		NailInteractionBox1->SetStaticMesh ( NailInteractionBox1Asset.Object );
-		NailInteractionBox1->SetupAttachment ( RightArmMesh , TEXT ( "joint20" ) );
-		NailInteractionBox1->SetRelativeLocation ( FVector ( -3684 , -1578 , 578 ) );
-		NailInteractionBox1->SetRelativeScale3D(FVector(1.5,3,1.5));
+		NailInteractionBox1->SetupAttachment ( RightArmMesh , TEXT ( "joint20" ) ); 
+		NailInteractionBox1->SetRelativeLocationAndRotation ( FVector ( -110 , -20 , 0 ), FRotator ( 0 , 0 , 90 ) );
+		NailInteractionBox1->SetRelativeScale3D(FVector( 1.3 , 1.3 ,2));
 		NailInteractionBox1->SetGenerateOverlapEvents ( true );
 		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
 
 	// 못 상호작용 박스2
 	NailInteractionBox2 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "NailInterationBox2" ) );
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/target/target2.target2'" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox2Asset ( TEXT ( "/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/target/target_Cube.target_Cube'" ) );
 	if ( NailInteractionBox2Asset.Succeeded ( ) )
 	{
 		NailInteractionBox2->SetStaticMesh ( NailInteractionBox2Asset.Object );
 		NailInteractionBox2->SetupAttachment ( RightArmMesh , TEXT ( "joint5" ) );
-		NailInteractionBox2->SetRelativeLocationAndRotation ( FVector ( -1145 , -42 , -520 ) , FRotator ( -1 , 0 , -124 ) );
+		NailInteractionBox2->SetRelativeLocationAndRotation ( FVector ( 0.268429 , 3.524717 , 35.329596 ) , FRotator ( 0 , 0 , -184 ) );
 		NailInteractionBox1->SetGenerateOverlapEvents ( true );
 		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
 
 	// 못 상호작용 박스3
 	NailInteractionBox3 = CreateDefaultSubobject<UStaticMeshComponent> ( TEXT ( "NailInterationBox3" ) );
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox3Asset ( TEXT ( "/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/target/Target3.Target3'" ) );
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> NailInteractionBox3Asset ( TEXT ( "/Script/Engine.StaticMesh'/Game/LHM_Boss/BossMeshes/target/target_Cube_001.target_Cube_001'" ) );
 	if ( NailInteractionBox3Asset.Succeeded ( ) )
 	{
 		NailInteractionBox3->SetStaticMesh ( NailInteractionBox3Asset.Object );
 		NailInteractionBox3->SetupAttachment ( RightArmMesh , TEXT ( "joint4" ) );
-		NailInteractionBox3->SetRelativeLocationAndRotation ( FVector ( -1033 , 54 , -254 ) , FRotator ( -12 , -10 , -107 ) );
+		NailInteractionBox3->SetRelativeLocationAndRotation ( FVector ( -272 , 0 , 99.185844 ) , FRotator ( 161 , 0 , 0 ) );
 		NailInteractionBox1->SetGenerateOverlapEvents ( true );
 		NailInteractionBox1->SetCollisionProfileName ( TEXT ( "BossNailInteractionBox" ) );
 	}
