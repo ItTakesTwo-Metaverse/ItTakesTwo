@@ -12,6 +12,7 @@
 #include "Components/SceneComponent.h"
 #include "CSR_MayAnimation.h"
 #include "HSW_Hammer.h"
+#include "SCR_ItTakesTwoGameMode.h"
 
 ACSR_Player_May::ACSR_Player_May ( )
 {

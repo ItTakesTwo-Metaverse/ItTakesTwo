@@ -6,10 +6,57 @@
 #include "CSR_Player_Cody.h"
 #include "CSR_Player_May.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/Engine.h"
+#include "Engine/GameViewportClient.h"
+#include "Engine/LocalPlayer.h"
+#include "CustomGameViewportClient.h"
+#include "TimerManager.h"
+#include "UObject/Object.h"
 
 void ASCR_ItTakesTwoGameMode::InitGame ( const FString& MapName , const FString& Options , FString& ErrorMessage )
 {
 	Super::InitGame(MapName, Options, ErrorMessage	);
+}
+
+ASCR_ItTakesTwoGameMode::ASCR_ItTakesTwoGameMode ( )
+{	
+	
+}
+
+void ASCR_ItTakesTwoGameMode::SetMayDie ( bool flag )
+{
+	this->MayDie = flag;
+	ChangeMaps ();
+}
+
+void ASCR_ItTakesTwoGameMode::SetCodyDie ( bool flag )
+{
+	this->CodyDie = flag;
+	ChangeMaps ();
+}
+
+void ASCR_ItTakesTwoGameMode::ChangeMaps ( )
+{
+	if ( !this->MayDie && !this->CodyDie ) {
+		this->MayCodyAllAliveMap();
+	}
+	else if ( this->MayDie && this->CodyDie ) {
+		this->MayCodyAllDieMap();
+	}
+	else if ( this->MayDie ) {
+		this->MayDieMap();
+	}
+	else if ( this->CodyDie ) {
+		this->CodyDieMap();
+	}
+	else {
+		this->CutSinMap();
+	}
+}
+
+UCustomGameViewportClient* ASCR_ItTakesTwoGameMode::GetCustomViewportClient ( )
+{
+	return (this->CustomViewportClient);
 }
 
 void ASCR_ItTakesTwoGameMode::BeginPlay()
@@ -48,5 +95,7 @@ void ASCR_ItTakesTwoGameMode::BeginPlay()
 	}
 	// P2을 컨트롤러와 연결합니다.
 	P2->Possess ( this->P2_Cody );
-
+	this->P1_May->GetMapMode ( this );
+	this->P2_Cody->GetMapMode(this);
+	this->CustomViewportClient = Cast<UCustomGameViewportClient> ( GetWorld ( )->GetGameViewport ( ) );
 }
