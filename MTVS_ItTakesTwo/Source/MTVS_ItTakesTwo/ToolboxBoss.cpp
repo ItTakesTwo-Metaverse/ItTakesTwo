@@ -20,6 +20,8 @@
 #include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 #include "LockHP.h"
 #include "Components/WidgetComponent.h"
+#include "Components/PrimitiveComponent.h"
+#include "Components/SphereComponent.h"
 
 
 
@@ -226,11 +228,11 @@ void AToolboxBoss::BeginPlay ( )
 	{
 		DrillCircleAnim = Cast<UDrillCircleAnimInstance> ( DrillCircle->GetAnimInstance ( ) );
 	}
-
+	
 	// 오른팔 충돌
 	RightArmMesh->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyBossBeginOverlap );
 	// 못 상호작용 박스 충돌
-	NailInteractionBox1->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyNailInteractionBoxBeginOverlap );
+	NailInteractionBox1->OnComponentHit.AddDynamic( this , &AToolboxBoss::OnMyTargetBoxHit );
 	// 자물쇠 충돌
 	LockBody1->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyLockBeginOverlap );
 	LockBody2->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyLockBeginOverlap );
@@ -243,7 +245,8 @@ void AToolboxBoss::BeginPlay ( )
 	Lock1HPWidget = Cast<ULockHP> ( Lock1HPBarComp->GetUserWidgetObject ( ) );
 	Lock2HPWidget = Cast<ULockHP> ( Lock2HPBarComp->GetUserWidgetObject ( ) );
 
-
+	Lock1HP = Lock1MaxHP;
+	Lock2HP = Lock2MaxHP;
 	// 체력 UI를 Full로 채우고싶다.
 	// 위젯이 올바르게 초기화되었는지 확인
 	if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
@@ -294,19 +297,33 @@ void AToolboxBoss::OnMyBossBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 
 }
 
-void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
+void AToolboxBoss::OnMyTargetBoxHit ( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit )
 {
-	// 플레이어의 못이 보스의 오른팔 상호작용 박스에 충돌했을 때 보스 일시정지 상태로 전이
 	if ( OtherActor->IsA<AHSW_Bullet> ( ) )
 	{
 		if ( fsm->CurrentState == EBossState::Attack1 )
 		{
-			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "OnMyNailInteractionBoxBeginOverlap" ) );
-			UE_LOG ( LogTemp , Warning , TEXT ( "OnMyNailInteractionBoxBeginOverlap" ) );
+			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "Nail Hit TargetBox" ) );
+			UE_LOG ( LogTemp , Warning , TEXT ( "Nail Hit TargetBox" ) );
 			fsm->ChangeState ( EBossState::Paused );
 		}
 	}
 }
+
+
+//void AToolboxBoss::OnMyNailInteractionBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
+//{
+//	// 플레이어의 못이 보스의 오른팔 상호작용 박스에 충돌했을 때 보스 일시정지 상태로 전이
+//	if ( OtherActor->IsA<AHSW_Bullet> ( ) )
+//	{
+//		if ( fsm->CurrentState == EBossState::Attack1 )
+//		{
+//			GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Blue , TEXT ( "OnMyNailInteractionBoxBeginOverlap" ) );
+//			UE_LOG ( LogTemp , Warning , TEXT ( "OnMyNailInteractionBoxBeginOverlap" ) );
+//			fsm->ChangeState ( EBossState::Paused );
+//		}
+//	}
+//}
 
 void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
@@ -318,7 +335,7 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 			//FString HPTEXT = FString::Printf(TEXT("%d" ), Lock1HP );
 			//GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Yellow , HPTEXT );
 			Lock1MaxHP -= damage;
-			Lock1HP = Lock1MaxHP;
+			//Lock1HP = Lock1MaxHP;
 			//if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
 			bCanDamage = false;
 
@@ -340,7 +357,7 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 		else if ( fsm->bIsAttack2 ) //else if ( Lock1HP <= 0 && Lock2HP > 0 )
 		{
 			Lock2MaxHP -= damage;
-			Lock2HP = Lock2MaxHP;
+			//Lock2HP = Lock2MaxHP;
 			//if(Lock2HPWidget ) { Lock2HPWidget->SetHPBar ( Lock2HP , Lock2MaxHP ); }
 			
 			if ( Lock2HP <= 0 )
