@@ -80,9 +80,18 @@ void ACSR_Player_Cody::MakeEnhancedInputLocalSubSystem()
 	
 }
 
+void ACSR_Player_Cody::ChangeCharacterColor_Implementation ( )
+{
+
+}
+
 void ACSR_Player_Cody::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (this->flag1 ) {
+		this->ChangeCharacterColor();
+		this->flag1 = false;
+	}
 }
 
 void ACSR_Player_Cody::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

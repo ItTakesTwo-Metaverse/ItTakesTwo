@@ -72,11 +72,14 @@ public:
 	float DieTime = 3.0f;
 	
 	UPROPERTY ( EditDefaultsOnly , Category = "ModifyAble" )
-	float INVItime = 1.0f;
+	float INVItime = 100.0f;
+	
+
+	UPROPERTY ( EditDefaultsOnly , Category = "ModifyAble" )
+	class UNiagaraSystem* NiagaraEffect;
 
 	UPROPERTY( )
 	int32 PlayerIndex;
-	
 
 	void Setting( );
 
@@ -86,6 +89,8 @@ public:
 	void fallingUnder( );
 	
 	void OnDamaged(int32 Damage);
+
+	bool flag1 = false;
 
 #pragma endregion ComponentSetting
 

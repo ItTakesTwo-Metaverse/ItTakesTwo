@@ -268,7 +268,7 @@ void UToolBoxBossFSM::Attack2State( const float& DeltaTime )
 }
 
 void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
-{
+{	
 	AttackTimer += DeltaTime;
 
 	if ( !bIsAttack3 )
@@ -280,10 +280,6 @@ void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
 
 		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillOffTimerHandle , this , &UToolBoxBossFSM::DrillOff , 10.5f , false );
 		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillArmOffTimerHandle , this , &UToolBoxBossFSM::DrillArmOff , 9.2f , false );
-
-		GetWorld()->GetTimerManager().SetTimer(WoodRotationTimerHandle, this, & UToolBoxBossFSM::Attack3WoodRotation , 1.f , false );
-	
-		
 
 		bIsAttack3 = true;
 	}
@@ -350,28 +346,24 @@ void UToolBoxBossFSM::DieState ( const float& DeltaTime )
 
 void UToolBoxBossFSM::DrillOn ( )
 {
-	me->Drill->SetVisibility ( true );
-	me->DrillCircle->SetVisibility ( true );
+	me->Drill->SetHiddenInGame ( false );
+	me->DrillCircle->SetHiddenInGame ( false );
 }
 
 void UToolBoxBossFSM::DrillOff ( )
 {
-	me->Drill->SetVisibility ( false );
-	me->DrillCircle->SetVisibility ( false );
+	me->Drill->SetHiddenInGame ( true );
+	me->DrillCircle->SetHiddenInGame ( true );
 }
 
 void UToolBoxBossFSM::DrillArmOn ( )
 {
-	me->DrillArms->SetVisibility ( true );
+	me->DrillArms->SetHiddenInGame ( false );
 }
 
 void UToolBoxBossFSM::DrillArmOff ( )
 {
-	me->DrillArms->SetVisibility ( false );
+	me->DrillArms->SetHiddenInGame ( true );
 }
 
-void UToolBoxBossFSM::Attack3WoodRotation ( )
-{
-	//wood->SetRootComponent
-}
 
