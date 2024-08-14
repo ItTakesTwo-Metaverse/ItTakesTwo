@@ -66,6 +66,8 @@ public:
 	float Lock2HP = 5;
 	float damage = 1;
 
+	bool bCanDamage=true;
+
 
 	FTimerHandle Lock1DestroyTimerHandle;
 	FTimerHandle Lock2DestroyTimerHandle;

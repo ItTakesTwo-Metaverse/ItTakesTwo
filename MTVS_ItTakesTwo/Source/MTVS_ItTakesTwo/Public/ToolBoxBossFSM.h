@@ -116,5 +116,4 @@ public:
 	void DrillArmOn ( );
 	void DrillArmOff ( );
 
-	void Attack3WoodRotation ( );
 };

@@ -67,4 +67,5 @@ public:
 	bool CanAddReBorn ( );
 	bool CanAddIniv ( );
 	bool CanAddAttack ( );
+	bool CanAddDamaged ( );
 };

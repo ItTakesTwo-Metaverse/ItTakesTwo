@@ -48,5 +48,8 @@ public:
 	UPROPERTY(EditDefaultsOnly )
 	class USceneComponent *NailBagLocation;
 
+	UFUNCTION(BlueprintNativeEvent )
+	void ChangeCharacterColor( );
+
 #pragma endregion PileMovement;
 };

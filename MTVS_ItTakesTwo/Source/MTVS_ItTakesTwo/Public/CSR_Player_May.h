@@ -41,5 +41,8 @@ public:
 
 	FVector HammerPlayerSocketLotation;
 
+	UFUNCTION(BlueprintNativeEvent )
+	void ChangeCharacterColor( );
+
 #pragma endregion
 };
