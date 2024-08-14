@@ -437,6 +437,7 @@ void AHSW_Bullet::NailReturn ( )
 		this->DetachFromActor ( FDetachmentTransformRules::KeepWorldTransform );
 	}
 	
+	NailBag->NailArrive ( this );
 	bIsShooting = false;
 
 	SetState ( ENailState::RETURNING );
