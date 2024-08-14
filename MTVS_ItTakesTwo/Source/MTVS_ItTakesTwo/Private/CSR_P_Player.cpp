@@ -168,6 +168,7 @@ void ACSR_P_Player::OnDamaged ( int32 Damage )
 			this->CharacterStateMannageComp->AddState ( DIE );
 		}
 		else {
+			this->flag1 = true;
 			this->CharacterStateMannageComp->AddState ( INVI );
 			this->CharacterStateMannageComp->RemoveState ( DAMAGED );
 		}

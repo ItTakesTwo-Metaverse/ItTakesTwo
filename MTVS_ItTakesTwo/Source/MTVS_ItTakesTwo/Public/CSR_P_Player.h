@@ -80,7 +80,6 @@ public:
 
 	UPROPERTY( )
 	int32 PlayerIndex;
-	
 
 	void Setting( );
 
@@ -90,6 +89,8 @@ public:
 	void fallingUnder( );
 	
 	void OnDamaged(int32 Damage);
+
+	bool flag1 = false;
 
 #pragma endregion ComponentSetting
 
