@@ -337,8 +337,9 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 				UGameplayStatics::SpawnEmitterAtLocation ( GetWorld ( ) , LockEffect , LockBody1->GetComponentLocation() , FRotator::ZeroRotator );
 			}
 
-			Lock1MaxHP -= damage;
-			Lock1HP = Lock1MaxHP;
+			
+			Lock1HP -= damage;
+			if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
 			
 			bCanDamage = false;
 			UE_LOG ( LogTemp , Warning , TEXT ( "%f" ), Lock1HP );
@@ -354,14 +355,15 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 				LockBody1->bBlendPhysics = true;
 
 				Lock1HPBarComp->DetachFromComponent( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+				Lock1HPBarComp->SetVisibility(false);
 
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock1DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
 			}
 		}
 		else if ( fsm->bIsAttack2 ) //else if ( Lock1HP <= 0 && Lock2HP > 0 )
 		{
-			Lock2MaxHP -= damage;
-			Lock2HP = Lock2MaxHP;
+			Lock2HP -= damage;
+			if ( Lock2HPWidget ) { Lock2HPWidget->SetHPBar ( Lock2HP , Lock2MaxHP ); }
 			
 			if ( Lock2HP <= 0 )
 			{
@@ -374,6 +376,7 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 				LockBody2->bBlendPhysics = true;
 
 				Lock2HPBarComp->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+				Lock2HPBarComp->SetVisibility ( false );
 
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock2DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
 			}

@@ -1,0 +1,15 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\projects\\unreal\\ittakestwo\\mtvs_ittakestwo\\plugins\\custommutiplescreen\\intermediate\\build\\win64\\unrealeditor\\inc\\custommutiplescreen\\uht\\customgameviewportclient.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\projects\\unreal\\ittakestwo\\mtvs_ittakestwo\\intermediate\\build\\win64\\x64\\mtvs_ittakestwoeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "c:\\projects\\unreal\\ittakestwo\\mtvs_ittakestwo\\plugins\\custommutiplescreen\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\custommutiplescreen\\definitions.custommutiplescreen.h",
+            "c:\\projects\\unreal\\ittakestwo\\mtvs_ittakestwo\\plugins\\custommutiplescreen\\source\\custommutiplescreen\\public\\customgameviewportclient.h",
+            "c:\\projects\\unreal\\ittakestwo\\mtvs_ittakestwo\\plugins\\custommutiplescreen\\intermediate\\build\\win64\\unrealeditor\\inc\\custommutiplescreen\\uht\\customgameviewportclient.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

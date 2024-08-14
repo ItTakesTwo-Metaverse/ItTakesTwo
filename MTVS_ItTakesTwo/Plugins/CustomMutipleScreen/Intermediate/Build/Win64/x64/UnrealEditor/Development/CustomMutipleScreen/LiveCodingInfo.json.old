@@ -2,6 +2,9 @@
 	"RemapUnityFiles": 
 	{
 		"Module.CustomMutipleScreen.cpp.obj": [
+			"CustomGameViewportClient.gen.cpp.obj",
+			"CustomMutipleScreen.init.gen.cpp.obj",
+			"CustomGameViewportClient.cpp.obj",
 			"CustomMutipleScreen.cpp.obj"
 		]
 	}
