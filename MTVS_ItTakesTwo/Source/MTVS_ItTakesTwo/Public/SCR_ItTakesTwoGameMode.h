@@ -19,6 +19,8 @@ protected:
 
 	virtual void BeginPlay() override;
 public:
+	ASCR_ItTakesTwoGameMode ();
+
 // 소환할 캐릭터들 블루프린트 등록.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ModifyAble" )
 	TSubclassOf<class ACSR_Player_Cody> SpawnCody;
@@ -26,9 +28,48 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ModifyAble" )
 	TSubclassOf<class ACSR_Player_May> SpawnMay;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite )
+	class UCustomGameViewportClient * CustomViewportClient;
+
 // 소환한 캐릭터들 저장.
 	class ACSR_Player_Cody *P2_Cody;
 
 	class ACSR_Player_May *P1_May;
 
+	void SetMayDie( bool flag );
+
+	void SetCodyDie( bool flag );
+
+	bool MayDie = false;
+
+	bool CodyDie = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
+	float view33 = 0.33f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
+	float view66 = 0.66f;
+
+	void ChangeMaps( );
+
+	UFUNCTION(BlueprintCallable )
+	class UCustomGameViewportClient* GetCustomViewportClient ();
+
+
+	UFUNCTION(BlueprintImplementableEvent )
+	void CodyDieMap( );
+
+	UFUNCTION(BlueprintImplementableEvent )
+	void MayDieMap( );
+
+	UFUNCTION(BlueprintImplementableEvent )
+	void MayCodyAllDieMap( );
+
+	UFUNCTION ( BlueprintImplementableEvent )
+	void MayCodyAllAliveMap( );
+
+	UFUNCTION ( BlueprintImplementableEvent )
+	void CutSinMap( );
+
 };
+

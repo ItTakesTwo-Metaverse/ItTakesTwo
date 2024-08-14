@@ -27,7 +27,9 @@ public:
 	class UStaticMeshComponent* MeshComp;
 
 	UPROPERTY ( )
-	class AHSW_Bullet* Bullet;
+	class AHSW_Bullet* Nail;
+	UPROPERTY ( )
+	class AHSW_Bullet* GrabbedNail;
 	UPROPERTY ( )
 	TArray<class AHSW_Bullet*> Magazine;
 	UPROPERTY ( )
@@ -45,4 +47,6 @@ public:
 
 	FVector GetNailBagSocketLocation ( );
 	FRotator GetNailBagSocketRotation ( );
+
+	void NailArrive ( AHSW_Bullet* nail );
 };

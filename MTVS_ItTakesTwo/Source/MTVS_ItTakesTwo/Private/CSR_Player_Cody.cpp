@@ -18,6 +18,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CSR_P_AComp_CharicStateMannage.h"
 #include "Animation/AnimInstance.h"
+#include "SCR_ItTakesTwoGameMode.h"
 
 ACSR_Player_Cody::ACSR_Player_Cody ( )
 {
@@ -89,8 +90,10 @@ void ACSR_Player_Cody::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if (this->flag1 ) {
+		//this->ItTakesMap->SetCodyDie(true);
 		this->ChangeCharacterColor();
 		this->flag1 = false;
+
 	}
 }
 
@@ -117,4 +120,3 @@ void ACSR_Player_Cody::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 
 }
-
