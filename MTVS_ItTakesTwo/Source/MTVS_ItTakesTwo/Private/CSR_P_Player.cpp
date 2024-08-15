@@ -22,6 +22,7 @@
 #include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 #include "../../../../Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraSystem.h"
 #include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
+#include "SCR_ItTakesTwoGameMode.h"
 
 // Sets default values
 ACSR_P_Player::ACSR_P_Player()
@@ -175,9 +176,13 @@ void ACSR_P_Player::OnDamaged ( int32 Damage )
 	}
 }
 
+void ACSR_P_Player::GetMapMode ( ASCR_ItTakesTwoGameMode* map )
+{
+	this->ItTakesMap = map;
+}
+
 void ACSR_P_Player::SecondJumpToOtherComp ( )
 {
 	this->CharicMovementComp->InitSecondJump ();
 }
 
-//void AEnemyActor::OnMyBoxBeginOverLap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )

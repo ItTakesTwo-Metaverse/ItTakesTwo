@@ -92,6 +92,11 @@ public:
 
 	bool flag1 = false;
 
+	void GetMapMode(class ASCR_ItTakesTwoGameMode *map );
+
+	UPROPERTY ( EditDefaultsOnly)
+	ASCR_ItTakesTwoGameMode* ItTakesMap;
+
 #pragma endregion ComponentSetting
 
 #pragma region
