@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "CSR_IttakesTwoMainUi.generated.h"
+#include "CSR_CodyUI.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MTVS_ITTAKESTWO_API UCSR_IttakesTwoMainUi : public UUserWidget
+class MTVS_ITTAKESTWO_API UCSR_CodyUI : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION(BlueprintImplementableEvent )
-	void Damaged(float CurHP, float MaxHP );
+	UFUNCTION(BlueprintCallable )
+	float TakeDamage ( float CurHP , float MaxHP );
 };
