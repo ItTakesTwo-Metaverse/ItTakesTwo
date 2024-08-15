@@ -113,6 +113,7 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 	else
 	{
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Unembedded" ) );
+		//NailBag->NailOutPush ( this );
 		SetState(ENailState::UNEMBEDDED);
 	}
 }
@@ -147,7 +148,8 @@ void AHSW_Bullet::TickLoad ( const float& DeltaTime )
 // 	SocketTransform = Player->FindComponentByClass<USkeletalMeshComponent> ( )->GetSocketTransform ( SocketName );
 // 	SetActorLocation ( SocketTransform.GetLocation ( ) );
 // 	SetActorRotation ( SocketTransform.GetRotation ( ) );
-
+	
+	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , this->GetName ( ));
 	//SetActorLocation ( Cast<ACSR_Player_Cody> ( Player )->ArrowComp->GetComponentLocation ( ) );
 	//SetActorRotation ( Cast<ACSR_Player_Cody> ( Player )->ArrowComp->GetComponentRotation ( ) );
 	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , FString::Printf(TEXT ( " % f % f % f " ) , this->GetActorLocation ( ).X , this->GetActorLocation ( ).Y , this->GetActorLocation ( ).Z ));
@@ -229,6 +231,7 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 
 	// To Do
 	// 플레이어에게 돌아가고싶다
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Magenta , this->GetName ( ) );
 	Distance = (Player->GetActorLocation() - this->GetActorLocation ( )).Size();
 	SetActorLocation ( FMath::Lerp ( this->GetActorLocation ( ) , Player->GetActorLocation ( ) , 0.1 ));
 
@@ -242,6 +245,7 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	if ( Distance < NailDefaultDist )
 	{
 	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "End" ) );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Auto Return" ) );
 		NailBag->NailPush ( this );
 // 		bIsReturning = false;
 		// Basic상태로 변경.
@@ -279,6 +283,7 @@ void AHSW_Bullet::SetState ( ENailState NextState)
 		break;
 
 	case ENailState::SHOOT:
+		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Magenta , this->GetName ( ) );
 		CurrentTime = 0;
 		BoxComp->SetCollisionEnabled ( ECollisionEnabled::QueryAndPhysics );
 

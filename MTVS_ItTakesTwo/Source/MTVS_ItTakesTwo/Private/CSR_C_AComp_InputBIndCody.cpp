@@ -35,11 +35,12 @@ void UCSR_C_AComp_InputBIndCody::SetupInputComponent ( class UEnhancedInputCompo
 void UCSR_C_AComp_InputBIndCody::ChangeZoomIn ( )
 {
 	Nail = this->CodyCharacter_->CodyPileComp->NailBag->NailPop ( );
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Green , Nail->GetName());
 	if ( Nail == nullptr ) {
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Zoom In Nail NULL" ));
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Zoom In: Nail NULL" ));
 		return;
 	}
-	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "1234" ) );
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Zoom In: Nail Vaild" ) );
 	this->CodyCharacter_->CameraComp->bUsePawnControlRotation = true;
 	this->CodyCharacter_->bUseControllerRotationYaw = true;
 	this->CodyCharacter_->CodyPileComp->ToggleButton ( true );
@@ -56,18 +57,29 @@ void UCSR_C_AComp_InputBIndCody::ChangeZoomOut ( )
 
 	if ( Nail == nullptr )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Zoom Out Nail NULL" ) );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Zoom Out: Nail NULL" ) );
 		return;
 	}
 
 	//this->CodyCharacter_->CodyPileComp->NailBag->NailPush (Nail);
-	NailBag->NailPush ( Nail );
-	Nail->SetState ( ENailState::BASIC );
+
+	if ( Nail->State == ENailState::LOAD )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Zoomout Return" ) );
+		NailBag->NailPush ( Nail );
+		Nail->SetState ( ENailState::BASIC );
+		Nail = nullptr;
+	}
 }
 
 void UCSR_C_AComp_InputBIndCody::ExecFIre ( )
 {
-	Nail = this->CodyCharacter_->CodyPileComp->NailBag->NailPop ( );
+	//Nail = GrabbedNail;
+	if ( Nail == nullptr )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Can't ExecFire" ) );
+		return;
+	}
 	this->CodyCharacter_->CodyPileComp->OnMyActionFire ( this->CodyCharacter_->ArrowComp->GetComponentLocation ( ) , this->CodyCharacter_->GetActorRotation ( ));
 }
 

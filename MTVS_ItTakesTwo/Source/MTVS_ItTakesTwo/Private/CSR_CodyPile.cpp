@@ -230,6 +230,7 @@ FVector UCSR_CodyPile::LayCasting ( )
 void UCSR_CodyPile::OnMyActionFire ( FVector startLocation , FRotator startRotation )
 {
 	this->Nail = Cast<ACSR_Player_Cody> ( GetOwner ( ) )->KeyBindComponent->Nail;
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Emerald , Nail->GetName ( ) );
 	UE_LOG ( LogTemp , Warning , TEXT ( "OnMyActionFire" ) );
 	if ( this->Nail == nullptr )
 	{	
@@ -238,7 +239,7 @@ void UCSR_CodyPile::OnMyActionFire ( FVector startLocation , FRotator startRotat
 	}
 
 	FVector target = LayCasting ( );
-	UE_LOG(LogTemp, Error, TEXT("%f %f %f"), target.X, target.Y, target.Z);
+	//UE_LOG(LogTemp, Error, TEXT("%f %f %f"), target.X, target.Y, target.Z);
 	if ( target == FVector::Zero ( ) ) {
 		UE_LOG ( LogTemp , Warning , TEXT ( "No target" ) );
 		return;

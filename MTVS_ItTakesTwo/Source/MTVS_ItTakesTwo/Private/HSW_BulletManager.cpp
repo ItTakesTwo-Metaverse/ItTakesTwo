@@ -53,6 +53,8 @@ void AHSW_BulletManager::BeginPlay()
 void AHSW_BulletManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	GEngine->AddOnScreenDebugMessage ( -1 , 0.01f , FColor::Cyan , FString::Printf ( TEXT ( "%d" ) , Magazine.Num ( ) ) );
 }
 
 //못통에서 못을 꺼낸다.
@@ -60,11 +62,14 @@ AHSW_Bullet* AHSW_BulletManager::NailPop ( )
 {
 	if ( Magazine.IsEmpty ( ) == true )
 	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Nail Pop: Magazine is Empty" ) );
 		UE_LOG( LogTemp , Warning , TEXT ( "NailPush : NailInven_Out is Empty" ) );
 		return nullptr;
 	}
 
+	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , FString::Printf(TEXT(  "%d" ),Magazine.Num()) );
 	Nail = Magazine.Pop ( );
+	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , FString::Printf ( TEXT ( "%d" ) , Magazine.Num ( ) ) );
 	//Magazine_Out.Push ( Nail );
 	return Nail;
 }
@@ -73,12 +78,14 @@ void AHSW_BulletManager::NailPush ( AHSW_Bullet* currentNail )
 {
 	if ( Magazine.Num() > 3 )
 	{
-		UE_LOG ( LogTemp , Warning , TEXT ( "Nail Full" ) );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Nail Push: Magazine is Full" ) );
+		UE_LOG ( LogTemp , Warning , TEXT ( "Nail Push: Magazine is Full" ) );
 		return;
 	}
 	if ( currentNail != nullptr )
 	{
-		Magazine.Push ( Nail );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , currentNail->GetName ( ) );
+		Magazine.Push ( currentNail );
 	}
 }
 
@@ -91,7 +98,7 @@ AHSW_Bullet* AHSW_BulletManager::NailOutPop ( )
 {
 	if ( Magazine_Out.IsEmpty ( ) == true )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ("NailOutPop : Magazine_Out is Empty"  ) );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ("NailOutPop : Magazine_Out is Empty"  ) );
 		return nullptr;
 	}
 
