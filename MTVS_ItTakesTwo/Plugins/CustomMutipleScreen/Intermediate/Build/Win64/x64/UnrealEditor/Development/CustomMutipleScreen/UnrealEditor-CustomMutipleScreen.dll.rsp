@@ -37,8 +37,6 @@
 /FUNCTIONPADMIN:6
 "C:\Projects\Unreal\ItTakesTwo\MTVS_ItTakesTwo\Intermediate\Build\Win64\x64\MTVS_ItTakesTwoEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
 "C:\Projects\Unreal\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\Module.CustomMutipleScreen.cpp.obj"
-"C:\Projects\Unreal\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\CustomGameViewportClient.gen.cpp.obj"
-"C:\Projects\Unreal\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\CustomMutipleScreen.init.gen.cpp.obj"
 "C:\Projects\Unreal\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\Default.rc2.res"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\CoreUObject\UnrealEditor-CoreUObject.lib"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\InputCore\UnrealEditor-InputCore.lib"
