@@ -51,7 +51,7 @@ void UCSR_P_AComp_CharicJump::Setting ( )
 {
 	this->CharacterStateComp->JumpZVelocity = this->FirstJumpZVelocity;
 	this->Character_->JumpMaxHoldTime = JumpMaxHoldT;
-	this->Character_->JumpMaxCount = 2;
+	this->Character_->JumpMaxCount = 10;
 }
 
 // input 점프가 들어오면 발생하는 함수

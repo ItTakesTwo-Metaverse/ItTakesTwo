@@ -53,7 +53,7 @@ void AHSW_Hammer::BeginPlay()
 void AHSW_Hammer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, FString::Printf(TEXT("bCanHanging: %d"), bCanHanging));
 	//나사로 이동중이라면
 	if ( bMoveToNail )
 	{
@@ -63,7 +63,7 @@ void AHSW_Hammer::Tick(float DeltaTime)
 	//매달려 있다면
 	else if ( bIsHanging )
 	{
-	//계속해서 진자운동 하고싶다.
+		//계속해서 진자운동 하고싶다.
 		HammerRotation( DeltaTime );
 		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Rotating" ) );
 	}
@@ -88,8 +88,9 @@ void AHSW_Hammer::OnMyBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent
 	if ( bullet )
 	{
 		bCanHanging = true;
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "bullet exist" ) );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Cyan, TEXT ( "Bullet Overlap" ) );
 	}
+
 }
 
 void AHSW_Hammer::OnMyBoxEndOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex )
@@ -98,23 +99,22 @@ void AHSW_Hammer::OnMyBoxEndOverlap ( UPrimitiveComponent* OverlappedComponent ,
 	if ( Cast<AHSW_Bullet> ( OtherActor ) == bullet )
 	{
 		bCanHanging = false;
-		bullet = nullptr;
+		//bullet = nullptr;
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Magenta , TEXT ( "Overlap End" ) );
 // 		if ( (bMoveToNail == true && bIsHanging == false) || (bMoveToNail == false && bIsHanging == true) )
 // 		{
 // 			GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "bullet null" ) );
 // 		}
 	}
-	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
 		
 }
 
 void AHSW_Hammer::ClickToMove ( )
 {
-	if ( bCanHanging )
-	{
-		bMoveToNail = true;
-		bCanHanging = false;
-	}
+
+	bMoveToNail = true;
+	bCanHanging = false;
+
 }
 
 void AHSW_Hammer::MoveToNail ( float deltatime)
@@ -125,11 +125,11 @@ void AHSW_Hammer::MoveToNail ( float deltatime)
 		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , FString::Printf ( TEXT ( "invoke" ) ) );
 		FVector currentLocation = this->GetActorLocation ( );
 		FVector nailLocation = bullet->GetActorLocation ( );
-		FString testString = FString::Printf ( TEXT ( "%f, %f, %f" ) , nailLocation.X , nailLocation.Y , nailLocation.Z );
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , testString);
+		//FString testString = FString::Printf ( TEXT ( "%f, %f, %f" ) , nailLocation.X , nailLocation.Y , nailLocation.Z );
+		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , testString);
 		float distance = ( nailLocation - currentLocation).Size ( );
 		FVector dir = (nailLocation-currentLocation).GetSafeNormal();
-		SetActorLocation ( FMath::Lerp ( currentLocation , nailLocation , 0.05f ));
+		SetActorLocation ( FMath::Lerp ( currentLocation , nailLocation , 0.5f ));
 		//SetActorLocation ( currentLocation + dir * 500.f * deltatime );
 
 		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , FString::Printf(TEXT ( "%f" ),distance ));
@@ -140,11 +140,15 @@ void AHSW_Hammer::MoveToNail ( float deltatime)
 			bMoveToNail = false;
 			GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Attach!" ) );
 
-			//소켓의 위치와 회전을 가져온다.
-			FTransform SocketTransform = bullet->MeshComp->GetSocketTransform ( TEXT ( "AttachingPoint" ) );
+			SocketTransform = bullet->MeshComp->GetSocketTransform(TEXT("AttachingPoint"));
+			SetActorLocation(SocketTransform.GetLocation());
+			//SetActorRotation(FRotator(45,45,45));
 
+			//소켓의 위치와 회전을 가져온다.
+			//FTransform SocketTransform = bullet->MeshComp->GetSocketTransform ( TEXT ( "AttachingPoint" ) );
+
+			// 해머를 bullet에 Attach 한다.
 			//this->AttachToActor( bullet, FAttachmentTransformRules::SnapToTargetNotIncludingScale , TEXT ( "AttachingPoint" ) );
-			this->AttachToActor( bullet, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT ( "AttachingPoint" ) );
 
 			//this->SetActorLocation ( SocketTransform.GetLocation ( ) );
 			//this->SetActorRotation ( SocketTransform.GetRotation());
@@ -174,17 +178,22 @@ void AHSW_Hammer::AttachHammerToNail ( )
 void AHSW_Hammer::DetachHammerFromNail ( )
 {
 	bIsHanging = false;
-	if ( bullet )
+	if ( IsAttachedTo(bullet) )
 	{
-		MeshComp->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+		//BoxComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		//auto* otherSceneComp = may->GetComponentByClass<USceneComponent> ( );
 		//SetActorLocation ( otherSceneComp->GetComponentLocation ( ) );
 
 // 		FString testString = FString::Printf ( TEXT ( "%f, %f, %f" ) , otherSceneComp->GetComponentLocation ( ).X , otherSceneComp->GetComponentLocation ( ).Y , otherSceneComp->GetComponentLocation ( ).Z );
-// 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , testString );
-		
+
+//		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Emerald, TEXT("Bullet Detached.."));
 
 	}
+
+// 	else
+// 	{
+// 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Emerald, TEXT("Bullet Not Attached.."));
+// 	}
 }
 
 void AHSW_Hammer::HammerRotation (float DeltaTime )
@@ -192,9 +201,9 @@ void AHSW_Hammer::HammerRotation (float DeltaTime )
 	//현재 매쉬의 위치 가져오기
 	//FVector CurrentLocation = MeshComp->GetComponentLocation ( );
 	CurrentTime += DeltaTime;
-	float Angle = Amplitude * FMath::Sin ( CurrentTime * Frequency * 2.0f * PI );
+	float Angle = Amplitude * FMath::Sin ( CurrentTime * Frequency * 1.5f * PI );
 
-	FRotator newRotation = FRotator( 0.0f , 0.0f , Angle);
+	newRotation = FRotator( 0.0f , 110.0f , Angle) ;
 	this->SetActorRelativeRotation ( newRotation );
 	//MeshComp->SetRelativeRotation ( newRotation );
 }

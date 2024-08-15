@@ -34,6 +34,10 @@ public:
 
 	UPROPERTY( )
 	class AHSW_Player_May* may;
+
+	FTransform SocketTransform;
+
+	FRotator newRotation;
 	
 	//UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	//class USkeletalMeshComponent* HammerMesh;
