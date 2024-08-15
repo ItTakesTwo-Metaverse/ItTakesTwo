@@ -126,6 +126,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartCinematic();
 
+	UPROPERTY()
+	class UParticleSystem* LockEffect;
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//class ASCR_ItTakesTwoGameMode *GMMode;
 };

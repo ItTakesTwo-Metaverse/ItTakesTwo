@@ -27,6 +27,7 @@
 #include "LevelSequenceActor.h"
 #include "SCR_ItTakesTwoGameMode.h"
 #include "CSR_FunctionLib.h"
+#include "Particles/ParticleSystem.h"
 
 
 
@@ -222,7 +223,11 @@ AToolboxBoss::AToolboxBoss ( )
 	// FSM 컴포넌트 추가
 	fsm = CreateDefaultSubobject<UToolBoxBossFSM> ( TEXT ( "FSM" ) );
 
-
+	ConstructorHelpers::FObjectFinder<UParticleSystem> LockEffectObj(TEXT("/Game/JBY/effect/P_Lock_Sparks.P_Lock_Sparks"));
+	if (LockEffectObj.Succeeded())
+	{
+		this->LockEffect = LockEffectObj.Object;
+	}
 }
 // Called when the game starts or when spawned
 void AToolboxBoss::BeginPlay ( )
@@ -341,11 +346,14 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	{	
 		if ( bCanDamage == true && Lock1HP > 0 )
 		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LockEffect, LockBody1->GetComponentLocation(), FRotator::ZeroRotator);
+
 			//FString HPTEXT = FString::Printf(TEXT("%d" ), Lock1HP );
 			//GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Yellow , HPTEXT );
 			Lock1HP -= damage;
 			//Lock1HP = Lock1MaxHP;
 			if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
+
 			bCanDamage = false;
 
 			if ( Lock1HP <= 0 )
@@ -366,6 +374,7 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 		}
 		else if ( fsm->bIsAttack2 ) //else if ( Lock1HP <= 0 && Lock2HP > 0 )
 		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LockEffect, LockBody2->GetComponentLocation(), FRotator::ZeroRotator);
 			Lock2HP -= damage;
 			//Lock2HP = Lock2MaxHP;
 			if(Lock2HPWidget ) { Lock2HPWidget->SetHPBar ( Lock2HP , Lock2MaxHP ); }
