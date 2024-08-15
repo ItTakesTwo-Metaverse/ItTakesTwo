@@ -26,94 +26,89 @@ void AHSW_BulletManager::BeginPlay()
 		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		FString SocketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , i );
 		FName SocketName ( *SocketNameString );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , SocketNameString );
 
 		FTransform t = this->MeshComp->GetSocketTransform ( SocketName );
 		//UE_LOG ( LogTemp , Log , TEXT ( "Socket Transform: %s" ) , *t.ToString ( ) );
 
-		Nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory ,params );
+		Nail = GetWorld ( )->SpawnActor<AHSW_Bullet> ( BulletFactory , params );
 
 		if ( Nail )
 		{
+			Nail->SetNailBag ( this );
 			Magazine.Add ( Nail );
-			Nail->SetNailBag(this );
-			Nail->NailBasic();
+			Nail->SetSocketName ( );
+			Nail->AttachToActor ( this , FAttachmentTransformRules::KeepRelativeTransform , SocketName );
 		}
-		else 
+		else
 		{
 			GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Nail Not Spawned" ) );
 		}
-
-		
 	}
+	//GetWorld ( )->GetTimerManager ( ).SetTimer ( TimerHandle , this , &AHSW_BulletManager::NailSetting , 0.4f , false );
 
-	SocketIndex = 2;
 }
 
 // Called every frame
 void AHSW_BulletManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 //못통에서 못을 꺼낸다.
-AHSW_Bullet* AHSW_BulletManager::NailPop ( FVector v , FRotator r )
+AHSW_Bullet* AHSW_BulletManager::NailPop ( )
 {
 	if ( Magazine.IsEmpty ( ) == true )
 	{
 		UE_LOG( LogTemp , Warning , TEXT ( "NailPush : NailInven_Out is Empty" ) );
 		return nullptr;
 	}
+
 	Nail = Magazine.Pop ( );
-	Magazine_Out.Push ( Nail );
-	//GrabbedNail = nail;
+	//Magazine_Out.Push ( Nail );
 	return Nail;
 }
 
-AHSW_Bullet* AHSW_BulletManager::NailPush ( )
+void AHSW_BulletManager::NailPush ( AHSW_Bullet* currentNail )
+{
+	if ( Magazine.Num() > 3 )
+	{
+		UE_LOG ( LogTemp , Warning , TEXT ( "Nail Full" ) );
+		return;
+	}
+	if ( currentNail != nullptr )
+	{
+		Magazine.Push ( Nail );
+	}
+}
+
+void AHSW_BulletManager::NailSetting ( )
+{
+
+}
+
+AHSW_Bullet* AHSW_BulletManager::NailOutPop ( )
 {
 	if ( Magazine_Out.IsEmpty ( ) == true )
 	{
-		UE_LOG ( LogTemp , Warning , TEXT ( "NailPush : NailInven_Out is Empty" ) );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ("NailOutPop : Magazine_Out is Empty"  ) );
 		return nullptr;
 	}
-	Nail = Magazine_Out.Pop ( );
-	if ( Nail == nullptr )
+
+	auto* nail = Magazine_Out.Pop ( );
+	return nail;
+}
+
+void AHSW_BulletManager::NailOutPush ( AHSW_Bullet* EmbeddedNail )
+{
+	if ( Magazine_Out.Num ( ) > 3 )
 	{
-		return nullptr;
+		UE_LOG ( LogTemp , Warning , TEXT ( "Nail_Out Full" ) );
+		return;
 	}
-	Magazine.Push ( Nail );
-	return Nail;
-		// 		// Nail이 들어갈 소켓 이름을 가져온다.
-		// 		FString socketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , Magazine.Num ( )-1);
-		// 		//FString DebugMsg = FString::Printf ( TEXT ( "%d" ) , Magazine.Num() );
-		// 		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , DebugMsg);
-		// 		FName socketName ( *socketNameString );
-		// 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , socketNameString );
-		// 		// 해당 소켓이름에 맞는 곳에 attach 한다.
-		// 		nail->AttachToActor ( this , FAttachmentTransformRules::KeepRelativeTransform, socketName );
-		// 		FTransform t = this->MeshComp->GetSocketTransform ( socketName );
-		// 		nail->SetActorLocation ( t.GetLocation ( ) );
-		// 		nail->SetActorRotation ( t.GetRotation ( ) );
-
-}
-
-FVector AHSW_BulletManager::GetNailBagSocketLocation ( )
-{
-	FString SocketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , SocketIndex );
-	FName SocketName ( *SocketNameString );
-	return MeshComp->GetSocketLocation ( SocketName );
-}
-
-FRotator AHSW_BulletManager::GetNailBagSocketRotation ( )
-{
-	FString SocketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , SocketIndex );
-	FName SocketName ( *SocketNameString );
-	return MeshComp->GetSocketRotation ( SocketName );
-}
-
-void AHSW_BulletManager::NailArrive ( AHSW_Bullet* nail )
-{
-	Nail = nail;
+	if ( EmbeddedNail != nullptr )
+	{
+		Magazine_Out.Push ( EmbeddedNail );
+	}
 }
 

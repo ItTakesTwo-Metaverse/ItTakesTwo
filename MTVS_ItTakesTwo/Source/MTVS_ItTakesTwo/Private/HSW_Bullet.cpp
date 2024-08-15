@@ -8,6 +8,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "HSW_BulletManager.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "CSR_Player_Cody.h"
+#include "Components/ArrowComponent.h"
 
 // Sets default values
 AHSW_Bullet::AHSW_Bullet()
@@ -55,7 +57,11 @@ void AHSW_Bullet::BeginPlay()
 	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Bullet::OnMyWallHit );
 
 	//Player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
-	GetWorld ( )->GetTimerManager ( ).SetTimer ( TimerHandle , this , &AHSW_Bullet::LoadSecondPlayer , 0.2f , false );
+
+	GetWorld ( )->GetTimerManager ( ).SetTimer ( TimerHandle , this , &AHSW_Bullet::LoadSecondPlayer , 0.1f , false );
+	
+	/*NailBagSocketAttach ( );*/
+	//GetWorld ( )->GetTimerManager ( ).SetTimer ( TimerHandle , this , &AHSW_Bullet::NailBagSocketAttach , 0.1f , false );
 
 	//StartPoint = Player->GetActorLocation ( );
 	//EndPoint = StartPoint + FVector ( 100000 , 0 , 0 );
@@ -91,7 +97,8 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "CollisionHit" ) );
 		// TargetComp를 OtherComp로 맞추고싶다.
 		TargetComp = OtherComp;
-		NailEmbedded();
+		NailBag->NailOutPush ( this);
+		SetState ( ENailState::EMBEDDED );
 
 	}
 // 	else if ( OtherActor->ActorHasTag ( TEXT ( "Wall1" ) ) )
@@ -105,6 +112,7 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 	//}
 	else
 	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Unembedded" ) );
 		SetState(ENailState::UNEMBEDDED);
 	}
 }
@@ -118,39 +126,43 @@ void AHSW_Bullet::TickBasic ( const float& DeltaTime )
 	SocketTransform = NailBag->MeshComp->GetSocketTransform ( SocketName );
 	SetActorLocation ( SocketTransform.GetLocation ( ) );
 	SetActorRotation ( SocketTransform.GetRotation ( ) );
-	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "State: Basic" ) );
+	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "State: Basic" ) );
 	
 	// 조건
 	// 만약, 장전 상태가 된다면 State를 Load로 바꾸고싶다.
-	if ( bIsLoading )
-	{
-		SetState(ENailState::LOAD);
-	}
-	else if ( bIsShooting )
-	{
-		SetState ( ENailState::SHOOT );
-	}
+// 	if ( bIsLoading )
+// 	{
+// 		SetState(ENailState::LOAD);
+// 	}
+// 	else if ( bIsShooting )
+// 	{
+// 		SetState ( ENailState::SHOOT );
+// 	}
 
 }
 
 void AHSW_Bullet::TickLoad ( const float& DeltaTime )
 {
 	//못의 위치를 플레이어의 손 소켓의 위치로 이동시키고싶다.
-	SocketTransform = Player->FindComponentByClass<USkeletalMeshComponent> ( )->GetSocketTransform ( SocketName );
-	SetActorLocation ( SocketTransform.GetLocation ( ) );
-	SetActorRotation ( SocketTransform.GetRotation ( ) );
+// 	SocketTransform = Player->FindComponentByClass<USkeletalMeshComponent> ( )->GetSocketTransform ( SocketName );
+// 	SetActorLocation ( SocketTransform.GetLocation ( ) );
+// 	SetActorRotation ( SocketTransform.GetRotation ( ) );
 
+	//SetActorLocation ( Cast<ACSR_Player_Cody> ( Player )->ArrowComp->GetComponentLocation ( ) );
+	//SetActorRotation ( Cast<ACSR_Player_Cody> ( Player )->ArrowComp->GetComponentRotation ( ) );
+	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , FString::Printf(TEXT ( " % f % f % f " ) , this->GetActorLocation ( ).X , this->GetActorLocation ( ).Y , this->GetActorLocation ( ).Z ));
+	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , TEXT ( "State: Load" ) );
 	// 조건
 	// 만약, 발사 상태가 된다면 State를 Load로 바꾸고 싶다.
-	if ( bIsShooting )
-	{
-		SetState ( ENailState::SHOOT );
-	}
-	// 만약, 장전 해제가 된다면 State를 Basic으로 바꾸고싶다.
-	if ( bBasic )
-	{
-		SetState ( ENailState::BASIC );
-	}
+// 	if ( bIsShooting )
+// 	{
+// 		SetState ( ENailState::SHOOT );
+// 	}
+// 	// 만약, 장전 해제가 된다면 State를 Basic으로 바꾸고싶다.
+// 	if ( bBasic )
+// 	{
+// 		SetState ( ENailState::BASIC );
+// 	}
 }
 
 void AHSW_Bullet::TickShoot ( const float& DeltaTime )
@@ -161,35 +173,37 @@ void AHSW_Bullet::TickShoot ( const float& DeltaTime )
 	FVector dir =  EndPoint - StartPoint ;
 	dir.Normalize ( );
 	SetActorLocation (GetActorLocation() + dir* Speed * DeltaTime, true);
+	FRotator rot = FRotationMatrix::MakeFromX ( dir ).Rotator ( );
+	SetActorRotation ( rot );
 
-	// 3초가 지나면 자동으로 돌아오게 하고싶다.
+	// 4초가 지나면 자동으로 돌아오게 하고싶다.
 	CurrentTime += DeltaTime;
 	if ( CurrentTime > BackTime )
 	{
-		NailBag->NailPush ( );
-		NailReturn ( );
+		SetState ( ENailState::RETURNING );
 	}
-	// 만약 E키가 눌려서 bIsReturning이 true가 된다면
-	else if ( bIsReturning == true )
-	{
-		NailReturn ( );
-	}
+// 	// 만약 E키가 눌려서 bIsReturning이 true가 된다면
+// 	else if ( bIsReturning == true )
+// 	{
+// 		SetState ( ENailState::RETURNING );
+// 	}
 }
 
 void AHSW_Bullet::TickEmbedded ( const float& DeltaTime )
 {
 	// To Do
 	// TargerComponent의 위치에 고정시키고싶다.
-	SetActorLocation ( TargetComp->GetComponentLocation());
-	SetActorRotation ( TargetComp->GetComponentRotation( ) );
+	//SetActorLocation ( TargetComp->GetComponentLocation());
+	//SetActorRotation ( TargetComp->GetComponentRotation( ) );
 
 	// 조건
 	// 플레이어가 E키를 누르면
-	if ( bIsReturning )
-	{
-		//	Returning 상태로 변경
-		NailReturn ( );
-	}
+// 	if ( bIsReturning )
+// 	{
+// 		DetachFromActor ( FDetachmentTransformRules::KeepWorldTransform );
+// 		//	Returning 상태로 변경
+// 		SetState ( ENailState::RETURNING );
+// 	}
 }
 
 void AHSW_Bullet::TickUnembedded ( const float& DeltaTime )
@@ -199,19 +213,12 @@ void AHSW_Bullet::TickUnembedded ( const float& DeltaTime )
 	// 벽에서 튕겨나가고 싶다.
 	// 
 	// 조건
-	// 3초가 지나면 자동으로 돌아오게 하고싶다.
+	// 4초가 지나면 자동으로 돌아오게 하고싶다.
 	CurrentTime += DeltaTime;
 	if ( CurrentTime > BackTime )
 	{
-		NailBag->NailPush ( );
-		NailReturn ( );
+		SetState ( ENailState::RETURNING );
 	}
-	// 만약 E키가 눌려서 bIsReturning이 true가 된다면
-	else if ( bIsReturning == true )
-	{
-		NailReturn ( );
-	}
-	//
 
 }
 
@@ -235,10 +242,10 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	if ( Distance < NailDefaultDist )
 	{
 	//	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "End" ) );
-
-		bIsReturning = false;
+		NailBag->NailPush ( this );
+// 		bIsReturning = false;
 		// Basic상태로 변경.
-		NailBasic ( );
+		SetState ( ENailState::BASIC );
 	}
 	
 }
@@ -246,15 +253,13 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 
 void AHSW_Bullet::TickGoToBag ( const float& DeltaTime )
 {
-	GoToNailBag ( );
+	SetSocketName ( );
 }
 
 void AHSW_Bullet::SetState ( ENailState NextState)
 {
-
 	State = NextState;
 	
-
 	switch ( State )
 	{
 	case ENailState::BASIC:
@@ -264,20 +269,27 @@ void AHSW_Bullet::SetState ( ENailState NextState)
 		//MeshComp->SetVisibility ( true );
 		BoxComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+
+		NailBasic ( );
 		break;
 
 	case ENailState::LOAD:
+
+		NailLoad ( );
 		break;
 
 	case ENailState::SHOOT:
 		CurrentTime = 0;
 		BoxComp->SetCollisionEnabled ( ECollisionEnabled::QueryAndPhysics );
+
+		NailShoot ( );
 		break;
 
 	case ENailState::EMBEDDED:
 		MovementComp->bShouldBounce = false;
 
 		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
+		NailEmbedded ( );
 		break;
 
 	case ENailState::UNEMBEDDED:
@@ -294,6 +306,7 @@ void AHSW_Bullet::SetState ( ENailState NextState)
 		MovementComp->ProjectileGravityScale = 0;
 
 		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+		NailReturn ( );
 		break;
 
 	case ENailState::GOTOBAG:
@@ -329,7 +342,7 @@ void AHSW_Bullet::NailReadytoShoot ( FVector v , FRotator r )
 	SetActorLocationAndRotation ( v , r );
 }
 
-void AHSW_Bullet::GoToNailBag ( )
+void AHSW_Bullet::SetSocketName()
 {
 	// Nail이 들어갈 소켓 이름을 가져온다.
 	FString socketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , NailBag->Magazine.Num ( ) -1);
@@ -338,7 +351,7 @@ void AHSW_Bullet::GoToNailBag ( )
 
 
 	// 해당 소켓이름에 맞는 곳에 attach 한다.
-	AttachToActor ( NailBag , FAttachmentTransformRules::SnapToTargetNotIncludingScale , SocketName );
+	// AttachToActor ( NailBag , FAttachmentTransformRules::SnapToTargetNotIncludingScale , SocketName );
 }
 
 void AHSW_Bullet::SetNailBag ( AHSW_BulletManager* nailBag )
@@ -351,30 +364,31 @@ void AHSW_Bullet::NailBasic ( )
 	// 못 통에서 BeginPlay에서 스폰될때 호출됨
 	// Nail이 Return될때 거리가 가까워지면 호출됨
 
-	// 만약 플레이어에 Attach되어있다면, Detach하고싶다.
+	//만약 플레이어에 Attach되어있다면, Detach하고싶다.
 	if ( this->IsAttachedTo ( Player ) )
 	{
-		this->DetachFromActor ( FDetachmentTransformRules::KeepRelativeTransform );
+		this->DetachFromActor ( FDetachmentTransformRules::KeepWorldTransform );
 	}
-	// 못통의 소켓에 Attach하고싶다.
-	GoToNailBag ( );
+	SetSocketName ( );
+	AttachToActor ( NailBag , FAttachmentTransformRules::KeepRelativeTransform , SocketName );
+	// 못통의 소켓에 하고싶다.
+	//NailBagSocketAttach ( );
 
 	bBasic = true;
 	bIsLoading = false;
 	bIsShooting = false;
-	SetState ( ENailState::BASIC );
+
 }
 
-void AHSW_Bullet::NailLoad ( FName socketName )
+void AHSW_Bullet::NailLoad ( )
 {
-	if ( IsAttachedTo ( NailBag ) )
-	{
-		// NailBag에서 Detach하고 
-		DetachFromActor ( FDetachmentTransformRules::KeepRelativeTransform );
-		// Player의 손에 Attach하고싶다.
-		AttachToActor ( Player , FAttachmentTransformRules::SnapToTargetNotIncludingScale , socketName );
-		this->SocketName = socketName;
-	}
+
+	// NailBag에서 Detach하고 
+	DetachFromActor ( FDetachmentTransformRules::KeepRelativeTransform );
+	// Player의 Arrow에 Attach하고싶다.
+	AttachToComponent ( Cast<ACSR_Player_Cody> ( Player )->ArrowComp , FAttachmentTransformRules::KeepRelativeTransform );
+
+	//AttachToComponent ( Cast<ACSR_Player_Cody>(Player)->ArrowComp , FAttachmentTransformRules::SnapToTargetNotIncludingScale );
 	bBasic = false;
 	bIsLoading = true;
 
@@ -386,20 +400,15 @@ void AHSW_Bullet::NailLoad ( FName socketName )
 
 }
 
-void AHSW_Bullet::NailShoot ( FVector start , FVector end )
+void AHSW_Bullet::NailShoot ( )
 {
 	// 마우스 좌 클릭시 호출 됨.
 
-	// 만약 못이 Player에 Attach되어있다면
-	if ( this->IsAttachedTo ( Player ) )
+// 	// 만약 못이 Player나 NailBag에 Attach되어있다면
+	if ( IsAttachedTo ( Player ) || IsAttachedTo ( NailBag ) )
 	{
-		// Nail이 오른손 소켓에서 detach됨.
-		this->DetachFromActor ( FDetachmentTransformRules::KeepRelativeTransform );
+	 	this->DetachFromActor ( FDetachmentTransformRules::KeepWorldTransform );
 	}
-	
-	//Nail의 StartPoint와 EndPoint를 설정해줌. ( Lay의 Start와 End가 들어올 것이다.)
-	StartPoint = start;
-	EndPoint = end;
 
 	// 기본 상태에서 좌클릭
 	bBasic = false;
@@ -414,14 +423,13 @@ void AHSW_Bullet::NailEmbedded ( )
 	// NailTag를 가진 Component와 부딪혔을때 호출하는 함수
 
 	// TargetComp에 Attach 하고싶다.
-	AttachToComponent ( TargetComp , FAttachmentTransformRules::KeepRelativeTransform );
+	AttachToComponent ( TargetComp , FAttachmentTransformRules::KeepWorldTransform );
 
 	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Embedded Attach!" ) );
 
 	// 슈팅 상태에서 충돌일어나면 false
-	bIsShooting = false;
-	// 박힘 상태로 변경
-	SetState ( ENailState::EMBEDDED );
+/*	bIsShooting = false;*/
+
 }
 
 void AHSW_Bullet::NailReturn ( )
@@ -429,32 +437,41 @@ void AHSW_Bullet::NailReturn ( )
 	// Shoot, UnEmbedded에서 3초가 지나면 호출된다.
 	// Shoot, Embedded, UnEmbedded에서 bIsReturning이 true가 되면 호출된다.
 	// 
-	// TargetComp에 붙어있다면
+	// TargetComp이 있으면서 TargetComp에 붙어있다면
 
 	if (TargetComp && this->IsAttachedTo ( TargetComp->GetOwner ( ) ))
 	{
 		// Detach하고싶다.
 		this->DetachFromActor ( FDetachmentTransformRules::KeepWorldTransform );
 	}
-	
-	NailBag->NailArrive ( this );
-	bIsShooting = false;
-
-	SetState ( ENailState::RETURNING );
+/*	bIsShooting = false;*/
 }
 
 
 void AHSW_Bullet::LoadSecondPlayer ( )
 {
 	APlayerController* SecondPlayerController = UGameplayStatics::GetPlayerController ( GetWorld ( ) , 1 );
-	Player = SecondPlayerController->GetPawn ( );
+	Player = Cast<ACSR_Player_Cody> ( SecondPlayerController->GetPawn ( ) );
 	if ( Player == nullptr)
 	{
 		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT("Player nullptr !!!!!" ));
 	}
+
 }
 
 void AHSW_Bullet::SetbIsReturning ( bool value )
 {
 	bIsReturning = value;
+}
+
+void AHSW_Bullet::FirstAttach ( FTransform t )
+{
+
+}
+
+void AHSW_Bullet::SetStartAndEnd ( FVector start , FVector end )
+{
+	//Nail의 StartPoint와 EndPoint를 설정해줌. ( Lay의 Start와 End가 들어올 것이다.)
+	StartPoint = start;
+	EndPoint = end;
 }
