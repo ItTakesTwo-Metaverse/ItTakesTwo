@@ -49,5 +49,8 @@ public:
 
 	class UCSR_PlayerWidget *MayUI;
 
+	UFUNCTION(BlueprintCallable)
+	void TranceSIn();
+
 #pragma endregion
 };
