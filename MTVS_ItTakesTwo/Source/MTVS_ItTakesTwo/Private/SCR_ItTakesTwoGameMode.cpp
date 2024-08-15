@@ -13,6 +13,9 @@
 #include "TimerManager.h"
 #include "UObject/Object.h"
 #include "../ToolboxBoss.h"
+#include "MovieSceneSequencePlaybackSettings.h"
+#include <Runtime/LevelSequence/Public/LevelSequencePlayer.h>
+#include "LevelSequenceActor.h"
 
 void ASCR_ItTakesTwoGameMode::InitGame ( const FString& MapName , const FString& Options , FString& ErrorMessage )
 {
@@ -106,4 +109,33 @@ void ASCR_ItTakesTwoGameMode::BeginPlay()
 	this->CustomViewportClient = Cast<UCustomGameViewportClient> ( GetWorld ( )->GetGameViewport ( ) );
 
 	this->boss = Cast< AToolboxBoss>(GetOwner());
+
+	if (SQ_2Phase)
+	{
+		FMovieSceneSequencePlaybackSettings Settings;
+		Settings.bAutoPlay = false;
+		Settings.bPauseAtEnd = true;
+
+		LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
+			GetWorld(), SQ_2Phase, Settings, LevelSequenceActor);
+
+		if (LevelSequencePlayer)
+		{
+			LevelSequenceActor->SetOwner(this); // 소유자 설정
+			LevelSequencePlayer->Play();
+		}
+	}
+
+	//if (SQ_2Phase)
+	//{
+	//	ALevelSequenceActor* TempLevelSequenceActor;
+	//	ULevelSequencePlayer* TempSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), SQ_2Phase, FMovieSceneSequencePlaybackSettings(), TempLevelSequenceActor);
+	//	// 생성된 TempLevelSequencePlayer를 클래스 멤버 변수에 저장
+	//	LevelSequenceActor = TempLevelSequenceActor;
+	//	LevelSequencePlayer = TempSequencePlayer;
+	//	if (LevelSequencePlayer)
+	//	{
+	//		LevelSequencePlayer->Play();
+	//	}
+	//}
 }

@@ -141,6 +141,6 @@ public:
 	FTimerHandle Circle3TimerHandle;
 	FTimerHandle Circle4TimerHandle;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//class ASCR_ItTakesTwoGameMode *GMMode;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ASCR_ItTakesTwoGameMode *GMMode;
 };

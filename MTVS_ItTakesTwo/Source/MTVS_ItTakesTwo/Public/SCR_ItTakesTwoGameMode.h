@@ -78,5 +78,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class AToolboxBoss *boss;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class ULevelSequence* SQ_2Phase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class ALevelSequenceActor* LevelSequenceActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class ULevelSequencePlayer* LevelSequencePlayer;
 };
 

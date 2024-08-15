@@ -231,11 +231,11 @@ AToolboxBoss::AToolboxBoss ( )
 	}
 
 
-	ConstructorHelpers::FObjectFinder<UNiagaraSystem> HoleMeshEffectObj(TEXT("/Script/Niagara.NiagaraSystem'/Game/PSH/DustPufff/FX_SmokePuffs.FX_SmokePuffs'"));
+	/*ConstructorHelpers::FObjectFinder<UNiagaraSystem> HoleMeshEffectObj(TEXT("/Script/Niagara.NiagaraSystem'/Game/PSH/DustPufff/FX_SmokePuffs.FX_SmokePuffs'"));
 	if (HoleMeshEffectObj.Succeeded()) 
 	{
 		HoleMeshEffect = HoleMeshEffectObj.Object;
-	}
+	}*/
 
 	
 	
@@ -379,8 +379,8 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 
 				Lock1HPBarComp->DetachFromComponent( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 
-				this->StartCinematic();
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock1DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
+				this->StartCinematic();
 			}
 		}
 		else if ( fsm->bIsAttack2 ) //else if ( Lock1HP <= 0 && Lock2HP > 0 )
@@ -425,7 +425,7 @@ void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedCompon
 {
 	if ( OtherActor->IsA<AWood> ( ) )
 	{
-		if (wood->WoodCircle1)
+		/*if (wood->WoodCircle1)
 		{
 			UNiagaraComponent* HoleMeshEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), this->HoleMeshEffect, wood->WoodCircle1->GetComponentLocation(), FRotator::ZeroRotator);
 			wood->DestroyCircle1();
@@ -444,9 +444,9 @@ void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedCompon
 		{
 			UNiagaraComponent* HoleMeshEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), this->HoleMeshEffect, wood->WoodCircle4->GetComponentLocation(), FRotator::ZeroRotator);
 			wood->DestroyCircle4();
-		}
+		}*/
 
-		//OtherComponent->DestroyComponent();
+		OtherComponent->DestroyComponent();
 	}
 
 	Player = Cast<ACSR_P_Player> ( OtherActor );
