@@ -18,6 +18,7 @@ float UCSR_PlayerWidget::TakeDamage ( float CurHP , float MaxHP )
 	return(CurHP / MaxHP);
 }
 
+
 //void UCSR_PlayerWidget::TakeDelayDamage ( )
 //{
 //	GetWorld ( )->GetTimerManager ( ).SetTimer( TimerHandle , this , &UCSR_PlayerWidget::DecreaseDelayBar , 0.5f , true );
@@ -34,3 +35,4 @@ float UCSR_PlayerWidget::DecreaseDelayBar ( FTimerHandle TimerHandle )
 	
 	return (this->MemoHP / 10);
 }
+
