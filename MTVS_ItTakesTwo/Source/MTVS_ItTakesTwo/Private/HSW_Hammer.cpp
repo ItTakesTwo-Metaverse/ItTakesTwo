@@ -29,6 +29,12 @@ AHSW_Hammer::AHSW_Hammer()
 	//HammerMesh->SetupAttachment(RootComponent);
 	//HammerMesh->SetCollisionProfileName ( TEXT ( "Hammer" ) );
 
+	//해머 인터렉션 Overlap
+	HammerNailOverlapComp = CreateDefaultSubobject<UBoxComponent> ( TEXT ( "HammerNailOverlapComp" ) );
+	HammerNailOverlapComp->SetupAttachment ( RootComponent );
+	HammerNailOverlapComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+	HammerNailOverlapComp->SetBoxExtent ( FVector ( 50.f ) );
+
 }
 
 // Called when the game starts or when spawned

@@ -41,10 +41,10 @@ AHSW_Bullet::AHSW_Bullet()
 
 
 	//해머 인터렉션 Overlap
-	NailHammerComp = CreateDefaultSubobject<UBoxComponent> ( TEXT ( "NailHammerComp" ) );
-	NailHammerComp->SetupAttachment ( RootComponent );
-	NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
-	NailHammerComp->SetBoxExtent ( FVector ( 50.f ) );
+	//NailHammerComp = CreateDefaultSubobject<UBoxComponent> ( TEXT ( "NailHammerComp" ) );
+	//NailHammerComp->SetupAttachment ( RootComponent );
+	//NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+	//NailHammerComp->SetBoxExtent ( FVector ( 50.f ) );
 
 
 }
