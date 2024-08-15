@@ -123,4 +123,9 @@ public:
 	UPROPERTY ( )
 	class ACSR_P_Player* Player;
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartCinematic();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ASCR_ItTakesTwoGameMode *GMMode;
 };

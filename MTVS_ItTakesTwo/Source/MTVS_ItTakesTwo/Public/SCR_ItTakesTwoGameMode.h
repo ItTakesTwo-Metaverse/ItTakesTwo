@@ -76,5 +76,7 @@ public:
 	UFUNCTION ( BlueprintImplementableEvent )
 	void CutSinMap( );
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class AToolboxBoss *boss;
 };
 

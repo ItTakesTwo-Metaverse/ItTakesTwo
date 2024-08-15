@@ -25,6 +25,8 @@
 #include "LevelSequence.h"
 #include "LevelSequencePlayer.h"
 #include "LevelSequenceActor.h"
+#include "SCR_ItTakesTwoGameMode.h"
+#include "CSR_FunctionLib.h"
 
 
 
@@ -255,6 +257,10 @@ void AToolboxBoss::BeginPlay ( )
 	if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
 	if ( Lock2HPWidget ) { Lock2HPWidget->SetHPBar ( Lock2HP , Lock2MaxHP ); }
 
+	this->GMMode = GetWorld()->GetAuthGameMode<ASCR_ItTakesTwoGameMode>();
+	if (this->GMMode) {
+		UCSR_FunctionLib::ExitGame(this->GetWorld(), TEXT("AToolboxBoss : GMMode is null"));
+	}
 }
 
 // Called every frame
@@ -354,6 +360,7 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 
 				Lock1HPBarComp->DetachFromComponent( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 
+				this->StartCinematic();
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock1DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
 			}
 		}

@@ -12,6 +12,7 @@
 #include "CustomGameViewportClient.h"
 #include "TimerManager.h"
 #include "UObject/Object.h"
+#include "../ToolboxBoss.h"
 
 void ASCR_ItTakesTwoGameMode::InitGame ( const FString& MapName , const FString& Options , FString& ErrorMessage )
 {
@@ -103,4 +104,6 @@ void ASCR_ItTakesTwoGameMode::BeginPlay()
 	this->P1_May->GetMapMode(this);
 	this->P2_Cody->GetMapMode(this);
 	this->CustomViewportClient = Cast<UCustomGameViewportClient> ( GetWorld ( )->GetGameViewport ( ) );
+
+	this->boss = Cast< AToolboxBoss>(GetOwner());
 }
