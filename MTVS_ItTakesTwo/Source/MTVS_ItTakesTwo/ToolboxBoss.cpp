@@ -257,10 +257,10 @@ void AToolboxBoss::BeginPlay ( )
 	if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
 	if ( Lock2HPWidget ) { Lock2HPWidget->SetHPBar ( Lock2HP , Lock2MaxHP ); }
 
-	this->GMMode = GetWorld()->GetAuthGameMode<ASCR_ItTakesTwoGameMode>();
-	if (this->GMMode) {
-		UCSR_FunctionLib::ExitGame(this->GetWorld(), TEXT("AToolboxBoss : GMMode is null"));
-	}
+	//this->GMMode = GetWorld()->GetAuthGameMode<ASCR_ItTakesTwoGameMode>();
+	//if (this->GMMode) {
+	//	UCSR_FunctionLib::ExitGame(this->GetWorld(), TEXT("AToolboxBoss : GMMode is null"));
+	//}
 }
 
 // Called every frame
@@ -343,9 +343,9 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 		{
 			//FString HPTEXT = FString::Printf(TEXT("%d" ), Lock1HP );
 			//GEngine->AddOnScreenDebugMessage ( -1 , 5.f , FColor::Yellow , HPTEXT );
-			Lock1MaxHP -= damage;
+			Lock1HP -= damage;
 			//Lock1HP = Lock1MaxHP;
-			//if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
+			if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
 			bCanDamage = false;
 
 			if ( Lock1HP <= 0 )
@@ -366,9 +366,9 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 		}
 		else if ( fsm->bIsAttack2 ) //else if ( Lock1HP <= 0 && Lock2HP > 0 )
 		{
-			Lock2MaxHP -= damage;
+			Lock2HP -= damage;
 			//Lock2HP = Lock2MaxHP;
-			//if(Lock2HPWidget ) { Lock2HPWidget->SetHPBar ( Lock2HP , Lock2MaxHP ); }
+			if(Lock2HPWidget ) { Lock2HPWidget->SetHPBar ( Lock2HP , Lock2MaxHP ); }
 			
 			if ( Lock2HP <= 0 )
 			{
