@@ -98,10 +98,18 @@ void ACSR_Player_May::SetupPlayerInputComponent ( UInputComponent* PlayerInputCo
 		UCSR_FunctionLib::ExitGame ( GetWorld ( ) , FString ( "ACSR_Player_May : InputKey is null" ) );
 	}
 
-	this->KeyBindComponent->SetupInputComponent( InputKey );
+	this->KeyBindComponent->SetupInputComponent ( InputKey );
 #pragma endregion EnhancedInput register
 
 	Setting ( );
+// 	UAnimInstance* anim = GetMesh ( )->GetAnimInstance ( );
+// 	if ( anim == nullptr ) {
+// 		UCSR_FunctionLib::ExitGame ( GetWorld ( ) , FString ( "ACSR_Player_May : anim is null" ) );
+// 	}
+// 	this->AnimMay = Cast<UCSR_MayAnimation> ( anim );
+// 	if ( this->AnimMay == nullptr ) {
+// 		UCSR_FunctionLib::ExitGame ( GetWorld ( ) , FString ( "ACSR_Player_May : AnimMay is null" ) );
+// 	}
 }
 
 

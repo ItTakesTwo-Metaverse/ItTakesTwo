@@ -20,6 +20,8 @@ void UCSR_CodyAnimation::NativeInitializeAnimation ( )
 	}
 	this->Player->AnimCody = this;
 	this->Player->CharacterStateMannageComp->Anim = this;
+
+	//this->register
 }
 
 void UCSR_CodyAnimation::NativeUpdateAnimation ( float DeltaSeconds )

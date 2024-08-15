@@ -102,6 +102,7 @@ public:
 
 	UPROPERTY (  )
 	class ACSR_Player_Cody* Player;
+	//class APawn* Player;
 
 	UFUNCTION(BlueprintCallable )
 	void NailBasic( );
