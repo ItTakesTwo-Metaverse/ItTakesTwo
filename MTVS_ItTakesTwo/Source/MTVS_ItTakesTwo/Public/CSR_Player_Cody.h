@@ -51,5 +51,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent )
 	void ChangeCharacterColor( );
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> PlayerHPWidget;
+
+	class UCSR_PlayerWidget *CodyUI;
+
 #pragma endregion PileMovement;
 };

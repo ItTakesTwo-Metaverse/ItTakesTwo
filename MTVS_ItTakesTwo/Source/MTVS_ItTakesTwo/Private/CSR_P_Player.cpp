@@ -50,6 +50,11 @@ ACSR_P_Player::ACSR_P_Player()
 	if ( this->CameraComp == nullptr ) {
 		UCSR_FunctionLib::ExitGame ( this->GetWorld ( ) , FString ( "ACSR_P_Player : this->CameraComp is null" ) );
 	}
+	FPostProcessSettings& PostProcessSettings = CameraComp->PostProcessSettings;
+	// Focal Distance를 설정합니다.
+	PostProcessSettings.bOverride_DepthOfFieldFocalDistance = true;
+	PostProcessSettings.bOverride_ColorContrast = true;
+
 	// 스프링 암을 붙이고 싶다.
 	this->CameraComp->SetupAttachment(this->SpringArmComp);
 
@@ -100,21 +105,25 @@ void ACSR_P_Player::Tick(float DeltaTime)
 		}
 	}
 	if ( (this->CharacterStateMannageComp->CurrentState & DIE) ) {
- 		this->CharacterStateMannageComp->RemoveState ( DIE );
-		APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
-		if ( CameraManager )
-		{
-			CameraManager->StartCameraFade ( 1.0f , 0.0f , 1.0f , FLinearColor::Black , false , true );
-		}
-		SetActorLocation ( this->SavePoint );
+		this->CurrentTIme = 0;
+		this->GetMesh ( )->SetVisibility ( false );
  		this->CharacterStateMannageComp->AddState ( REBORN );
+		this->CharacterStateMannageComp->RemoveState ( DIE );
 	}
 	if ( (this->CharacterStateMannageComp->CurrentState & REBORN)) {
+		CameraBlurOn ( );
 		this->CurrentTIme = this->CurrentTIme + DeltaTime;
 		if ( this->DieTime <= this->CurrentTIme ) {
 			this->CurrentTIme = 0.0f;
 			this->GetMesh ( )->SetVisibility ( true );
 			this->CharacterStateMannageComp->RemoveState ( REBORN );
+			APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
+			SetActorLocation ( this->SavePoint );
+			if ( CameraManager )
+			{
+				CameraManager->StartCameraFade ( 1.0f , 0.0f , 0.5f , FLinearColor::Black , false , true );
+				CameraBlurOff ( );
+			}
 		}
 	}
 }
@@ -159,17 +168,17 @@ void ACSR_P_Player::OnDamaged ( int32 Damage )
 	if ( this->CharacterStateMannageComp->AddState ( DAMAGED ) )
 	{
 		
-		UNiagaraComponent *a = UNiagaraFunctionLibrary::SpawnSystemAtLocation ( this->GetWorld ( ) , this->NiagaraEffect , this->GetActorLocation ( ) , FRotator::ZeroRotator );
-		if ( a == nullptr ) {
-			UCSR_FunctionLib::ExitGame(this->GetWorld(), TEXT("123" ));
+		UNiagaraComponent *DamagedEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation ( this->GetWorld ( ) , this->NiagaraEffect , this->GetActorLocation ( ) , FRotator::ZeroRotator );
+		if ( DamagedEffect == nullptr ) {
+			UCSR_FunctionLib::ExitGame(this->GetWorld(), TEXT("ACSR_P_Player : DamagedEffect is null" ));
 		}
-		a->SetAutoDestroy(true);
+		DamagedEffect->SetAutoDestroy(true);
 		this->CurHp = FMath::Max(0, this->CurHp - Damage );
-		if (this->CurHp == 0 ) {
+		if (this->CurHp <= 0 ) {
+			this->flag1 = true;
 			this->CharacterStateMannageComp->AddState ( DIE );
 		}
 		else {
-			this->flag1 = true;
 			this->CharacterStateMannageComp->AddState ( INVI );
 			this->CharacterStateMannageComp->RemoveState ( DAMAGED );
 		}
@@ -179,6 +188,18 @@ void ACSR_P_Player::OnDamaged ( int32 Damage )
 void ACSR_P_Player::GetMapMode ( ASCR_ItTakesTwoGameMode* map )
 {
 	this->ItTakesMap = map;
+}
+
+void ACSR_P_Player::CameraBlurOn ( )
+{
+	CameraComp->PostProcessSettings.DepthOfFieldFocalDistance = 1;
+	CameraComp->PostProcessSettings.ColorContrast = FVector4 ( 0.3f , 0.3f , 0.3f , 0.3f );
+}
+
+void ACSR_P_Player::CameraBlurOff ( )
+{
+	CameraComp->PostProcessSettings.DepthOfFieldFocalDistance = 0;
+	CameraComp->PostProcessSettings.ColorContrast = FVector4 ( 1.0f , 1.0f , 1.0f , 1.0f );
 }
 
 void ACSR_P_Player::SecondJumpToOtherComp ( )
