@@ -382,6 +382,19 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock1DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
 				this->StartCinematic();
+
+				
+				TArray<AActor*> FoundActors;
+
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHSW_Bullet::StaticClass(), FoundActors);
+				for (AActor* Actor : FoundActors)
+				{
+					if (AHSW_Bullet* Nail = Cast<AHSW_Bullet>(Actor))
+					{
+						Nail->NailBag->NailOutPop();
+						Nail->SetState(ENailState::RETURNING);
+					}
+				}
 			}
 		}
 		else if ( fsm->bIsAttack2 ) //else if ( Lock1HP <= 0 && Lock2HP > 0 )
@@ -405,6 +418,18 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 				Lock2HPBarComp->DestroyComponent();
 
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock2DestroyTimerHandle , this , &AToolboxBoss::DestroyLock2 , 3.0f , false );
+
+				TArray<AActor*> FoundActors;
+
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHSW_Bullet::StaticClass(), FoundActors);
+				for (AActor* Actor : FoundActors)
+				{
+					if (AHSW_Bullet* Nail = Cast<AHSW_Bullet>(Actor))
+					{
+						Nail->NailBag->NailOutPop();
+						Nail->SetState(ENailState::RETURNING);
+					}
+				}
 			}
 		}
 	}
