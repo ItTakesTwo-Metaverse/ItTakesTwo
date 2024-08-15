@@ -29,6 +29,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite )
 	class UStaticMeshComponent* MeshComp;
 
+	UPROPERTY(EditDefaultsOnly)
+	class UBoxComponent* HammerNailOverlapComp;
+
 	UPROPERTY( )
 	class AHSW_Player_May* may;
 	
