@@ -35,9 +35,9 @@
 /NODEFAULTLIB:"LIBCD"
 /NODEFAULTLIB:"LIBCPD"
 /FUNCTIONPADMIN:6
-"C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Intermediate\Build\Win64\x64\MTVS_ItTakesTwoEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
-"C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\Module.CustomMutipleScreen.cpp.obj"
-"C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\Default.rc2.res"
+"C:\Users\Admin\Documents\challage\ItTakesTwo\MTVS_ItTakesTwo\Intermediate\Build\Win64\x64\MTVS_ItTakesTwoEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
+"C:\Users\Admin\Documents\challage\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\Module.CustomMutipleScreen.cpp.obj"
+"C:\Users\Admin\Documents\challage\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\Default.rc2.res"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\CoreUObject\UnrealEditor-CoreUObject.lib"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\InputCore\UnrealEditor-InputCore.lib"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Engine\UnrealEditor-Engine.lib"
@@ -69,7 +69,7 @@
 "synchronization.lib"
 "dwmapi.lib"
 "imm32.lib"
-/OUT:"C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Binaries\Win64\UnrealEditor-CustomMutipleScreen.dll"
-/IMPLIB:"C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\UnrealEditor-CustomMutipleScreen.sup.lib"
-/PDB:"C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Binaries\Win64\UnrealEditor-CustomMutipleScreen.pdb"
+/OUT:"C:\Users\Admin\Documents\challage\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Binaries\Win64\UnrealEditor-CustomMutipleScreen.dll"
+/IMPLIB:"C:\Users\Admin\Documents\challage\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\UnrealEditor-CustomMutipleScreen.sup.lib"
+/PDB:"C:\Users\Admin\Documents\challage\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Binaries\Win64\UnrealEditor-CustomMutipleScreen.pdb"
 /ignore:4078

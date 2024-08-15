@@ -1,1 +1,0 @@
-#include "C:/Users/Admin/Documents/itBEtabeta/ItTakesTwo/MTVS_ItTakesTwo/Plugins/CustomMutipleScreen/Source/CustomMutipleScreen/Public/CustomMutipleScreen.h"
