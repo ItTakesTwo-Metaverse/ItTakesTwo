@@ -59,6 +59,11 @@ UCustomGameViewportClient* ASCR_ItTakesTwoGameMode::GetCustomViewportClient ( )
 	return (this->CustomViewportClient);
 }
 
+void ASCR_ItTakesTwoGameMode::CallCutSin()
+{
+	this->P1_May->TranceSIn();
+}
+
 void ASCR_ItTakesTwoGameMode::BeginPlay()
 {
 	Super::BeginPlay ();

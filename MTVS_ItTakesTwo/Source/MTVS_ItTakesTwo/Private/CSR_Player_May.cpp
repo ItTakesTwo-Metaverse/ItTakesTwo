@@ -77,6 +77,15 @@ void ACSR_Player_May::ChangeCharacterColor_Implementation ( )
 	
 }
 
+void ACSR_Player_May::TranceSIn()
+{
+	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(this, this->PlayerIndex);
+	if (CameraManager)
+	{
+		CameraManager->StartCameraFade(0.0f, 1.0f, 0.5f, FLinearColor::Black, false, true);
+	}
+}
+
 void ACSR_Player_May::Tick ( float DeltaTime )
 {
 	Super::Tick ( DeltaTime );

@@ -179,6 +179,7 @@ void ACSR_P_Player::OnDamaged ( int32 Damage )
 			this->CharacterStateMannageComp->AddState ( DIE );
 		}
 		else {
+			this->ItTakesMap->CutSinMap();
 			this->CharacterStateMannageComp->AddState ( INVI );
 			this->CharacterStateMannageComp->RemoveState ( DAMAGED );
 		}
@@ -193,7 +194,7 @@ void ACSR_P_Player::GetMapMode ( ASCR_ItTakesTwoGameMode* map )
 void ACSR_P_Player::CameraBlurOn ( )
 {
 	CameraComp->PostProcessSettings.DepthOfFieldFocalDistance = 1;
-	CameraComp->PostProcessSettings.ColorContrast = FVector4 ( 0.3f , 0.3f , 0.3f , 0.3f );
+	CameraComp->PostProcessSettings.ColorContrast = FVector4 ( 0.7f , 0.7f , 0.7f , 1.0f );
 }
 
 void ACSR_P_Player::CameraBlurOff ( )
