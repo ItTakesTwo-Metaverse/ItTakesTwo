@@ -16,8 +16,6 @@
 #include "CSR_Player_May.h"
 #include "CSR_Player_Cody.h"
 #include "Wood.h"
-#include "../../../../Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraSystem.h"
-#include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 #include "LockHP.h"
 #include "Components/WidgetComponent.h"
 #include "Components/PrimitiveComponent.h"
@@ -28,6 +26,9 @@
 #include "SCR_ItTakesTwoGameMode.h"
 #include "CSR_FunctionLib.h"
 #include "Particles/ParticleSystem.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraSystem.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
 
 
 
@@ -228,6 +229,12 @@ AToolboxBoss::AToolboxBoss ( )
 	{
 		this->LockEffect = LockEffectObj.Object;
 	}
+
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> HoleMeshEffectObj(TEXT("/Script/Niagara.NiagaraSystem'/Game/PSH/DustPufff/FX_SmokePuffs.FX_SmokePuffs'"));
+	if (HoleMeshEffectObj.Succeeded()) {
+		this->HoleMeshNiagara = HoleMeshEffectObj.Object;
+	}
+
 }
 // Called when the game starts or when spawned
 void AToolboxBoss::BeginPlay ( )
@@ -248,7 +255,7 @@ void AToolboxBoss::BeginPlay ( )
 	LockBody2->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyLockBeginOverlap );
 	// 드릴 충돌
 	Drill->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyDrillOverlap );
-	DrillArms->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyDrillOverlap );
+	DrillArms->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyDrillCirleOverlap);
 
 	DrillCircle->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyDrillCirleOverlap );
 
@@ -414,6 +421,9 @@ void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedCompon
 {
 	if ( OtherActor->IsA<AWood> ( ) )
 	{
+		//UNiagaraComponent* HoleMeshNiagara = UNiagaraFunctionLibrary::SpawnSystemAtLocation(this->GetWorld(), this->HoleMeshNiagara, this->GetActorLocation(), FRotator::ZeroRotator);
+
+		//GetWorld()->GetTimerManager().SetTimer(HoleMeshTimerHandle, this, &AToolboxBoss::DestroyHoleMesh, 1.5f, false);
 		OtherComponent->DestroyComponent();
 	}
 
@@ -474,6 +484,14 @@ void AToolboxBoss::EnterRagdollState ( )
 	}
 }
 
+
+void AToolboxBoss::DestroyHoleMesh()
+{
+	if (wood->WoodCircle1) { wood->WoodCircle1->DestroyComponent(); }
+	if (wood->WoodCircle2) { wood->WoodCircle2->DestroyComponent(); }
+	if (wood->WoodCircle3) { wood->WoodCircle3->DestroyComponent(); }
+	if (wood->WoodCircle4) { wood->WoodCircle4->DestroyComponent(); }
+}
 
 void AToolboxBoss::SetAnimState ( ERightArmAnimState NewState )
 {
