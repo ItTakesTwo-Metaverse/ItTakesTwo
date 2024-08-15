@@ -18,10 +18,6 @@ float UCSR_PlayerWidget::TakeDamage ( float CurHP , float MaxHP )
 	return(CurHP / MaxHP);
 }
 
-void UCSR_PlayerWidget::OutLight()
-{
-	
-}
 
 //void UCSR_PlayerWidget::TakeDelayDamage ( )
 //{

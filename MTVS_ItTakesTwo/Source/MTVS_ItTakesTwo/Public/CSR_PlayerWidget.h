@@ -32,8 +32,17 @@ public:
 	UPROPERTY ( BlueprintReadWrite )
 	float TargetHP = 0;
 
-	UFUNCTION()
-	void OutLight();
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetOnRebornUI();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetOffRebornUI();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetOnHPUI();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetOffHPUI();
 
 	//UFUNCTION(BlueprintCallable )
 	//void TakeDelayDamage( );

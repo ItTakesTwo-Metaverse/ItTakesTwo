@@ -107,11 +107,14 @@ void ACSR_Player_May::Tick ( float DeltaTime )
 	}
 	if ( this->flag1 ) {
 		this->ChangeCharacterColor ( );
-		this->ItTakesMap->SetMayDie(true);
 		this->MayUI->TakeDamageEvent ( this->CurHp , this->MaxHp );
 		this->flag1 = false;
 	}
-	//if (this->flag2 )
+	if (this->flag2) {
+		this->MayUI->SetOffRebornUI();
+		this->MayUI->InitHP(this->MaxHp);
+		this->flag2 = false;
+	}
 }
 
 void ACSR_Player_May::SetupPlayerInputComponent ( UInputComponent* PlayerInputComponent )
