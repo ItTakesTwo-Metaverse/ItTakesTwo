@@ -123,5 +123,4 @@ public:
 	UPROPERTY ( )
 	class ACSR_P_Player* Player;
 	
-
 };

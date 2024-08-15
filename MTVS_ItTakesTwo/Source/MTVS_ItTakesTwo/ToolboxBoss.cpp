@@ -22,6 +22,9 @@
 #include "Components/WidgetComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Components/SphereComponent.h"
+#include "LevelSequence.h"
+#include "LevelSequencePlayer.h"
+#include "LevelSequenceActor.h"
 
 
 
@@ -454,6 +457,7 @@ void AToolboxBoss::EnterRagdollState ( )
 		GetMesh ( )->bBlendPhysics = true;
 	}
 }
+
 
 void AToolboxBoss::SetAnimState ( ERightArmAnimState NewState )
 {
