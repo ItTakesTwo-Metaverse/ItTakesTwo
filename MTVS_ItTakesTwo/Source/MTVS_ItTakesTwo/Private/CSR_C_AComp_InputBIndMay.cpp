@@ -10,6 +10,9 @@
 #include "HSW_Hammer.h"
 #include "CSR_P_AComp_CharicStateMannage.h"
 #include "CSR_P_AComp_CharicJump.h"
+#include "Kismet/GameplayStatics.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
+#include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
 
 void UCSR_C_AComp_InputBIndMay::BeginPlay ( )
 {
@@ -57,7 +60,10 @@ void UCSR_C_AComp_InputBIndMay::OnAttackAction ( const FInputActionValue& Value 
 				this->MayCharacter_->AnimMay->PlayerAttackMontage ( );
 
 				//이펙트, 소리, 카메라쉐이크
-
+				GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(Hammer->HammerCameraShake);
+				//UGameplayStatics::PlaySound2D(GetWorld(), Hammer->HammerSFV);
+// 				UNiagaraComponent* DamagedEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(this->GetWorld(), Hammer->NiagaraEffect, Hammer->MeshComp->GetSocketLocation(TEXT("HammerVFXSocket")), FRotator::ZeroRotator);
+// 				DamagedEffect->SetAutoDestroy(true);
 
 			}
 			/*this->MayCharacter_->UseHammerComp->Attack ( );*/

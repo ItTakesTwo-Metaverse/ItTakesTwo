@@ -85,4 +85,15 @@ public:
 	float Amplitude = -90;
 	float Frequency = 0.7;
 	float CurrentTime = 0;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UCameraShakeBase> HammerCameraShake;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* HammerSFV;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* NiagaraEffect;
+
+
 };
