@@ -78,6 +78,7 @@ void ACSR_Player_May::ChangeCharacterColor_Implementation ( )
 	
 }
 
+
 void ACSR_Player_May::TranceSIn()
 {
 	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(this, this->PlayerIndex);
@@ -96,15 +97,18 @@ void ACSR_Player_May::LightOn()
 	}
 }
 
+
 void ACSR_Player_May::Tick ( float DeltaTime )
 {
 	Super::Tick ( DeltaTime );
 
-	if ( ((this->UseHammerComp->Hammer->bMoveToNail == false) && (this->UseHammerComp->Hammer->bIsHanging == true)) || (this->UseHammerComp->Hammer->bMoveToNail == true) )
+	if ( (this->UseHammerComp->Hammer->bIsHanging == true) || (this->UseHammerComp->Hammer->bMoveToNail == true) )
 	{
 		HammerPlayerSocketLotation = this->UseHammerComp->Hammer->MeshComp->GetSocketLocation ( TEXT ( "PlayerAttachingPoint" ) );
 		SetActorLocation ( HammerPlayerSocketLotation );
+		//SetActorRotation(FRotator(SocketTransform.GetRotation().Y, SocketTransform.GetRotation().Z-90.f, SocketTransform.GetRotation().X));
 	}
+
 	if ( this->flag1 ) {
 		this->ChangeCharacterColor ( );
 		this->MayUI->TakeDamageEvent ( this->CurHp , this->MaxHp );
