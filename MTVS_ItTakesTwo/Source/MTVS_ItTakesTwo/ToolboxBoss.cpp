@@ -256,11 +256,6 @@ void AToolboxBoss::BeginPlay ( )
 	// 위젯이 올바르게 초기화되었는지 확인
 	if ( Lock1HPWidget ) { Lock1HPWidget->SetHPBar ( Lock1HP , Lock1MaxHP ); }
 	if ( Lock2HPWidget ) { Lock2HPWidget->SetHPBar ( Lock2HP , Lock2MaxHP ); }
-
-	this->GMMode = GetWorld()->GetAuthGameMode<ASCR_ItTakesTwoGameMode>();
-	if (this->GMMode) {
-		UCSR_FunctionLib::ExitGame(this->GetWorld(), TEXT("AToolboxBoss : GMMode is null"));
-	}
 }
 
 // Called every frame

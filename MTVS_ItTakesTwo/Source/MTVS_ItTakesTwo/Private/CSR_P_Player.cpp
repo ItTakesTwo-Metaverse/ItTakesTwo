@@ -179,7 +179,6 @@ void ACSR_P_Player::OnDamaged ( int32 Damage )
 			this->CharacterStateMannageComp->AddState ( DIE );
 		}
 		else {
-			this->ItTakesMap->CutSinMap();
 			this->CharacterStateMannageComp->AddState ( INVI );
 			this->CharacterStateMannageComp->RemoveState ( DAMAGED );
 		}
