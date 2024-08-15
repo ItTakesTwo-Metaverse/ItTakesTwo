@@ -47,7 +47,7 @@ void UCSR_C_AComp_InputBIndMay::OnAttackAction ( const FInputActionValue& Value 
 			this->Hammer->ClickToMove ( );
 
 		}
-		// Hammer가 Nail에 매달릴 수 없는 상태라면 (일반적인 상태)
+		// Hammer가 Nail과 멀리 떨어져있다면 (일반적인 망치 공격 상태)
 		else
 		{
 			if ( this->Character_->CharacterStateMannageComp->AddState ( ATTACK ) ) {
@@ -66,5 +66,6 @@ void UCSR_C_AComp_InputBIndMay::OnAttackAction ( const FInputActionValue& Value 
 		this->Hammer->DetachHammerFromNail ( );
 		// 해머를 플레이어에게 Attach 시킨다.
 		this->MayCharacter_->UseHammerComp->AttachHammer ( );
+		this->MayCharacter_->Jump ( );
 	}	
 }

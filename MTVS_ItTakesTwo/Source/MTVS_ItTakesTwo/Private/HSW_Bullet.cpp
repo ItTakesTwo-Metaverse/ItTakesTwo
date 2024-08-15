@@ -41,10 +41,10 @@ AHSW_Bullet::AHSW_Bullet()
 
 
 	//해머 인터렉션 Overlap
-	NailHammerComp = CreateDefaultSubobject<UBoxComponent> ( TEXT ( "NailHammerComp" ) );
-	NailHammerComp->SetupAttachment ( RootComponent );
-	NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
-	NailHammerComp->SetBoxExtent ( FVector ( 50.f ) );
+	//NailHammerComp = CreateDefaultSubobject<UBoxComponent> ( TEXT ( "NailHammerComp" ) );
+	//NailHammerComp->SetupAttachment ( RootComponent );
+	//NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+	//NailHammerComp->SetBoxExtent ( FVector ( 50.f ) );
 
 
 }
@@ -272,7 +272,7 @@ void AHSW_Bullet::SetState ( ENailState NextState)
 
 		//MeshComp->SetVisibility ( true );
 		BoxComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
-		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+		//NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 
 		NailBasic ( );
 		break;
@@ -293,7 +293,7 @@ void AHSW_Bullet::SetState ( ENailState NextState)
 	case ENailState::EMBEDDED:
 		MovementComp->bShouldBounce = false;
 
-		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
+		//NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
 		NailEmbedded ( );
 		break;
 
@@ -310,7 +310,7 @@ void AHSW_Bullet::SetState ( ENailState NextState)
 		MovementComp->bShouldBounce = false;
 		MovementComp->ProjectileGravityScale = 0;
 
-		NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+		//NailHammerComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
 		NailReturn ( );
 		break;
 

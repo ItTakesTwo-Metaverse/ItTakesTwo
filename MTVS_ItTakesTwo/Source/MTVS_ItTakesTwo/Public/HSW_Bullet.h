@@ -45,8 +45,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* MeshComp;
 
-	UPROPERTY(EditDefaultsOnly)
-	class UBoxComponent* NailHammerComp;
 
 	//발사체 컴포넌트를 만들고싶다.
 	UPROPERTY(EditDefaultsOnly)
@@ -104,6 +102,7 @@ public:
 
 	UPROPERTY (  )
 	class ACSR_Player_Cody* Player;
+	//class APawn* Player;
 
 	UFUNCTION(BlueprintCallable )
 	void NailBasic( );

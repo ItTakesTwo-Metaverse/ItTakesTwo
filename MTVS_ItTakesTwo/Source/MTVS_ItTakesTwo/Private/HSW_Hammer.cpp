@@ -29,6 +29,12 @@ AHSW_Hammer::AHSW_Hammer()
 	//HammerMesh->SetupAttachment(RootComponent);
 	//HammerMesh->SetCollisionProfileName ( TEXT ( "Hammer" ) );
 
+	//해머 인터렉션 Overlap
+	HammerNailOverlapComp = CreateDefaultSubobject<UBoxComponent> ( TEXT ( "HammerNailOverlapComp" ) );
+	HammerNailOverlapComp->SetupAttachment ( RootComponent );
+	HammerNailOverlapComp->SetCollisionEnabled ( ECollisionEnabled::NoCollision );
+	HammerNailOverlapComp->SetBoxExtent ( FVector ( 50.f ) );
+
 }
 
 // Called when the game starts or when spawned
@@ -37,8 +43,8 @@ void AHSW_Hammer::BeginPlay()
 	Super::BeginPlay();
 	
 	BoxComp->OnComponentHit.AddDynamic( this , &AHSW_Hammer::OnMyBoxHit );
-	BoxComp->OnComponentBeginOverlap.AddDynamic ( this , &AHSW_Hammer::OnMyBoxBeginOverlap );
-	BoxComp->OnComponentEndOverlap.AddDynamic ( this , &AHSW_Hammer::OnMyBoxEndOverlap );
+	HammerNailOverlapComp->OnComponentBeginOverlap.AddDynamic ( this , &AHSW_Hammer::OnMyBoxBeginOverlap );
+	HammerNailOverlapComp->OnComponentEndOverlap.AddDynamic ( this , &AHSW_Hammer::OnMyBoxEndOverlap );
 
 	may = Cast<AHSW_Player_May>(GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( ));
 }
@@ -48,8 +54,10 @@ void AHSW_Hammer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+	//나사로 이동중이라면
 	if ( bMoveToNail )
 	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "MoveToNail" ) );
 		MoveToNail ( DeltaTime );
 	}
 	//매달려 있다면
@@ -74,24 +82,30 @@ void AHSW_Hammer::OnMyBoxHit ( UPrimitiveComponent* HitComponent , AActor* Other
 
 void AHSW_Hammer::OnMyBoxBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
-	bCanHanging = true;
+	
 	bullet = Cast<AHSW_Bullet> ( OtherActor );
 	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Begin Overlap" ) );
 	if ( bullet )
 	{
+		bCanHanging = true;
 		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "bullet exist" ) );
 	}
 }
 
 void AHSW_Hammer::OnMyBoxEndOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex )
 {
-	bCanHanging = false;
-	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
-	if ( (bMoveToNail == true && bIsHanging == false) || (bMoveToNail == false && bIsHanging == true) )
+	
+	if ( Cast<AHSW_Bullet> ( OtherActor ) == bullet )
 	{
+		bCanHanging = false;
 		bullet = nullptr;
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "bullet null" ) );
+// 		if ( (bMoveToNail == true && bIsHanging == false) || (bMoveToNail == false && bIsHanging == true) )
+// 		{
+// 			GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "bullet null" ) );
+// 		}
 	}
+	//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "End Overlap" ) );
+		
 }
 
 void AHSW_Hammer::ClickToMove ( )
@@ -121,6 +135,7 @@ void AHSW_Hammer::MoveToNail ( float deltatime)
 		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , FString::Printf(TEXT ( "%f" ),distance ));
 		if ( distance < 150 )
 		{
+			CurrentTime = 0;
 			bIsHanging = true;
 			bMoveToNail = false;
 			GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Attach!" ) );
@@ -129,16 +144,17 @@ void AHSW_Hammer::MoveToNail ( float deltatime)
 			FTransform SocketTransform = bullet->MeshComp->GetSocketTransform ( TEXT ( "AttachingPoint" ) );
 
 			//this->AttachToActor( bullet, FAttachmentTransformRules::SnapToTargetNotIncludingScale , TEXT ( "AttachingPoint" ) );
-			this->AttachToActor( bullet, FAttachmentTransformRules::SnapToTargetIncludingScale );
+			this->AttachToActor( bullet, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT ( "AttachingPoint" ) );
 
-			this->SetActorLocation ( SocketTransform.GetLocation ( ) );
-			this->SetActorRotation ( SocketTransform.GetRotation());
+			//this->SetActorLocation ( SocketTransform.GetLocation ( ) );
+			//this->SetActorRotation ( SocketTransform.GetRotation());
 
 
 		}
 	}
 	else
 	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "bullet is null, move stop" ) );
 		bIsHanging = false;
 		bMoveToNail = false;
 	}

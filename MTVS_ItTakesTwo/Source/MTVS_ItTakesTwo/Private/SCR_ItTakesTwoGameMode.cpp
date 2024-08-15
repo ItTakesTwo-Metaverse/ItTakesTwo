@@ -95,7 +95,7 @@ void ASCR_ItTakesTwoGameMode::BeginPlay()
 	}
 	// P2을 컨트롤러와 연결합니다.
 	P2->Possess ( this->P2_Cody );
-	this->P1_May->GetMapMode ( this );
+	this->P1_May->GetMapMode(this);
 	this->P2_Cody->GetMapMode(this);
 	this->CustomViewportClient = Cast<UCustomGameViewportClient> ( GetWorld ( )->GetGameViewport ( ) );
 }

@@ -19,6 +19,7 @@
 #include "CSR_P_AComp_CharicStateMannage.h"
 #include "Animation/AnimInstance.h"
 #include "SCR_ItTakesTwoGameMode.h"
+#include "CSR_PlayerWidget.h"
 
 ACSR_Player_Cody::ACSR_Player_Cody ( )
 {
@@ -53,6 +54,9 @@ ACSR_Player_Cody::ACSR_Player_Cody ( )
 void ACSR_Player_Cody::BeginPlay()
 {
 	Super::BeginPlay();
+	this->CodyUI = Cast<UCSR_PlayerWidget>(CreateWidget(this->GetWorld(), this->PlayerHPWidget) );
+	this->CodyUI->AddToViewport();
+	this->CodyUI->InitHP(this->MaxHp);
 }
 
 // possess 과정 중에서 선 입력
@@ -90,10 +94,10 @@ void ACSR_Player_Cody::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if (this->flag1 ) {
-		//this->ItTakesMap->SetCodyDie(true);
+		this->ItTakesMap->SetCodyDie(true);
 		this->ChangeCharacterColor();
+		this->CodyUI->TakeDamageEvent(this->CurHp, this->MaxHp);
 		this->flag1 = false;
-
 	}
 }
 

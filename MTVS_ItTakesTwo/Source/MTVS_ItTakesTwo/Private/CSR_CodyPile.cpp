@@ -153,7 +153,7 @@ FVector UCSR_CodyPile::LayCasting ( )
 		);
 
 		// 디버그 라인 그리기 (선택 사항)
-		DrawDebugLine ( GetWorld ( ) , WorldLocation , WorldLocation + (WorldDirection * 10000.0f) , FColor::Green , false , 1.0f , 0 , 1.0f );
+		//DrawDebugLine ( GetWorld ( ) , WorldLocation , WorldLocation + (WorldDirection * 10000.0f) , FColor::Green , false , 1.0f , 0 , 1.0f );
 
 		if ( bHit )
 		{

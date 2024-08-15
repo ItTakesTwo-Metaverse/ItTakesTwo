@@ -13,6 +13,7 @@
 #include "CSR_MayAnimation.h"
 #include "HSW_Hammer.h"
 #include "SCR_ItTakesTwoGameMode.h"
+#include "CSR_PlayerWidget.h"
 
 ACSR_Player_May::ACSR_Player_May ( )
 {
@@ -45,7 +46,9 @@ void ACSR_Player_May::BeginPlay ( )
 	
 	FString testString = FString::Printf ( TEXT ( "%f, %f, %f" ) , HammerPlayerSocketLotation.X , HammerPlayerSocketLotation.Y , HammerPlayerSocketLotation.Z );
 	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , testString );
-
+	this->MayUI = Cast<UCSR_PlayerWidget> ( CreateWidget ( this->GetWorld ( ) , this->PlayerHPWidget ) );
+	this->MayUI->AddToViewport ( );
+	this->MayUI->InitHP ( this->MaxHp );
 }
 
 // PlayerController를 IMC_PlayerController와 맵핑.
@@ -85,6 +88,8 @@ void ACSR_Player_May::Tick ( float DeltaTime )
 	}
 	if ( this->flag1 ) {
 		this->ChangeCharacterColor ( );
+		this->ItTakesMap->SetMayDie(true);
+		this->MayUI->TakeDamageEvent ( this->CurHp , this->MaxHp );
 		this->flag1 = false;
 	}
 }
