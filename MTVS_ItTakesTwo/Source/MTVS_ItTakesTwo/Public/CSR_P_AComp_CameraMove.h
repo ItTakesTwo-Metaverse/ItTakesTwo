@@ -13,6 +13,7 @@ class MTVS_ITTAKESTWO_API UCSR_P_AComp_CameraMove : public UActorComponent
 {
 	GENERATED_BODY()
 
+
 public:	
 	// Sets default values for this component's properties
 	UCSR_P_AComp_CameraMove();
