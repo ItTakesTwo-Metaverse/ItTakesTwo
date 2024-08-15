@@ -46,4 +46,6 @@ public:
 
 	UPROPERTY ( EditDefaultsOnly)
 	AHSW_Bullet* Nail;
+	UPROPERTY ( EditDefaultsOnly )
+	AHSW_Bullet* GrabbedNail;
 };

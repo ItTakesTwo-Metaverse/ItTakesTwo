@@ -5,4 +5,7 @@ MTVS_ItTakesTwo/Saved
 MTVS_ItTakesTwo/.vsconfig
 MTVS_ItTakesTwo/MTVS_ItTakesTwo.sln
 MTVS_ItTakesTwo/Content/StarterContent
+MTVS_ItTakesTwo/Plugins/CustomMutipleScreen/Content
+MTVS_ItTakesTwo/Plugins/CustomMutipleScreen/Intermediate
+MTVS_ItTakesTwo/Plugins/CustomMutipleScreen/Binaries
 .vs

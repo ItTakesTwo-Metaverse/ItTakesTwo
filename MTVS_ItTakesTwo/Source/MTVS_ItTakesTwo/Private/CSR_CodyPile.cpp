@@ -13,6 +13,7 @@
 #include "HSW_BulletManager.h"
 #include "CSR_FunctionLib.h"
 #include "Kismet/GameplayStatics.h"
+#include "CSR_C_AComp_InputBIndCody.h"
 
 // Sets default values for this component's properties
 UCSR_CodyPile::UCSR_CodyPile()
@@ -152,7 +153,7 @@ FVector UCSR_CodyPile::LayCasting ( )
 		);
 
 		// 디버그 라인 그리기 (선택 사항)
-		//DrawDebugLine ( GetWorld ( ) , WorldLocation , WorldLocation + (WorldDirection * 10000.0f) , FColor::Green , false , 1.0f , 0 , 1.0f );
+		DrawDebugLine ( GetWorld ( ) , WorldLocation , WorldLocation + (WorldDirection * 10000.0f) , FColor::Green , false , 1.0f , 0 , 1.0f );
 
 		if ( bHit )
 		{
@@ -226,39 +227,41 @@ FVector UCSR_CodyPile::LayCasting ( )
 	//return (FVector::ZeroVector);
 //}
 
-void UCSR_CodyPile::OnMyActionFire (FVector startLocation , FRotator startRotation, AHSW_Bullet* nail )
+void UCSR_CodyPile::OnMyActionFire ( FVector startLocation , FRotator startRotation )
 {
+	this->Nail = Cast<ACSR_Player_Cody> ( GetOwner ( ) )->KeyBindComponent->Nail;
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Emerald , Nail->GetName ( ) );
 	UE_LOG ( LogTemp , Warning , TEXT ( "OnMyActionFire" ) );
-	
-	if ( nail == nullptr ) {
-		UE_LOG ( LogTemp , Warning , TEXT ( "Nail is empty" ) );
+	if ( this->Nail == nullptr )
+	{	
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Load Nail From Cody Fail" ) );
 		return;
 	}
+
 	FVector target = LayCasting ( );
-	UE_LOG(LogTemp, Error, TEXT("%f %f %f"), target.X, target.Y, target.Z);
+	//UE_LOG(LogTemp, Error, TEXT("%f %f %f"), target.X, target.Y, target.Z);
 	if ( target == FVector::Zero ( ) ) {
 		UE_LOG ( LogTemp , Warning , TEXT ( "No target" ) );
 		return;
 	}
-
-	nail->NailShoot ( startLocation , target );
-
+	this->Nail->SetStartAndEnd ( startLocation , target );
+	this->Nail->SetState ( ENailState::SHOOT );
 }
 
-AHSW_Bullet* UCSR_CodyPile::OnMyActionBack ( )
+void UCSR_CodyPile::OnMyActionBack ( )
 {
 	UE_LOG ( LogTemp , Warning , TEXT ( "OnMyActionBack" ) );
-	AHSW_Bullet* bullet = this->NailBag->NailPush ( );
-	if ( bullet == nullptr )
+	auto* returnNail = NailBag->NailOutPop ( );
+	if ( returnNail == nullptr )
 	{
-		UE_LOG ( LogTemp , Error , TEXT ( "NailPush returned nullptr!" ) );
-		return nullptr;
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT("ReturnNailFail" ));
+		return;
 	}
-	else if ( NailBag== nullptr )
-	{
-		UE_LOG ( LogTemp , Error , TEXT ( "NailBag nullptr!" ) );
-		return nullptr;
-	}
-	return bullet;
+	returnNail->SetState ( ENailState::RETURNING );
+}
+
+void UCSR_CodyPile::SetBackNail ( AHSW_Bullet* BackNail )
+{	
+
 }
 
