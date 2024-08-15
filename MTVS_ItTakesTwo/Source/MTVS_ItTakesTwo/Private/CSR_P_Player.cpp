@@ -176,6 +176,7 @@ void ACSR_P_Player::OnDamaged ( int32 Damage )
 		this->CurHp = FMath::Max(0, this->CurHp - Damage );
 		if (this->CurHp <= 0 ) {
 			this->flag1 = true;
+
 			this->CharacterStateMannageComp->AddState ( DIE );
 		}
 		else {

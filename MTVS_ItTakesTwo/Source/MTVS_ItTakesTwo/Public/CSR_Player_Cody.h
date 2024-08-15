@@ -54,6 +54,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> PlayerHPWidget;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCSR_PlayerWidget *CodyUI;
 
 #pragma endregion PileMovement;

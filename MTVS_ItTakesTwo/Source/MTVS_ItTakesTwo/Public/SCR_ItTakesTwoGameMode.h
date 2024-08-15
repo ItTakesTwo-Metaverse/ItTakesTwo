@@ -78,5 +78,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class AToolboxBoss *boss;
+
+	UFUNCTION(BlueprintCallable )
+	void LightOn();
+
+	UFUNCTION(BlueprintCallable )
+	void LightOff();
 };
 

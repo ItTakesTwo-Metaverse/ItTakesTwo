@@ -126,6 +126,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartCinematic();
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//class ASCR_ItTakesTwoGameMode *GMMode;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ASCR_ItTakesTwoGameMode *GMMode;
 };

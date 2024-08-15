@@ -13,6 +13,8 @@
 #include "TimerManager.h"
 #include "UObject/Object.h"
 #include "../ToolboxBoss.h"
+#include "Blueprint/UserWidget.h"
+#include "CSR_PlayerWidget.h"
 
 void ASCR_ItTakesTwoGameMode::InitGame ( const FString& MapName , const FString& Options , FString& ErrorMessage )
 {
@@ -62,7 +64,19 @@ UCustomGameViewportClient* ASCR_ItTakesTwoGameMode::GetCustomViewportClient ( )
 
 void ASCR_ItTakesTwoGameMode::CallCutSin()
 {
+	this->CutSinMap();
+}
+
+
+void ASCR_ItTakesTwoGameMode::LightOn()
+{
 	this->P1_May->TranceSIn();
+	this->P1_May->MayUI->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void ASCR_ItTakesTwoGameMode::LightOff()
+{
+	this->P1_May->LightOn();
 }
 
 void ASCR_ItTakesTwoGameMode::BeginPlay()

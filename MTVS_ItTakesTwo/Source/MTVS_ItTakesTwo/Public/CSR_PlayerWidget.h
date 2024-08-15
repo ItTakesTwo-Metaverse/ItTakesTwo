@@ -32,6 +32,9 @@ public:
 	UPROPERTY ( BlueprintReadWrite )
 	float TargetHP = 0;
 
+	UFUNCTION()
+	void OutLight();
+
 	//UFUNCTION(BlueprintCallable )
 	//void TakeDelayDamage( );
 
