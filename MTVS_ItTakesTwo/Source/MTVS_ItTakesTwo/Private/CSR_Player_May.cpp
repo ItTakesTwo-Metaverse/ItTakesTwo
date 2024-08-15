@@ -69,12 +69,32 @@ void ACSR_Player_May::MakeEnhancedInputLocalSubSystem ( )
 	// EnhancedInput을 IMC_...를 맵핑합니다.
 	SubSys->AddMappingContext ( this->IMC_PlayerController_ , 0 );
 	this->PlayerIndex = 0;
+
 }
 
 
 void ACSR_Player_May::ChangeCharacterColor_Implementation ( )
 {
 	
+}
+
+
+void ACSR_Player_May::TranceSIn()
+{
+	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(this, this->PlayerIndex);
+	if (CameraManager)
+	{
+		CameraManager->StartCameraFade(0.0f, 1.0f, 0.5f, FLinearColor::Black, false, true);
+	}
+}
+
+void ACSR_Player_May::LightOn()
+{
+	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(this, this->PlayerIndex);
+	if (CameraManager)
+	{
+		CameraManager->StartCameraFade(1.0f, 0.0f, 0.5f, FLinearColor::Black, false, true);
+	}
 }
 
 
@@ -91,9 +111,13 @@ void ACSR_Player_May::Tick ( float DeltaTime )
 
 	if ( this->flag1 ) {
 		this->ChangeCharacterColor ( );
-		this->ItTakesMap->SetMayDie(true);
 		this->MayUI->TakeDamageEvent ( this->CurHp , this->MaxHp );
 		this->flag1 = false;
+	}
+	if (this->flag2) {
+		this->MayUI->SetOffRebornUI();
+		this->MayUI->InitHP(this->MaxHp);
+		this->flag2 = false;
 	}
 }
 

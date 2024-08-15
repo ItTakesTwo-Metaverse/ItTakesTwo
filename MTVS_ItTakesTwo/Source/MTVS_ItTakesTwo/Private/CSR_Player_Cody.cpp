@@ -94,11 +94,19 @@ void ACSR_Player_Cody::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if (this->flag1 ) {
-		this->ItTakesMap->SetCodyDie(true);
 		this->ChangeCharacterColor();
 		this->CodyUI->TakeDamageEvent(this->CurHp, this->MaxHp);
 		this->flag1 = false;
 	}
+	if (this->flag2) {
+		this->CodyUI->SetOffRebornUI();
+		this->CodyUI->InitHP(this->MaxHp);
+		this->ItTakesMap->SetCodyDie(false);
+		this->flag2 = false;
+	}
+	//if (this->flag3) {
+	//	this->ItTakesMap->SetCodyDIe(true);
+	//}
 }
 
 void ACSR_Player_Cody::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

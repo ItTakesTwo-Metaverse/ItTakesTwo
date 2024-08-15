@@ -32,8 +32,11 @@ public:
 	class UCustomGameViewportClient * CustomViewportClient;
 
 // 소환한 캐릭터들 저장.
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite )
 	class ACSR_Player_Cody *P2_Cody;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite )
 	class ACSR_Player_May *P1_May;
 
 	void SetMayDie( bool flag );
@@ -55,6 +58,8 @@ public:
 	UFUNCTION(BlueprintCallable )
 	class UCustomGameViewportClient* GetCustomViewportClient ();
 
+	UFUNCTION(BlueprintCallable )
+	void CallCutSin();
 
 	UFUNCTION(BlueprintImplementableEvent )
 	void CodyDieMap( );
@@ -71,5 +76,16 @@ public:
 	UFUNCTION ( BlueprintImplementableEvent )
 	void CutSinMap( );
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class AToolboxBoss *boss;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class ULevelSequence* SQ_2Phase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class ALevelSequenceActor* LevelSequenceActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class ULevelSequencePlayer* LevelSequencePlayer;
 };
 

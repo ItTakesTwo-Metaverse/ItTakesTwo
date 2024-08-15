@@ -123,5 +123,24 @@ public:
 	UPROPERTY ( )
 	class ACSR_P_Player* Player;
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartCinematic();
 
+	UPROPERTY()
+	class UParticleSystem* LockEffect;
+
+	UPROPERTY()
+	class AWood* wood;
+	
+	UPROPERTY()
+	class UNiagaraSystem* HoleMeshEffect;
+
+
+	FTimerHandle Circle1TimerHandle;
+	FTimerHandle Circle2TimerHandle;
+	FTimerHandle Circle3TimerHandle;
+	FTimerHandle Circle4TimerHandle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ASCR_ItTakesTwoGameMode *GMMode;
 };

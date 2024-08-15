@@ -40,4 +40,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* WoodCircle4;
+
+
+	void DestroyCircle1();
+	void DestroyCircle2();
+	void DestroyCircle3();
+	void DestroyCircle4();
 };

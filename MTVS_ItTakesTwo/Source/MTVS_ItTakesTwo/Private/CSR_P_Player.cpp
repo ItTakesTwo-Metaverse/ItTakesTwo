@@ -113,17 +113,22 @@ void ACSR_P_Player::Tick(float DeltaTime)
 	if ( (this->CharacterStateMannageComp->CurrentState & REBORN)) {
 		CameraBlurOn ( );
 		this->CurrentTIme = this->CurrentTIme + DeltaTime;
+		
 		if ( this->DieTime <= this->CurrentTIme ) {
 			this->CurrentTIme = 0.0f;
-			this->GetMesh ( )->SetVisibility ( true );
-			this->CharacterStateMannageComp->RemoveState ( REBORN );
-			APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
 			SetActorLocation ( this->SavePoint );
+			APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
 			if ( CameraManager )
 			{
 				CameraManager->StartCameraFade ( 1.0f , 0.0f , 0.5f , FLinearColor::Black , false , true );
 				CameraBlurOff ( );
 			}
+			this->GetMesh ( )->SetVisibility ( true );
+			this->CurHp = this->MaxHp;
+			this->flag1 = true;
+			this->flag2 = true;
+			this->CharacterStateMannageComp->AddState (INVI);
+			this->CharacterStateMannageComp->RemoveState ( REBORN );
 		}
 	}
 }
@@ -157,9 +162,6 @@ void ACSR_P_Player::fallingUnder ( )
 	{
 		CameraManager->StartCameraFade ( 0.0f , 1.0f , 2.0f , FLinearColor::Black , false , true );
 	}
-	SetActorLocation ( this->SavePoint );
-	CameraManager->StartCameraFade ( 1.0f , 0.0f , 3.5f , FLinearColor::Black , false , true );
-	this->GetMesh ( )->SetVisibility ( true );
 	this->CharacterStateMannageComp->AddState(DIE);
 }
 
@@ -175,10 +177,10 @@ void ACSR_P_Player::OnDamaged ( int32 Damage )
 		DamagedEffect->SetAutoDestroy(true);
 		this->CurHp = FMath::Max(0, this->CurHp - Damage );
 		if (this->CurHp <= 0 ) {
-			this->flag1 = true;
 			this->CharacterStateMannageComp->AddState ( DIE );
 		}
 		else {
+			this->flag1 = true;
 			this->CharacterStateMannageComp->AddState ( INVI );
 			this->CharacterStateMannageComp->RemoveState ( DAMAGED );
 		}
@@ -193,7 +195,7 @@ void ACSR_P_Player::GetMapMode ( ASCR_ItTakesTwoGameMode* map )
 void ACSR_P_Player::CameraBlurOn ( )
 {
 	CameraComp->PostProcessSettings.DepthOfFieldFocalDistance = 1;
-	CameraComp->PostProcessSettings.ColorContrast = FVector4 ( 0.3f , 0.3f , 0.3f , 0.3f );
+	CameraComp->PostProcessSettings.ColorContrast = FVector4 ( 0.7f , 0.7f , 0.7f , 1.0f );
 }
 
 void ACSR_P_Player::CameraBlurOff ( )
