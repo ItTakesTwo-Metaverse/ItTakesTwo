@@ -105,5 +105,9 @@ void ASCR_ItTakesTwoGameMode::BeginPlay()
 	this->P2_Cody->GetMapMode(this);
 	this->CustomViewportClient = Cast<UCustomGameViewportClient> ( GetWorld ( )->GetGameViewport ( ) );
 
-	this->boss = Cast< AToolboxBoss>(GetOwner());
+	this->boss = Cast<AToolboxBoss>(UGameplayStatics::GetActorOfClass(this->GetWorld(), AToolboxBoss::StaticClass()));
+	if (this->boss == nullptr) {
+		UCSR_FunctionLib::ExitGame(GetWorld(), FString("ASCR_ItTakesTwoGameMode : boss is Null"));
+	}
+	this->boss->GMMode = this;
 }
