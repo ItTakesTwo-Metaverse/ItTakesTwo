@@ -34,18 +34,19 @@ void UCSR_C_AComp_InputBIndCody::SetupInputComponent ( class UEnhancedInputCompo
 
 void UCSR_C_AComp_InputBIndCody::ChangeZoomIn ( )
 {
-	Nail = this->CodyCharacter_->CodyPileComp->NailBag->NailPop ( this->CodyCharacter_->ArrowComp->GetComponentLocation ( ) , this->CodyCharacter_->GetActorRotation ( ) );
+	Nail = this->CodyCharacter_->CodyPileComp->NailBag->NailPop ( );
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Green , Nail->GetName());
 	if ( Nail == nullptr ) {
-		UE_LOG ( LogTemp , Warning , TEXT ( "Nail is empty" ) );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Zoom In: Nail NULL" ));
 		return;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("1234" ) );
+	GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Zoom In: Nail Vaild" ) );
 	this->CodyCharacter_->CameraComp->bUsePawnControlRotation = true;
 	this->CodyCharacter_->bUseControllerRotationYaw = true;
 	this->CodyCharacter_->CodyPileComp->ToggleButton ( true );
 
-	Nail->NailLoad ( FName("hanr_r") );
-	
+	Nail->SetState (ENailState::LOAD );
+	//this->CodyCharacter_->ArrowComp->GetComponentLocation ( ) , this->CodyCharacter_->GetActorRotation ( )
 }
 
 void UCSR_C_AComp_InputBIndCody::ChangeZoomOut ( )
@@ -54,27 +55,35 @@ void UCSR_C_AComp_InputBIndCody::ChangeZoomOut ( )
 	this->CodyCharacter_->bUseControllerRotationYaw = false;
 	this->CodyCharacter_ ->CodyPileComp->ToggleButton ( false );
 
+	if ( Nail == nullptr )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Zoom Out: Nail NULL" ) );
+		return;
+	}
+
+	//this->CodyCharacter_->CodyPileComp->NailBag->NailPush (Nail);
+
 	if ( Nail->State == ENailState::LOAD )
 	{
-		Nail = NailBag->NailPush ( );
-		Nail->NailBasic ( );
-	}
-	else
-	{
-		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Not Load" ),  );
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Blue , TEXT ( "Zoomout Return" ) );
+		NailBag->NailPush ( Nail );
+		Nail->SetState ( ENailState::BASIC );
+		Nail = nullptr;
 	}
 }
 
 void UCSR_C_AComp_InputBIndCody::ExecFIre ( )
 {
-	this->CodyCharacter_->CodyPileComp->OnMyActionFire ( this->CodyCharacter_->ArrowComp->GetComponentLocation ( ) , this->CodyCharacter_->GetActorRotation ( ),Nail );
+	//Nail = GrabbedNail;
+	if ( Nail == nullptr )
+	{
+		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Can't ExecFire" ) );
+		return;
+	}
+	this->CodyCharacter_->CodyPileComp->OnMyActionFire ( this->CodyCharacter_->ArrowComp->GetComponentLocation ( ) , this->CodyCharacter_->GetActorRotation ( ));
 }
 
 void UCSR_C_AComp_InputBIndCody::ExecBack ( )
 {
-	Nail = this->CodyCharacter_->CodyPileComp->OnMyActionBack ( );
-	if ( Nail )
-	{
-		Nail->SetbIsReturning (true);
-	}
+	this->CodyCharacter_->CodyPileComp->OnMyActionBack ( );
 }
