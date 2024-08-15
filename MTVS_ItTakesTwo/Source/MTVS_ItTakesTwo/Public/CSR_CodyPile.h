@@ -80,9 +80,9 @@ public:
 
 	FVector LayCasting ( );
 
-	void OnMyActionFire ( FVector startLocation, FRotator startRotation, AHSW_Bullet* nail );
+	void OnMyActionFire ( FVector startLocation, FRotator startRotation );
 
-	AHSW_Bullet* OnMyActionBack ();
+	void OnMyActionBack ();
 
 	//---------------------------------------------
 	UPROPERTY(EditAnywhere,BlueprintReadWrite )
@@ -90,4 +90,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly )
 	class AHSW_BulletManager* NailBag;
+
+	UPROPERTY ()
+	class AHSW_Bullet* Nail;
+
+	void SetBackNail ( AHSW_Bullet* BackNail );
+	TArray<AHSW_Bullet*> NailArray;
+	
 };

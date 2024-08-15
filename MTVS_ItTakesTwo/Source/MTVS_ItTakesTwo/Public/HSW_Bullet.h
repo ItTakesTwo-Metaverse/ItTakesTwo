@@ -70,7 +70,7 @@ public:
 	
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly )
-	ENailState State;
+	ENailState State = ENailState::BASIC;
 
 	float NailDefaultDist = 100;
 
@@ -96,21 +96,21 @@ public:
 
 	void NailReadytoShoot ( FVector v , FRotator r );
 
-	void GoToNailBag ();
+	void SetSocketName();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class AHSW_BulletManager* NailBag;
 	void SetNailBag ( AHSW_BulletManager* nailBag );
 
 	UPROPERTY (  )
-	class APawn* Player;
+	class ACSR_Player_Cody* Player;
 
 	UFUNCTION(BlueprintCallable )
 	void NailBasic( );
 	UFUNCTION(BlueprintCallable )
-	void NailShoot ( FVector start , FVector end );
+	void NailShoot ( );
 	UFUNCTION(BlueprintCallable )
-	void NailLoad ( FName socketName );
+	void NailLoad ( );
 	UFUNCTION(BlueprintCallable )
 	void NailReturn( );
 
@@ -134,7 +134,10 @@ public:
 
 	float CurrentTime = 0.f;
 	UPROPERTY(EditDefaultsOnly )
-	float BackTime = 3.f;
+	float BackTime = 4.f;
 
 	void SetbIsReturning ( bool value );
+
+	void FirstAttach ( FTransform t);
+	void SetStartAndEnd ( FVector start , FVector end );
 };

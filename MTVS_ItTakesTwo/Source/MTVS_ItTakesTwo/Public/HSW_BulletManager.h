@@ -39,14 +39,18 @@ public:
 	TSubclassOf<class AHSW_Bullet> BulletFactory;
 
 	UFUNCTION(BlueprintCallable )
-	AHSW_Bullet* NailPop ( FVector v , FRotator r);
+	AHSW_Bullet* NailPop ();
+
 	UFUNCTION(BlueprintCallable )
-	AHSW_Bullet* NailPush ( );
+	void NailPush ( AHSW_Bullet* currentNail );
 
-	int32 SocketIndex;
 
-	FVector GetNailBagSocketLocation ( );
-	FRotator GetNailBagSocketRotation ( );
+// 	FVector GetNailBagSocketLocation ( );
+// 	FRotator GetNailBagSocketRotation ( );
 
-	void NailArrive ( AHSW_Bullet* nail );
+	FTimerHandle TimerHandle;
+
+	void NailSetting ( );
+	AHSW_Bullet* NailOutPop ( );
+	void NailOutPush ( AHSW_Bullet* EmbeddedNail );
 };
