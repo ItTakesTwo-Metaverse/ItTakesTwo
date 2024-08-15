@@ -130,14 +130,16 @@ public:
 	class UParticleSystem* LockEffect;
 
 	UPROPERTY()
-	class UNiagaraSystem* HoleMeshNiagara;
-
+	class AWood* wood;
+	
 	UPROPERTY()
-	class AWood	* wood;
+	class UNiagaraSystem* HoleMeshEffect;
 
-	FTimerHandle HoleMeshTimerHandle;
 
-	void DestroyHoleMesh();
+	FTimerHandle Circle1TimerHandle;
+	FTimerHandle Circle2TimerHandle;
+	FTimerHandle Circle3TimerHandle;
+	FTimerHandle Circle4TimerHandle;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//class ASCR_ItTakesTwoGameMode *GMMode;
