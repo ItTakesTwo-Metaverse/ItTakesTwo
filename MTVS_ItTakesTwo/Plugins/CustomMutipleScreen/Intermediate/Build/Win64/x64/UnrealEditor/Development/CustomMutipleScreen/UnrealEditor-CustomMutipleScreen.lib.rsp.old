@@ -6,7 +6,7 @@
 /NAME:"UnrealEditor-CustomMutipleScreen.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Intermediate\Build\Win64\x64\MTVS_ItTakesTwoEditor\Development\UnrealEd\SharedPCH.UnrealEd.Cpp20.h.obj"
+"C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Intermediate\Build\Win64\x64\MTVS_ItTakesTwoEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
 "C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\Module.CustomMutipleScreen.cpp.obj"
 "C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\Default.rc2.res"
 /OUT:"C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\UnrealEditor-CustomMutipleScreen.lib"

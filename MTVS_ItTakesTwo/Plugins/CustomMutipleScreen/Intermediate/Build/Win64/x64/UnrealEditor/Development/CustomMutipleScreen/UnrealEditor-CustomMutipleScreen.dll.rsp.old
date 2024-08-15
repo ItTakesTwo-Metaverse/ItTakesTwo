@@ -39,6 +39,7 @@
 "C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\Module.CustomMutipleScreen.cpp.obj"
 "C:\Users\Admin\Documents\itBEtabeta\ItTakesTwo\MTVS_ItTakesTwo\Plugins\CustomMutipleScreen\Intermediate\Build\Win64\x64\UnrealEditor\Development\CustomMutipleScreen\Default.rc2.res"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\CoreUObject\UnrealEditor-CoreUObject.lib"
+"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\InputCore\UnrealEditor-InputCore.lib"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Engine\UnrealEditor-Engine.lib"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Slate\UnrealEditor-Slate.lib"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\SlateCore\UnrealEditor-SlateCore.lib"
