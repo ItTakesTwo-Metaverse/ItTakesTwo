@@ -72,7 +72,6 @@ void ACSR_Player_May::MakeEnhancedInputLocalSubSystem ( )
 
 }
 
-
 void ACSR_Player_May::ChangeCharacterColor_Implementation ( )
 {
 	
@@ -96,6 +95,11 @@ void ACSR_Player_May::LightOn()
 	}
 }
 
+void ACSR_Player_May::tranReBorn()
+{
+	this->MayUI->SetOnRebornUI();
+}
+
 void ACSR_Player_May::Tick ( float DeltaTime )
 {
 	Super::Tick ( DeltaTime );
@@ -111,9 +115,27 @@ void ACSR_Player_May::Tick ( float DeltaTime )
 		this->flag1 = false;
 	}
 	if (this->flag2) {
-		this->MayUI->SetOffRebornUI();
+		//this->MayUI->SetOffRebornUI();
 		this->MayUI->InitHP(this->MaxHp);
+		this->MayUI->SetOnHPUI();
+		this->ItTakesMap->SetMayDie(false);
 		this->flag2 = false;
+	}
+	if (this->flag3) {
+		this->StarFouder();
+		this->MayUI->TakeDamageEvent(this->CurHp, this->MaxHp);
+		this->ItTakesMap->SetMayDie(true);
+		this->flag3 = false;
+	}
+	if (this->flag4) {
+		this->MayUI->StartHeartBeat(DeltaTime);
+		CurR = (DeltaTime / 4) + CurR;
+		if (CurR >= MaxR) {
+			CurR = 0;
+			this->MayUI->SetOffRebornUI();
+			this->OFFHeart();
+			this->MayUI->MemoRebone = 0;
+		}
 	}
 }
 
@@ -130,6 +152,8 @@ void ACSR_Player_May::SetupPlayerInputComponent ( UInputComponent* PlayerInputCo
 #pragma endregion EnhancedInput register
 
 	Setting ( );
+
+
 }
 
 

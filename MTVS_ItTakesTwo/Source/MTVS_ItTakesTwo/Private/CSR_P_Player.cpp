@@ -107,6 +107,7 @@ void ACSR_P_Player::Tick(float DeltaTime)
 	if ( (this->CharacterStateMannageComp->CurrentState & DIE) ) {
 		this->CurrentTIme = 0;
 		this->GetMesh ( )->SetVisibility ( false );
+		this->flag3 = true;
  		this->CharacterStateMannageComp->AddState ( REBORN );
 		this->CharacterStateMannageComp->RemoveState ( DIE );
 	}
@@ -157,11 +158,7 @@ void ACSR_P_Player::Landed ( const FHitResult& Hit )
 void ACSR_P_Player::fallingUnder ( )
 {
 	this->GetMesh()->SetVisibility(false);
-	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager ( this , this->PlayerIndex );
-	if ( CameraManager )
-	{
-		CameraManager->StartCameraFade ( 0.0f , 1.0f , 2.0f , FLinearColor::Black , false , true );
-	}
+	this->CurHp = 0;
 	this->CharacterStateMannageComp->AddState(DIE);
 }
 
@@ -202,6 +199,16 @@ void ACSR_P_Player::CameraBlurOff ( )
 {
 	CameraComp->PostProcessSettings.DepthOfFieldFocalDistance = 0;
 	CameraComp->PostProcessSettings.ColorContrast = FVector4 ( 1.0f , 1.0f , 1.0f , 1.0f );
+}
+
+void ACSR_P_Player::ONHeart()
+{
+	this->flag4 = true;
+}
+
+void ACSR_P_Player::OFFHeart()
+{
+	this->flag4 = false;
 }
 
 void ACSR_P_Player::SecondJumpToOtherComp ( )

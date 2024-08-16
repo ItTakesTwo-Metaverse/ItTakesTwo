@@ -57,5 +57,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCSR_PlayerWidget *CodyUI;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float MaxR = 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float CurR = 0;
+
+	UFUNCTION(BlueprintCallable)
+	void tranReBorn();
+
 #pragma endregion PileMovement;
 };

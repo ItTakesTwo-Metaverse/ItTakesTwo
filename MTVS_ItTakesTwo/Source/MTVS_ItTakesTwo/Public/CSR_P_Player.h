@@ -94,6 +94,10 @@ public:
 
 	bool flag2 = false;
 
+	bool flag3 = false;
+
+	bool flag4 = false;
+
 	void GetMapMode(class ASCR_ItTakesTwoGameMode *map );
 
 	UPROPERTY ( EditDefaultsOnly)
@@ -102,6 +106,16 @@ public:
 	void CameraBlurOn ( );
 
 	void CameraBlurOff ( );
+	
+	UFUNCTION(BlueprintCallable)
+	void ONHeart();
+
+	UFUNCTION(BlueprintCallable)
+	void OFFHeart();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StarFouder();
+	
 
 #pragma endregion ComponentSetting
 

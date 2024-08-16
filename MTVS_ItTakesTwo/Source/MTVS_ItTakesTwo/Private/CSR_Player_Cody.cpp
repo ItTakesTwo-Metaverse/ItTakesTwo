@@ -90,6 +90,11 @@ void ACSR_Player_Cody::ChangeCharacterColor_Implementation ( )
 
 }
 
+void ACSR_Player_Cody::tranReBorn()
+{
+	this->CodyUI->SetOnRebornUI();
+}
+
 void ACSR_Player_Cody::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -101,12 +106,25 @@ void ACSR_Player_Cody::Tick(float DeltaTime)
 	if (this->flag2) {
 		this->CodyUI->SetOffRebornUI();
 		this->CodyUI->InitHP(this->MaxHp);
+		this->CodyUI->SetOnHPUI();
 		this->ItTakesMap->SetCodyDie(false);
 		this->flag2 = false;
 	}
-	//if (this->flag3) {
-	//	this->ItTakesMap->SetCodyDIe(true);
-	//}
+	if (this->flag3) {
+		this->CodyUI->TakeDamageEvent(this->CurHp, this->MaxHp);
+		this->ItTakesMap->SetCodyDie(true);
+		this->flag3 = false;
+	}
+	if (this->flag4) {
+		this->CodyUI->StartHeartBeat(DeltaTime);
+		CurR = (DeltaTime / 4) + CurR;
+		if (CurR >= MaxR) {
+			CurR = 0;
+			this->CodyUI->SetOffRebornUI();
+			this->OFFHeart();
+			this->CodyUI->MemoRebone = 0;
+		}
+	}
 }
 
 void ACSR_Player_Cody::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
