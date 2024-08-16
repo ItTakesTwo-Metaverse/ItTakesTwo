@@ -56,6 +56,16 @@ public:
 
 	class UCSR_PlayerWidget *CodyUI;
 
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* FootStepSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* JumpSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* DemageSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* DeathSFV;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float MaxR = 1;
 

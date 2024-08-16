@@ -56,7 +56,7 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 	// 실행창에 상태 메세지 출력
 	FString logMsg = UEnum::GetValueAsString(CurrentState);
-	DrawDebugString(GetWorld(), GetOwner()->GetActorLocation(), logMsg, nullptr, FColor::Red, 0);
+	//DrawDebugString(GetWorld(), GetOwner()->GetActorLocation(), logMsg, nullptr, FColor::Red, 0);
 
 
 	switch (CurrentState)
@@ -275,7 +275,11 @@ void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
 	{	
 		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillArmOnTimerHandle , this , &UToolBoxBossFSM::DrillArmOn , 0.3f , false );
 
-		if ( DrillCircleAnim ) DrillCircleAnim->PlayDrillCircle2Montage ( );
+		if (DrillCircleAnim)
+		{
+			DrillCircleAnim->PlayDrillCircle2Montage();
+			UGameplayStatics::PlaySound2D(GetWorld(), me->DrillSpinSFV);
+		}
 		if ( DrillArmsAnim ) DrillArmsAnim->PlayDrillArmsMontage ( );
 
 		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillOffTimerHandle , this , &UToolBoxBossFSM::DrillOff , 10.5f , false );

@@ -54,6 +54,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LightOn();
 
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* FootStepSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* JumpSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* DemageSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* DeathSFV;
+
+
 	UFUNCTION(BlueprintCallable)
 	void tranReBorn();
 

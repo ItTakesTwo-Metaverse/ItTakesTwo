@@ -91,6 +91,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	class USoundBase* HammerSFV;
+	
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* HammerHangingSFV;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UNiagaraSystem* NiagaraEffect;
