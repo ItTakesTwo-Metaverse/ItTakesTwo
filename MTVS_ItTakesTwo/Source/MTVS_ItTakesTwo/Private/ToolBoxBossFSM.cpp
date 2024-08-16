@@ -45,7 +45,7 @@ void UToolBoxBossFSM::BeginPlay()
 
 	
 	// 초기 상태를 Start로 설정
-	ChangeState(EBossState::Start );
+	ChangeState(EBossState::Start);
 }
 
 
@@ -341,7 +341,9 @@ void UToolBoxBossFSM::DieState ( const float& DeltaTime )
 	{
 	me->EnterRagdollState ( );
 	bIsInRagdoll = true;
+	me->playEndingvideo();
 	}
+
 }
 
 void UToolBoxBossFSM::DrillOn ( )
