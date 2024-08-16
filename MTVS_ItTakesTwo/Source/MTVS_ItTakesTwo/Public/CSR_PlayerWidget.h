@@ -25,24 +25,41 @@ public:
 
 	UFUNCTION ( BlueprintImplementableEvent )
 	void TakeDamageEvent ( float CurHP , float MaxHP );
+	
+	UFUNCTION(BlueprintCallable)
+	float RebornJung(float DeltaTIme);
 
 	UPROPERTY (BlueprintReadWrite)
 	float MemoHP = 0;
-
+	
 	UPROPERTY ( BlueprintReadWrite )
 	float TargetHP = 0;
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UPROPERTY(BlueprintReadWrite)
+	float TargetRebone = 1;
+
+	UPROPERTY(BlueprintReadWrite)
+	float MemoRebone = 0;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetOnRebornUI();
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetOffRebornUI();
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetOnHPUI();
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetOffHPUI();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	float CountReboneTime(float a);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartHeartBeat(float DeltaTime);
+
+
 
 	//UFUNCTION(BlueprintCallable )
 	//void TakeDelayDamage( );
