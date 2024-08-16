@@ -79,19 +79,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class AToolboxBoss *boss;
 
-	UFUNCTION(BlueprintCallable )
-	void LightOn();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class ULevelSequence* SQ_2Phase;
 
-	UFUNCTION(BlueprintCallable )
-	void LightOff();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class ALevelSequenceActor* LevelSequenceActor;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
-	//class ULevelSequence* SQ_2Phase;
-
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Level Sequence")
-	//class ALevelSequenceActor* LevelSequenceActor;
-
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Level Sequence")
-	//class ULevelSequencePlayer* LevelSequencePlayer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class ULevelSequencePlayer* LevelSequencePlayer;
 };
 

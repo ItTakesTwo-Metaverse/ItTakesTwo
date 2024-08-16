@@ -28,7 +28,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ModifyAble" )
 	TSubclassOf<class AHSW_Hammer> HammerFactory;
 
-	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite )
+	UPROPERTY (EditDefaultsOnly )
 	class AHSW_Hammer *Hammer;
 
 	UPROPERTY (EditDefaultsOnly )
