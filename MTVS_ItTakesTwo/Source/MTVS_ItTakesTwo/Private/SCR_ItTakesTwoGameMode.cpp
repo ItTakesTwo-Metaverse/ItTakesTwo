@@ -112,7 +112,7 @@ void ASCR_ItTakesTwoGameMode::BeginPlay()
 	this->boss = Cast<AToolboxBoss>(UGameplayStatics::GetActorOfClass(this->GetWorld(), AToolboxBoss::StaticClass()));
 	if (this->boss == nullptr) {
 		UCSR_FunctionLib::ExitGame(GetWorld(), FString("ASCR_ItTakesTwoGameMode : boss is Null"));
-
+	}
 	/*this->boss = Cast< AToolboxBoss>(GetOwner());*/
 
 	if (SQ_2Phase)
