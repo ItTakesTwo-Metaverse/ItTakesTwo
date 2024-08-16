@@ -275,7 +275,11 @@ void UToolBoxBossFSM::Attack3State( const float& DeltaTime )
 	{	
 		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillArmOnTimerHandle , this , &UToolBoxBossFSM::DrillArmOn , 0.3f , false );
 
-		if ( DrillCircleAnim ) DrillCircleAnim->PlayDrillCircle2Montage ( );
+		if (DrillCircleAnim)
+		{
+			DrillCircleAnim->PlayDrillCircle2Montage();
+			UGameplayStatics::PlaySound2D(GetWorld(), me->DrillSpinSFV);
+		}
 		if ( DrillArmsAnim ) DrillArmsAnim->PlayDrillArmsMontage ( );
 
 		GetWorld ( )->GetTimerManager ( ).SetTimer ( DrillOffTimerHandle , this , &UToolBoxBossFSM::DrillOff , 10.5f , false );

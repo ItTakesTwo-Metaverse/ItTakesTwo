@@ -237,7 +237,7 @@ AToolboxBoss::AToolboxBoss ( )
 		HoleMeshEffect = HoleMeshEffectObj.Object;
 	}*/
 
-	
+	UGameplayStatics::PlaySound2D(GetWorld(), BossImpactSFV);
 	
 }
 // Called when the game starts or when spawned
@@ -357,6 +357,7 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 	{	
 		if ( bCanDamage == true && Lock1HP > 0 )
 		{
+			UGameplayStatics::PlaySound2D(GetWorld(), BossLockHitSFV);
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LockEffect, LockBody1->GetComponentLocation(), FRotator::ZeroRotator);
 
 			//FString HPTEXT = FString::Printf(TEXT("%d" ), Lock1HP );
@@ -369,10 +370,12 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 
 			if ( Lock1HP <= 0 )
 			{	
+				UGameplayStatics::PlaySound2D(GetWorld(), BossLockBreakSFV);
 				Lock1->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 				Lock1->SetSimulatePhysics ( true );
 				Lock1->bBlendPhysics = true;
 
+				UGameplayStatics::PlaySound2D(GetWorld(), ArmBrokenSFV);
 				LockBody1->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 				LockBody1->SetSimulatePhysics ( true );
 				LockBody1->bBlendPhysics = true;
@@ -401,6 +404,7 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 		}
 		else if ( fsm->bIsAttack2 ) //else if ( Lock1HP <= 0 && Lock2HP > 0 )
 		{
+			UGameplayStatics::PlaySound2D(GetWorld(), BossLockHitSFV);
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LockEffect, LockBody2->GetComponentLocation(), FRotator::ZeroRotator);
 			Lock2HP -= damage;
 			//Lock2HP = Lock2MaxHP;
@@ -408,10 +412,13 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 			
 			if ( Lock2HP <= 0 )
 			{
+				UGameplayStatics::PlaySound2D(GetWorld(), BossLockBreakSFV);
+
 				Lock2->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 				Lock2->SetSimulatePhysics ( true );
 				Lock2->bBlendPhysics = true;
 
+				UGameplayStatics::PlaySound2D(GetWorld(), ArmBrokenSFV);
 				LockBody2->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 				LockBody2->SetSimulatePhysics ( true );
 				LockBody2->bBlendPhysics = true;
@@ -477,9 +484,13 @@ void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedCompon
 // 			
 // 			wood->DestroyCircle4();
 // 		}
+
 		FVector OtherComponentLoaction = OtherComponent->GetComponentLocation();
 		UNiagaraComponent* WoodDustEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(this->GetWorld(), this->NiagaraEffect, OtherComponentLoaction , FRotator::ZeroRotator);
 		WoodDustEffect->SetAutoDestroy(true);
+		
+		UGameplayStatics::PlaySound2D(GetWorld(), DrillHoleSFV);
+
 		OtherComponent->DestroyComponent();
 	}
 

@@ -146,4 +146,19 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	class UNiagaraSystem* NiagaraEffect;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* BossLockHitSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* BossLockBreakSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* DrillHoleSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* DrillSpinSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* BossImpactSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* ArmScrapeSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* ArmBrokenSFV;
 };

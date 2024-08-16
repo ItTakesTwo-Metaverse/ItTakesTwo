@@ -6,6 +6,7 @@
 #include "../Public/HSW_Bullet.h"
 #include "HSW_Player_May.h"
 #include "Components/SceneComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AHSW_Hammer::AHSW_Hammer()
@@ -142,6 +143,7 @@ void AHSW_Hammer::MoveToNail ( float deltatime)
 
 			SocketTransform = bullet->MeshComp->GetSocketTransform(TEXT("AttachingPoint"));
 			SetActorLocation(SocketTransform.GetLocation());
+			UGameplayStatics::PlaySound2D(GetWorld(),HammerHangingSFV);
 			//SetActorRotation(FRotator(45,45,45));
 
 			//소켓의 위치와 회전을 가져온다.

@@ -56,5 +56,13 @@ public:
 
 	class UCSR_PlayerWidget *CodyUI;
 
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* FootStepSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* JumpSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* DemageSFV;
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* DeathSFV;
 #pragma endregion PileMovement;
 };
