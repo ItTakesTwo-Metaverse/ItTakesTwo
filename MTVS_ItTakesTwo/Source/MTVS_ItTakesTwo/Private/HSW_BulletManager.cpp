@@ -26,7 +26,7 @@ void AHSW_BulletManager::BeginPlay()
 		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		FString SocketNameString = FString::Printf ( TEXT ( "NailBag_%d" ) , i );
 		FName SocketName ( *SocketNameString );
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , SocketNameString );
+		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , SocketNameString );
 
 		FTransform t = this->MeshComp->GetSocketTransform ( SocketName );
 		//UE_LOG ( LogTemp , Log , TEXT ( "Socket Transform: %s" ) , *t.ToString ( ) );
@@ -84,7 +84,7 @@ void AHSW_BulletManager::NailPush ( AHSW_Bullet* currentNail )
 	}
 	if ( currentNail != nullptr )
 	{
-		GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , currentNail->GetName ( ) );
+		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Red , currentNail->GetName ( ) );
 		Magazine.Push ( currentNail );
 	}
 }

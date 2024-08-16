@@ -29,7 +29,7 @@ public:
 
 #pragma region
 	UPROPERTY( EditAnywhere, Category = "ModifyAble" )
-	int32 MaxHp = 8;
+	int32 MaxHp = 10;
 
 	UPROPERTY( EditAnywhere )
 	int32 CurHp = MaxHp;
@@ -69,10 +69,10 @@ public:
 	float CurrentTIme = 0;
 
 	UPROPERTY( EditDefaultsOnly , Category = "ModifyAble")
-	float DieTime = 3.0f;
+	float DieTime = 5.0f;
 	
 	UPROPERTY ( EditDefaultsOnly , Category = "ModifyAble" )
-	float INVItime = 100.0f;
+	float INVItime = 1.5f;
 	
 
 	UPROPERTY ( EditDefaultsOnly , Category = "ModifyAble" )
@@ -92,10 +92,16 @@ public:
 
 	bool flag1 = false;
 
+	bool flag2 = false;
+
 	void GetMapMode(class ASCR_ItTakesTwoGameMode *map );
 
 	UPROPERTY ( EditDefaultsOnly)
 	ASCR_ItTakesTwoGameMode* ItTakesMap;
+
+	void CameraBlurOn ( );
+
+	void CameraBlurOff ( );
 
 #pragma endregion ComponentSetting
 

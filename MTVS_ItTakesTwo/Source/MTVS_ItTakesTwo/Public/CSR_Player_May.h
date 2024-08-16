@@ -44,5 +44,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent )
 	void ChangeCharacterColor( );
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> PlayerHPWidget;
+
+	class UCSR_PlayerWidget *MayUI;
+
+	UFUNCTION(BlueprintCallable)
+	void TranceSIn();
+	UFUNCTION(BlueprintCallable)
+	void LightOn();
 #pragma endregion
 };

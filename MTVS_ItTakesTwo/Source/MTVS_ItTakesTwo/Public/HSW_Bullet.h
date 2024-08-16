@@ -45,8 +45,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* MeshComp;
 
-	UPROPERTY(EditDefaultsOnly)
-	class UBoxComponent* NailHammerComp;
 
 	//발사체 컴포넌트를 만들고싶다.
 	UPROPERTY(EditDefaultsOnly)
@@ -85,7 +83,7 @@ public:
 	float Distance;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly )
-	float Speed = 5000;
+	float Speed = 10000;
 
 	void SetActive ( bool bValue );
 
@@ -104,6 +102,7 @@ public:
 
 	UPROPERTY (  )
 	class ACSR_Player_Cody* Player;
+	//class APawn* Player;
 
 	UFUNCTION(BlueprintCallable )
 	void NailBasic( );
@@ -134,10 +133,35 @@ public:
 
 	float CurrentTime = 0.f;
 	UPROPERTY(EditDefaultsOnly )
-	float BackTime = 4.f;
+	float BackTime = 3.f;
 
 	void SetbIsReturning ( bool value );
 
 	void FirstAttach ( FTransform t);
 	void SetStartAndEnd ( FVector start , FVector end );
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UCameraShakeBase> NailShootCameraShake;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UCameraShakeBase> NailReturnCameraShake;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* NailLoadSFV;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* NailEmbeddedSFV;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* NailUnEmbeddedSFV;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* NailReturnSFV;
+
+	FVector ReturnDir;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UParticleSystem* NailEmbeddedVFXFactory;
+
+
 };
