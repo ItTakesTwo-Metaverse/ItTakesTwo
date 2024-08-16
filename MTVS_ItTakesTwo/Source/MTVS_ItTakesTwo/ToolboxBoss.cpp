@@ -385,8 +385,10 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 				Lock1HPBarComp->DestroyComponent();
 
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock1DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
-				this->StartCinematic();
-
+				//this->StartCinematic();
+				playvideo();
+				GetWorld()->DeltaTimeSeconds -= 13.f;
+				UE_LOG(LogTemp, Warning, TEXT("deltatime -= 13.f"));
 				
 				TArray<AActor*> FoundActors;
 
@@ -427,7 +429,7 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 				Lock2HPBarComp->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
 				Lock2HPBarComp->DestroyComponent();
 
-				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock2DestroyTimerHandle , this , &AToolboxBoss::DestroyLock2 , 3.0f , false );
+				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock2DestroyTimerHandle , this , &AToolboxBoss::DestroyLock2 , 2.0f , false );
 
 				TArray<AActor*> FoundActors;
 
@@ -458,6 +460,7 @@ void AToolboxBoss::DestroyLock2 ( )
 {
 	if ( Lock2 ) { Lock2->DestroyComponent ( ); }
 	if ( LockBody2 ) { LockBody2->DestroyComponent ( ); }
+	EndingCinematic();
 }
 
 void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )

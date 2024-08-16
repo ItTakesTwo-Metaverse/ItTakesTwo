@@ -68,6 +68,11 @@ public:
 	float Lock2HP = Lock2MaxHP;
 	float damage = 1;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void playvideo();
+	UFUNCTION(BlueprintImplementableEvent)
+	void playEndingvideo();
+
 	bool bCanDamage = true;
 	float CurrentTime = 0;
 
@@ -94,7 +99,7 @@ public:
 	void OnMyTargetBoxHit( UPrimitiveComponent* HitComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , FVector NormalImpulse , const FHitResult& Hit );
 
 	// 자물쇠 망치공격 당했을 때 자물쇠 데미지
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
 
 	UFUNCTION( )
@@ -125,6 +130,10 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartCinematic();
+
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void EndingCinematic();
 
 	UPROPERTY()
 	class UParticleSystem* LockEffect;
