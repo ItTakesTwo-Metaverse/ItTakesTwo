@@ -47,12 +47,10 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> PlayerHPWidget;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCSR_PlayerWidget *MayUI;
 
 	UFUNCTION(BlueprintCallable)
 	void TranceSIn();
-
 	UFUNCTION(BlueprintCallable)
 	void LightOn();
 
@@ -64,5 +62,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float CurR = 0;
+
 #pragma endregion
 };

@@ -54,7 +54,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> PlayerHPWidget;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCSR_PlayerWidget *CodyUI;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)

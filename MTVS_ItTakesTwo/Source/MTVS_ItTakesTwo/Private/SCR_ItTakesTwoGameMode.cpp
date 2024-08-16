@@ -13,8 +13,9 @@
 #include "TimerManager.h"
 #include "UObject/Object.h"
 #include "../ToolboxBoss.h"
-#include "Blueprint/UserWidget.h"
-#include "CSR_PlayerWidget.h"
+#include "MovieSceneSequencePlaybackSettings.h"
+#include <Runtime/LevelSequence/Public/LevelSequencePlayer.h>
+#include "LevelSequenceActor.h"
 
 void ASCR_ItTakesTwoGameMode::InitGame ( const FString& MapName , const FString& Options , FString& ErrorMessage )
 {
@@ -64,19 +65,7 @@ UCustomGameViewportClient* ASCR_ItTakesTwoGameMode::GetCustomViewportClient ( )
 
 void ASCR_ItTakesTwoGameMode::CallCutSin()
 {
-	this->CutSinMap();
-}
-
-
-void ASCR_ItTakesTwoGameMode::LightOn()
-{
 	this->P1_May->TranceSIn();
-	this->P1_May->MayUI->SetVisibility(ESlateVisibility::Hidden);
-}
-
-void ASCR_ItTakesTwoGameMode::LightOff()
-{
-	this->P1_May->LightOn();
 }
 
 void ASCR_ItTakesTwoGameMode::BeginPlay()
@@ -118,10 +107,40 @@ void ASCR_ItTakesTwoGameMode::BeginPlay()
 	this->P1_May->GetMapMode(this);
 	this->P2_Cody->GetMapMode(this);
 
+	// 여기 확인
 	this->CustomViewportClient = Cast<UCustomGameViewportClient> ( GetWorld ( )->GetGameViewport ( ) );
 	this->boss = Cast<AToolboxBoss>(UGameplayStatics::GetActorOfClass(this->GetWorld(), AToolboxBoss::StaticClass()));
 	if (this->boss == nullptr) {
 		UCSR_FunctionLib::ExitGame(GetWorld(), FString("ASCR_ItTakesTwoGameMode : boss is Null"));
+
+	/*this->boss = Cast< AToolboxBoss>(GetOwner());*/
+
+	if (SQ_2Phase)
+	{
+		FMovieSceneSequencePlaybackSettings Settings;
+		Settings.bAutoPlay = false;
+		Settings.bPauseAtEnd = true;
+
+		LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
+			GetWorld(), SQ_2Phase, Settings, LevelSequenceActor);
+
+		if (LevelSequencePlayer)
+		{
+			LevelSequenceActor->SetOwner(this); // 소유자 설정
+			LevelSequencePlayer->Play();
+		}
 	}
-	this->boss->GMMode = this;
+
+	//if (SQ_2Phase)
+	//{
+	//	ALevelSequenceActor* TempLevelSequenceActor;
+	//	ULevelSequencePlayer* TempSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), SQ_2Phase, FMovieSceneSequencePlaybackSettings(), TempLevelSequenceActor);
+	//	// 생성된 TempLevelSequencePlayer를 클래스 멤버 변수에 저장
+	//	LevelSequenceActor = TempLevelSequenceActor;
+	//	LevelSequencePlayer = TempSequencePlayer;
+	//	if (LevelSequencePlayer)
+	//	{
+	//		LevelSequencePlayer->Play();
+	//	}
+	//}
 }

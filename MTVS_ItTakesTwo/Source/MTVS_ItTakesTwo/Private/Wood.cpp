@@ -62,6 +62,7 @@ AWood::AWood()
 		WoodCircle4->SetGenerateOverlapEvents ( true );
 		WoodCircle4->SetCollisionProfileName ( TEXT ( "Wood" ) );
 	}
+
 }
 
 // Called when the game starts or when spawned
@@ -76,5 +77,25 @@ void AWood::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AWood::DestroyCircle1()
+{	
+	WoodCircle1->DestroyComponent();
+}
+
+void AWood::DestroyCircle2()
+{
+	WoodCircle2->DestroyComponent();
+}
+
+void AWood::DestroyCircle3()
+{
+	WoodCircle3->DestroyComponent();
+}
+
+void AWood::DestroyCircle4()
+{
+	WoodCircle4->DestroyComponent();
 }
 
