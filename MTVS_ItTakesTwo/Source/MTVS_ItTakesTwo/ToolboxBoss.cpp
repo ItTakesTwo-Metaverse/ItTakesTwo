@@ -237,7 +237,7 @@ AToolboxBoss::AToolboxBoss ( )
 		HoleMeshEffect = HoleMeshEffectObj.Object;
 	}*/
 
-	UGameplayStatics::PlaySound2D(GetWorld(), BossImpactSFV);
+	
 	
 }
 // Called when the game starts or when spawned
@@ -277,6 +277,7 @@ void AToolboxBoss::BeginPlay ( )
 	//if (this->GMMode) {
 	//	UCSR_FunctionLib::ExitGame(this->GetWorld(), TEXT("AToolboxBoss : GMMode is null"));
 	//}
+	UGameplayStatics::PlaySound2D(GetWorld(), BossImpactSFV);
 }
 
 // Called every frame

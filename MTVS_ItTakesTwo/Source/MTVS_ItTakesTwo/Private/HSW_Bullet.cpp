@@ -59,6 +59,11 @@ void AHSW_Bullet::BeginPlay()
 	//Player = GetWorld ( )->GetFirstPlayerController ( )->GetPawn ( );
 
 	GetWorld ( )->GetTimerManager ( ).SetTimer ( TimerHandle , this , &AHSW_Bullet::LoadSecondPlayer , 0.1f , false );
+
+	if (GEngine)
+	{
+		GEngine->bEnableOnScreenDebugMessages = false;
+	}
 	
 	/*NailBagSocketAttach ( );*/
 	//GetWorld ( )->GetTimerManager ( ).SetTimer ( TimerHandle , this , &AHSW_Bullet::NailBagSocketAttach , 0.1f , false );
@@ -76,7 +81,7 @@ void AHSW_Bullet::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	const FString myState = UEnum::GetValueAsString ( State );
-	DrawDebugString ( GetWorld ( ) , this->GetActorLocation ( ) , myState , nullptr , FColor::Yellow , 0 , true , 1 );
+	//DrawDebugString ( GetWorld ( ) , this->GetActorLocation ( ) , myState , nullptr , FColor::Yellow , 0 , true , 1 );
 	switch ( State )
 	{
 	case ENailState::BASIC:			TickBasic ( DeltaTime );			break;

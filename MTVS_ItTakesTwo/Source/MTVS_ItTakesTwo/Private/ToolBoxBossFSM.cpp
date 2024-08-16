@@ -56,7 +56,7 @@ void UToolBoxBossFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 	// 실행창에 상태 메세지 출력
 	FString logMsg = UEnum::GetValueAsString(CurrentState);
-	DrawDebugString(GetWorld(), GetOwner()->GetActorLocation(), logMsg, nullptr, FColor::Red, 0);
+	//DrawDebugString(GetWorld(), GetOwner()->GetActorLocation(), logMsg, nullptr, FColor::Red, 0);
 
 
 	switch (CurrentState)
