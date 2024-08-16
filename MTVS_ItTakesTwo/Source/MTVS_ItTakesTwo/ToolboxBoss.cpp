@@ -391,8 +391,10 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 				{
 					if (AHSW_Bullet* Nail = Cast<AHSW_Bullet>(Actor))
 					{
-						Nail->NailBag->NailOutPop();
-						Nail->SetState(ENailState::RETURNING);
+						if (Nail->NailBag->NailOutPop() != nullptr)
+						{
+							Nail->SetState(ENailState::RETURNING);
+						}
 					}
 				}
 			}
@@ -426,8 +428,10 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 				{
 					if (AHSW_Bullet* Nail = Cast<AHSW_Bullet>(Actor))
 					{
-						Nail->NailBag->NailOutPop();
-						Nail->SetState(ENailState::RETURNING);
+						if (Nail->NailBag->NailOutPop() != nullptr)
+						{
+							Nail->SetState(ENailState::RETURNING);
+						}
 					}
 				}
 			}
@@ -473,7 +477,9 @@ void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedCompon
 // 			
 // 			wood->DestroyCircle4();
 // 		}
-
+		FVector OtherComponentLoaction = OtherComponent->GetComponentLocation();
+		UNiagaraComponent* WoodDustEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(this->GetWorld(), this->NiagaraEffect, OtherComponentLoaction , FRotator::ZeroRotator);
+		WoodDustEffect->SetAutoDestroy(true);
 		OtherComponent->DestroyComponent();
 	}
 
