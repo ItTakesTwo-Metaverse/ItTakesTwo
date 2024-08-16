@@ -84,5 +84,14 @@ public:
 
 	UFUNCTION(BlueprintCallable )
 	void LightOff();
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	//class ULevelSequence* SQ_2Phase;
+
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Level Sequence")
+	//class ALevelSequenceActor* LevelSequenceActor;
+
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Level Sequence")
+	//class ULevelSequencePlayer* LevelSequencePlayer;
 };
 

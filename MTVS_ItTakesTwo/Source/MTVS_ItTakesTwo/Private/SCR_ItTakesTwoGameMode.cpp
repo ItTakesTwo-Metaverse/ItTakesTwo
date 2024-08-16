@@ -15,6 +15,8 @@
 #include "../ToolboxBoss.h"
 #include "Blueprint/UserWidget.h"
 #include "CSR_PlayerWidget.h"
+#include "MovieSceneSequencePlaybackSettings.h"
+#include "LevelSequencePlayer.h"
 
 void ASCR_ItTakesTwoGameMode::InitGame ( const FString& MapName , const FString& Options , FString& ErrorMessage )
 {
@@ -72,6 +74,7 @@ void ASCR_ItTakesTwoGameMode::LightOn()
 {
 	this->P1_May->TranceSIn();
 	this->P1_May->MayUI->SetVisibility(ESlateVisibility::Hidden);
+	this->P2_Cody->CodyUI->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void ASCR_ItTakesTwoGameMode::LightOff()
@@ -124,4 +127,20 @@ void ASCR_ItTakesTwoGameMode::BeginPlay()
 		UCSR_FunctionLib::ExitGame(GetWorld(), FString("ASCR_ItTakesTwoGameMode : boss is Null"));
 	}
 	this->boss->GMMode = this;
+
+	//if (SQ_2Phase)
+	//{
+	//	FMovieSceneSequencePlaybackSettings Settings;
+	//	Settings.bAutoPlay = false;
+	//	Settings.bPauseAtEnd = true;
+
+	//	LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
+	//		GetWorld(), SQ_2Phase, Settings, LevelSequenceActor);
+
+	//	if (LevelSequencePlayer)
+	//	{
+	//		LevelSequenceActor->SetOwner(this); // 소유자 설정
+	//		LevelSequencePlayer->Play();
+	//	}
+	//}
 }
