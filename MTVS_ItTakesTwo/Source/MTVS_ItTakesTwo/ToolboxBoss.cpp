@@ -259,7 +259,7 @@ void AToolboxBoss::BeginPlay ( )
 	LockBody2->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyLockBeginOverlap );
 	// 드릴 충돌
 	Drill->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyDrillOverlap );
-	DrillArms->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyDrillCirleOverlap);
+	DrillArms->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyBossBeginOverlap);
 
 	DrillCircle->OnComponentBeginOverlap.AddDynamic( this , &AToolboxBoss::OnMyDrillCirleOverlap );
 
@@ -378,9 +378,25 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 				LockBody1->bBlendPhysics = true;
 
 				Lock1HPBarComp->DetachFromComponent( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+				Lock1HPBarComp->DestroyComponent();
 
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock1DestroyTimerHandle , this , &AToolboxBoss::DestroyLock1 , 3.0f , false );
 				this->StartCinematic();
+
+				
+				TArray<AActor*> FoundActors;
+
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHSW_Bullet::StaticClass(), FoundActors);
+				for (AActor* Actor : FoundActors)
+				{
+					if (AHSW_Bullet* Nail = Cast<AHSW_Bullet>(Actor))
+					{
+						if (Nail->NailBag->NailOutPop() != nullptr)
+						{
+							Nail->SetState(ENailState::RETURNING);
+						}
+					}
+				}
 			}
 		}
 		else if ( fsm->bIsAttack2 ) //else if ( Lock1HP <= 0 && Lock2HP > 0 )
@@ -401,8 +417,23 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 				LockBody2->bBlendPhysics = true;
 
 				Lock2HPBarComp->DetachFromComponent ( FDetachmentTransformRules::KeepWorldTransform ); // 부착해제
+				Lock2HPBarComp->DestroyComponent();
 
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock2DestroyTimerHandle , this , &AToolboxBoss::DestroyLock2 , 3.0f , false );
+
+				TArray<AActor*> FoundActors;
+
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHSW_Bullet::StaticClass(), FoundActors);
+				for (AActor* Actor : FoundActors)
+				{
+					if (AHSW_Bullet* Nail = Cast<AHSW_Bullet>(Actor))
+					{
+						if (Nail->NailBag->NailOutPop() != nullptr)
+						{
+							Nail->SetState(ENailState::RETURNING);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -423,29 +454,32 @@ void AToolboxBoss::DestroyLock2 ( )
 
 void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComponent , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
+
 	if ( OtherActor->IsA<AWood> ( ) )
 	{
-		/*if (wood->WoodCircle1)
-		{
-			UNiagaraComponent* HoleMeshEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), this->HoleMeshEffect, wood->WoodCircle1->GetComponentLocation(), FRotator::ZeroRotator);
-			wood->DestroyCircle1();
-		}
-		if (wood->WoodCircle2)
-		{
-			UNiagaraComponent* HoleMeshEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), this->HoleMeshEffect, wood->WoodCircle2->GetComponentLocation(), FRotator::ZeroRotator);
-			wood->DestroyCircle2();
-		}
-		if (wood->WoodCircle3)
-		{
-			UNiagaraComponent* HoleMeshEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), this->HoleMeshEffect, wood->WoodCircle3->GetComponentLocation(), FRotator::ZeroRotator);
-			wood->DestroyCircle3();
-		}
-		if (wood->WoodCircle4)
-		{
-			UNiagaraComponent* HoleMeshEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), this->HoleMeshEffect, wood->WoodCircle4->GetComponentLocation(), FRotator::ZeroRotator);
-			wood->DestroyCircle4();
-		}*/
-
+// 		if (wood->WoodCircle1)
+// 		{
+// 			/*UNiagaraComponent* HoleMeshEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), this->HoleMeshEffect, wood->WoodCircle1->GetComponentLocation(), FRotator::ZeroRotator);*/
+// 			wood->DestroyCircle1();
+// 		}
+// 		if (wood->WoodCircle2)
+// 		{
+// 			
+// 			wood->DestroyCircle2();
+// 		}
+// 		if (wood->WoodCircle3)
+// 		{
+// 			
+// 			wood->DestroyCircle3();
+// 		}
+// 		if (wood->WoodCircle4)
+// 		{
+// 			
+// 			wood->DestroyCircle4();
+// 		}
+		FVector OtherComponentLoaction = OtherComponent->GetComponentLocation();
+		UNiagaraComponent* WoodDustEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(this->GetWorld(), this->NiagaraEffect, OtherComponentLoaction , FRotator::ZeroRotator);
+		WoodDustEffect->SetAutoDestroy(true);
 		OtherComponent->DestroyComponent();
 	}
 

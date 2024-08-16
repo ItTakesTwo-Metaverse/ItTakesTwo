@@ -51,6 +51,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void TranceSIn();
-
+	UFUNCTION(BlueprintCallable)
+	void LightOn();
 #pragma endregion
 };

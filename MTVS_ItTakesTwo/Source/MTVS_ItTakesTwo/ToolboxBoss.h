@@ -143,4 +143,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ASCR_ItTakesTwoGameMode *GMMode;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* NiagaraEffect;
 };
