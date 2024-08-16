@@ -53,5 +53,15 @@ public:
 	void TranceSIn();
 	UFUNCTION(BlueprintCallable)
 	void LightOn();
+
+	UFUNCTION(BlueprintCallable)
+	void tranReBorn();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float MaxR = 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float CurR = 0;
+
 #pragma endregion
 };
