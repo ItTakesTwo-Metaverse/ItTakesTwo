@@ -61,7 +61,7 @@ void UCSR_C_AComp_InputBIndMay::OnAttackAction ( const FInputActionValue& Value 
 
 				//이펙트, 소리, 카메라쉐이크
 				GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(Hammer->HammerCameraShake);
-				//UGameplayStatics::PlaySound2D(GetWorld(), Hammer->HammerSFV);
+				UGameplayStatics::PlaySound2D(GetWorld(), Hammer->HammerSFV);
 // 				UNiagaraComponent* DamagedEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(this->GetWorld(), Hammer->NiagaraEffect, Hammer->MeshComp->GetSocketLocation(TEXT("HammerVFXSocket")), FRotator::ZeroRotator);
 // 				DamagedEffect->SetAutoDestroy(true);
 

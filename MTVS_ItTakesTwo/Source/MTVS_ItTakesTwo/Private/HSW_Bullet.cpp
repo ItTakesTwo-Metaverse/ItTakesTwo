@@ -115,9 +115,11 @@ void AHSW_Bullet::OnMyWallHit ( UPrimitiveComponent* HitComponent , AActor* Othe
 	//}
 	else
 	{
+		if (State != ENailState::UNEMBEDDED) {
+		SetState(ENailState::UNEMBEDDED);
+		}
 		//GEngine->AddOnScreenDebugMessage ( -1 , 2.0f , FColor::Yellow , TEXT ( "Unembedded" ) );
 		//NailBag->NailOutPush ( this );
-		SetState(ENailState::UNEMBEDDED);
 	}
 }
 
@@ -238,7 +240,7 @@ void AHSW_Bullet::TickReturning ( const float& DeltaTime )
 	//Player를 Arrow 컴프로 설정해주기
 	ReturnDir = Player->GetActorLocation() - this->GetActorLocation();
 	Distance = (Player->GetActorLocation() - this->GetActorLocation ( )).Size();
-	SetActorLocation ( FMath::Lerp(this->GetActorLocation(), Player->GetActorLocation(), 0.9f ));
+	SetActorLocation ( FMath::Lerp(this->GetActorLocation(), Player->GetActorLocation(), 0.1f ));
 
 	//SetActorLocationAndRotation ( FMath::Lerp ( this->GetActorLocation ( ) , nailDestLocation , 0.1 ) , FMath::Lerp ( this->GetActorRotation ( ) , nailDestRotation , 0.1 ) );
 
@@ -284,7 +286,7 @@ void AHSW_Bullet::SetState ( ENailState NextState)
 		break;
 
 	case ENailState::LOAD:
-		//UGameplayStatics::PlaySound2D(GetWorld(), NailLoadSFV);
+		UGameplayStatics::PlaySound2D(GetWorld(), NailLoadSFV);
 		NailLoad ( );
 		break;
 
@@ -298,7 +300,7 @@ void AHSW_Bullet::SetState ( ENailState NextState)
 		break;
 
 	case ENailState::EMBEDDED:
-		//UGameplayStatics::PlaySound2D(GetWorld(), NailEmbeddedSFV);
+		UGameplayStatics::PlaySound2D(GetWorld(), NailEmbeddedSFV);
 		UGameplayStatics::GetPlayerController(GetWorld(), 1)->PlayerCameraManager->StartCameraShake(NailShootCameraShake);
 		MovementComp->bShouldBounce = false;
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), NailEmbeddedVFXFactory, MeshComp->GetSocketTransform(TEXT("NailVFXSocket")));
@@ -308,16 +310,16 @@ void AHSW_Bullet::SetState ( ENailState NextState)
 		break;
 
 	case ENailState::UNEMBEDDED:
-		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), NailEmbeddedVFXFactory, MeshComp->GetSocketTransform(TEXT("NailVFXSocket")));
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), NailEmbeddedVFXFactory, MeshComp->GetSocketTransform(TEXT("NailVFXSocket")));
 
-		//UGameplayStatics::PlaySound2D(GetWorld(), NailUnEmbeddedSFV);
+		UGameplayStatics::PlaySound2D(GetWorld(), NailUnEmbeddedSFV);
 		BoxComp->SetEnableGravity ( true);
 		MovementComp->bShouldBounce = true;
 		MovementComp->ProjectileGravityScale = 1.f;
 		break;
 
 	case ENailState::RETURNING:
-		//UGameplayStatics::PlaySound2D(GetWorld(), NailReturnSFV);
+		UGameplayStatics::PlaySound2D(GetWorld(), NailReturnSFV);
 		BoxComp->SetEnableGravity ( false );
 		BoxComp->SetCollisionEnabled ( ECollisionEnabled::QueryOnly );
 
