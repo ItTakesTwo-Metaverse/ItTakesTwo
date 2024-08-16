@@ -56,6 +56,7 @@ public:
 
 	class UCSR_PlayerWidget *CodyUI;
 
+
 	UPROPERTY(EditDefaultsOnly)
 	class USoundBase* FootStepSFV;
 	UPROPERTY(EditDefaultsOnly)
@@ -64,5 +65,15 @@ public:
 	class USoundBase* DemageSFV;
 	UPROPERTY(EditDefaultsOnly)
 	class USoundBase* DeathSFV;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float MaxR = 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float CurR = 0;
+
+	UFUNCTION(BlueprintCallable)
+	void tranReBorn();
+
 #pragma endregion PileMovement;
 };

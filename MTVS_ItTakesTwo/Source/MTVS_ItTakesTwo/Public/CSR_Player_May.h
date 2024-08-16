@@ -53,6 +53,7 @@ public:
 	void TranceSIn();
 	UFUNCTION(BlueprintCallable)
 	void LightOn();
+
 	UPROPERTY(EditDefaultsOnly)
 	class USoundBase* FootStepSFV;
 	UPROPERTY(EditDefaultsOnly)
@@ -61,5 +62,16 @@ public:
 	class USoundBase* DemageSFV;
 	UPROPERTY(EditDefaultsOnly)
 	class USoundBase* DeathSFV;
+
+
+	UFUNCTION(BlueprintCallable)
+	void tranReBorn();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float MaxR = 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float CurR = 0;
+
 #pragma endregion
 };
