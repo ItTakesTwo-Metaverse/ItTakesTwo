@@ -98,6 +98,7 @@ public:
 	void Attack5State( const float& DeltaTime );
 	void DieState ( const float& DeltaTime );
 	
+	FTimerHandle Lock1HP0;
 
 	FTimerHandle DrillOnTimerHandle;
 	FTimerHandle DrillOffTimerHandle;
@@ -110,6 +111,8 @@ public:
 	FTimerHandle DrillArmOff4TimerHandle;
 
 	FTimerHandle WoodRotationTimerHandle;
+
+	void DieState();
 
 	void DrillOn ( );
 	void DrillOff ( );

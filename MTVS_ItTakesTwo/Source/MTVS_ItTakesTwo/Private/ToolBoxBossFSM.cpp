@@ -21,7 +21,7 @@ UToolBoxBossFSM::UToolBoxBossFSM()
 
 	AttackCoolDown = 3;
 	AttackTimer = 0;
-	Attack1Duration = 20; // Attack1 : 팔 휘두르기 공격 시간 (애님8초+대기4) 12초 / 테스트용 20초
+	Attack1Duration = 25; // Attack1 : 팔 휘두르기 공격 시간 (애님8초+대기4) 12초 / 테스트용 25초
 	Attack2Duration = 20; // Attack2 : 전동드릴 바닥 뚫는 공격 시간
 	Attack3Duration = 13; // Attack3 : 전동드릴 회전 공격 시간
 	Attack4Duration = 16.5f; // Attack3 : 전동드릴 회전 공격 시간
@@ -213,7 +213,7 @@ void UToolBoxBossFSM::Attack1State ( const float& DeltaTime )
 
 void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
 {	
-	// 일시정지 상태에서 12초간 유지 ( 자물쇠 파괴할 수 있는 제한시간 )
+	// 일시정지 상태에서 12초간 유지 ( 자물쇠 파괴할 수 있는 제한시간 ) (테스트용 25초)
 	AttackTimer += DeltaTime;
 
 	if ( AttackTimer <= Attack1Duration )
@@ -231,7 +231,9 @@ void UToolBoxBossFSM::PausedState ( const float& DeltaTime )
 		}
 		else if ( DestroyedLock1 && me->Lock2HP <= 0 ) // 자물쇠2가 파괴된다면
 		{
-			ChangeState( EBossState::Die );
+			GetWorld()->GetTimerManager().SetTimer(Lock1HP0, this, &UToolBoxBossFSM::DieState, 10.f, false);
+
+			//ChangeState( EBossState::Die );
 			AttackTimer = 0; // 공격시간 리셋
 			return; // 상태를 바꿨으므로 함수 종료
 		}
@@ -348,6 +350,11 @@ void UToolBoxBossFSM::DieState ( const float& DeltaTime )
 	me->playEndingvideo();
 	}
 
+}
+
+void UToolBoxBossFSM::DieState()
+{
+	ChangeState(EBossState::Die);
 }
 
 void UToolBoxBossFSM::DrillOn ( )

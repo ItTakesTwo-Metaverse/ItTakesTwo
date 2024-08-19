@@ -431,6 +431,8 @@ void AToolboxBoss::OnMyLockBeginOverlap ( UPrimitiveComponent* OverlappedCompone
 
 				GetWorld ( )->GetTimerManager ( ).SetTimer ( Lock2DestroyTimerHandle , this , &AToolboxBoss::DestroyLock2 , 2.0f , false );
 
+				fsm->ChangeState(EBossState::Die);
+
 				TArray<AActor*> FoundActors;
 
 				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHSW_Bullet::StaticClass(), FoundActors);
