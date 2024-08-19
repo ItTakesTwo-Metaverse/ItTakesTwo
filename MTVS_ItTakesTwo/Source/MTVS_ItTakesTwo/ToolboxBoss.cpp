@@ -503,7 +503,7 @@ void AToolboxBoss::OnMyDrillCirleOverlap ( UPrimitiveComponent* OverlappedCompon
 	// 플레이어 데미지 처리
 	if ( OtherActor->IsA<ACSR_P_Player> ( ) )
 	{
-		Player->OnDamaged ( 1 );
+		Player->OnDamaged ( 6 );
 
 		//UNiagaraSystem* NiagaraEffect = LoadObject<UNiagaraSystem> ( nullptr , TEXT ( "/Script/Niagara.NiagaraSystem'/Game/JBY/effect/collision_effect.collision_effect'" ) );
 		//if ( NiagaraEffect )
