@@ -1,5 +1,8 @@
 # ItTakesTwo
 
+## 영상 링크
+<https://www.youtube.com/watch?v=UKX-qx788uw>
+
 **일정 : 2024.07.22 ~ 2024. 08.16**
 ---
 **마일스톤으로 큰단위의 작업을 설정해 주세요**
